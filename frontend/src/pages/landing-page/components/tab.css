@@ -1,0 +1,8 @@
+.tab-slider {
+    position: absolute;
+    bottom: 0;
+    height: 2px; /* Adjust this according to your design */
+    background-color: blue; /* Change this to your slider color */
+    transition: all 0.3s;
+  }
+  
