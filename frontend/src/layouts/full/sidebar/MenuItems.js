@@ -5,66 +5,48 @@ import {
 import { uniqueId } from 'lodash';
 
 
-const Menuitems = [
+
+
+const Menuitems = (projectId) => [
   {
     navlabel: true,
-    subheader: 'Planning',
+    subheader: 'PLANIFICATION',
   },
-
   {
     id: uniqueId(),
-    title: 'Dashboard',
+    title: 'Board',
     icon: IconLayoutDashboard,
-    href: '/dashboard',
+    href: `/dashboard/${projectId}`,
   },
-  {
-    navlabel: true,
-    subheader: 'Utilities',
-  },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Typography',
-  //   icon: IconTypography,
-  //   href: '/ui/typography',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Shadow',
-  //   icon: IconCopy,
-  //   href: '/ui/shadow',
-  // },
-  // {
-  //   navlabel: true,
-  //   subheader: 'Auth',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Login',
-  //   icon: IconLogin,
-  //   href: '/auth/login',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Register',
-  //   icon: IconUserPlus,
-  //   href: '/auth/register',
-  // },
-  // {
-  //   navlabel: true,
-  //   subheader: 'Extra',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Icons',
-  //   icon: IconMoodHappy,
-  //   href: '/icons',
-  // },
   {
     id: uniqueId(),
     title: 'User management',
     icon: IconAperture,
     href: '/user/management',
   },
+  {
+    id: uniqueId(),
+    title: 'Table ',
+    icon: IconAperture,
+    href: `/Table/${projectId}`,
+  },
+
+  {
+    id: uniqueId(),
+    title: 'Timeline ',
+    icon: IconAperture,
+    href: `/Timeline/${projectId}`,
+  },
+  // {
+  //   navlabel: true,
+  //   subheader: 'STATISTICS',
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Statistics',
+  //   icon: IconLayoutDashboard,
+  //   href: `/statistic`,
+  // },
 ];
 
 

@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema(
     Location: { type: String },
     organisation: { type: String },
 
+    Tasks : [
+      {
+        TasksId: { type: ObjectId, ref: "Tasks" },
+      },
+    ],
+
 
     // id: String,
 

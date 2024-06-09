@@ -26,7 +26,7 @@ const ProjectDescription = ({ openDescriptionModal,closeDescription ,handleOpenP
               flexDirection: 'column',
               alignItems: 'center',
               width: '820px',
-              height: '2200px',
+              height: '2000px',
               background: '#fff',
               borderRadius: '5px',
               position: 'relative',

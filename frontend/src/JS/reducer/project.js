@@ -2,6 +2,11 @@ import {
     LOAD_PROJECT,
     FAIL_PROJECT,
     CREATE_PROJECT_SUCCESS,
+    GET_PROJECT_SUCCESS,
+    SELECT_PROJECT,
+    GET_PROJECTBYID_SUCCESS,
+    UPDATE_PROJECT_SUCCESS,
+    DELETE_PROJECT_SUCCESS
    
   } from '../actionTypes/project';
   import {
@@ -10,13 +15,16 @@ import {
   } from '../actionTypes/user';
   
   const initialState = {
-    loaduser: false,
+    loadproject: false,
     errors: [],
     isError: false,
     isSuccess: false,
     projects: [],
     loading: false,
     error: null,
+    selectedProject: null,
+    project:[]
+    
     
   };
   
@@ -25,19 +33,47 @@ import {
       case STOP_LOADING:
         return {
           ...state,
-          loaduser: false,
+          loadproject: false,
         };
       case LOAD_PROJECT:
-        return { ...state, loaduser: true };
+        return { ...state, loadproject: true };
       case FAIL_PROJECT:
-        return { ...state, loaduser: false, errors: payload };
+        return { ...state, loadproject: false, errors: payload };
      
       case CREATE_PROJECT_SUCCESS:
-        return { ...state, loaduser: false, isSuccess: true,};
+        return { ...state, loadproject: false, isSuccess: true,};
       
-      default:
-        return state;
-    }
+        case UPDATE_PROJECT_SUCCESS:
+          return {
+            ...state,
+            loadproject: false,
+            projects: payload,
+            errors: [], 
+          };
+          case DELETE_PROJECT_SUCCESS:
+      return {
+        ...state,
+        loadproject: false,
+        projects: state.projects.filter(projet => projet._id !== payload),
+      };
+
+    case GET_PROJECT_SUCCESS:
+      return { ...state, loadproject: false, isSuccess: true,
+        projects:payload.projects};
+
+        
+        case GET_PROJECTBYID_SUCCESS:
+          return { ...state, loadproject: false, isSuccess: true,
+            project:payload.project};
+      case SELECT_PROJECT:
+        return {
+          ...state,
+          selectedProject:payload.selectedProject
+        };
+    
+    default:
+      return state;
+  }
   };
   
   export default projectReducer;

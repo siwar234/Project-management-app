@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { baselightTheme } from "./theme/DefaultColors";
 
 function App() {
+  
   const dispatch = useDispatch();
 
   useEffect(() => {

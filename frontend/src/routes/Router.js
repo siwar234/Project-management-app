@@ -22,6 +22,18 @@ const ResetPassword = React.lazy(() => import('../views/authentication/forgotPas
 const FullLayout = React.lazy(() => import('../layouts/full/FullLayout'));
 const BlankLayout = React.lazy(() => import('../layouts/blank/BlankLayout'));
 const JoinTeam = React.lazy(() => import('../views/authentication/JoinTeam'));
+const Layout = React.lazy(() => import('../layouts/full/Layout'));
+const Projects = React.lazy(() => import('../views/Projects/ViewProjects'));
+const DetailsProjects = React.lazy(() => import('../views/Projects/DetailsProjects'));
+const Redirect = React.lazy(() => import('../views/Redirect'));
+const Workspace = React.lazy(() => import('../views/dashboard/Workspace'));
+const Table = React.lazy(() => import('../views/dashboard/Table'));
+const Timeline = React.lazy(() => import('../views/dashboard/Timeline'));
+const Statistics = React.lazy(() => import('../views/dashboard/statistics/Statistics'));
+// const MindNode = React.lazy(() => import('../views/dashboard/MindNode'));
+
+
+
 
 const Teams = React.lazy(() => import('../views/teams/Teams'));
 const EquipeDetails = React.lazy(() => import('../views/teams/EquipeDetails'));
@@ -36,16 +48,78 @@ const Router = () => {
     
     {
       path: '/',
-      element: <PrivateRouteAD><FullLayout /></PrivateRouteAD>,
+      element: !isAuth ? <Login /> : <Layout />,
       children: [
-        { path: '/dashboard', exact: true, element: <Dashboard /> },
-        { path: '/profileuser/:token/:id', exact: true, element:  <Icons />  },
-        { path: '/ui/typography', exact: true, element:  <TypographyPage />  },
-        { path: '/ui/shadow', exact: true, element: <Shadow /> },
+        { path: '/profileuser/:token/:id', exact: true, element: !isAuth ? <Login /> : <Icons />  },
+       
 
         { path: '*', element: <Navigate to="/auth/404" /> },
       ],
     },
+
+    {
+      path: '/',
+      element: <BlankLayout />,
+      children: [
+        { path: '/redirect', exact: true, element:  <Redirect />  },
+       
+
+        { path: '*', element: <Navigate to="/auth/404" /> },
+      ],
+    },
+    {
+      path: '/',
+      element: <UserRole><FullLayout /></UserRole>,
+      children: [
+        { path: '/dashboard/:projectId', exact: true, element: <Dashboard /> },
+        { path: '/Table/:projectId', exact: true, element: <Table /> },
+        { path: '/Timeline/:projectId', exact: true, element: <Timeline /> },
+
+
+      ],
+    },
+    
+
+    {
+      path: '/',
+      element: <UserRole><Layout /></UserRole>,
+      children: [
+        { path: '/statistic', exact: true, element: <Statistics /> },
+       
+        
+
+      ],
+    },
+  
+
+    {
+      path: '/',
+      element: <Layout />,
+      children: [
+        { path: '/workspace', exact: true, element: <Workspace /> },
+       
+
+      ],
+    },
+
+
+    {
+      path: '/projects',
+      element: !isAuth ? <Login /> :<Layout />,
+      children: [
+        { path: '/projects/viewprojects', exact: true, element:!isAuth ? <Login /> : <Projects /> },
+
+      ],
+    },
+    {
+      path: '/projects',
+      element: !isAuth ? <Login /> :<FullLayout />,
+      children: [
+        { path: '/projects/details/:projectId', exact: true, element:!isAuth ? <Login /> : <DetailsProjects /> },
+
+      ],
+    },
+   
    
     {
       path: '/',
@@ -57,7 +131,7 @@ const Router = () => {
 
     {
       path: '/team',
-      element: !isAuth ? <Login /> :<UserRole> <FullLayout /></UserRole>,
+      element: !isAuth ? <Login /> :<UserRole> <Layout /></UserRole>,
       children: [
       
         { path: '/team/teams', exact: true, element: !isAuth ? <Login /> :<Teams /> },
@@ -71,7 +145,7 @@ const Router = () => {
       path: '/authentificate/',
       element: <BlankLayout />,
       children: [
-        { path: '/authentificate/login', element: !isAuth ?  <Login /> : <Navigate to="/dashboard" /> },
+        { path: '/authentificate/login', element: !isAuth ?  <Login /> : <Navigate to="/workspace" /> },
       ],
     },
 

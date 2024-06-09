@@ -22,10 +22,7 @@ router.post("/reset-password/:token", resetPassword);
   });
   router.get('/current', authMiddleware, async (req, res) => {
     try {
-      const user = await User.findById(req.user.id).populate({
-        path: 'equipes',
-        populate: { path: 'members.memberId', model: 'User' } 
-      });;
+      const user = await User.findById(req.user.id)
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }

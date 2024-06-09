@@ -10,6 +10,7 @@ const equipeSchema = new mongoose.Schema(
     NameEquipe: {
       type: String,
       trim: true,
+      index: true
   
     },
     

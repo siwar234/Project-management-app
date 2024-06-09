@@ -39,7 +39,10 @@ const authroute = require('./routes/auth');
 const googleAuth = require('./routes/google');
 const equipeRoute = require('./routes/equipe');
 const projectRoute = require('./routes/project');
-
+const tasksRoute = require('./routes/tasks');
+const ticketsRoute = require('./routes/tickets');
+const featureRoute =require('./routes/feature')
+const favouiteRoute =require('./routes/favourites')
 
 const userRoute = require('./routes/user');
 // Middleware
@@ -67,6 +70,12 @@ app.use("/api/auth", authroute);
 app.use("/api", userRoute);
 app.use("/api/equipe", equipeRoute);
 app.use("/api/project", projectRoute);
+app.use("/api/tasks", tasksRoute);
+app.use("/api/tickets", ticketsRoute);
+app.use("/api/feature", featureRoute);
+app.use("/api/favrouites", favouiteRoute);
+
+
 
 // Connect server
 app.listen(process.env.PORT, () => console.log("Server connected"));

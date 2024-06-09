@@ -30,10 +30,9 @@ const InvitationRegister = ({ title, subtitle, subtext }) => {
 
 
   
-
   const signInGoogle=()=>{
         
-    window.location.replace("http://localhost:8000/auth/google/callback");
+    window.location.replace("http://localhost:8000/auth/google");
 
 }
 

@@ -22,8 +22,9 @@ const Header = (props) => {
   const [opened, setopen] = useState(null);
   const [openProject, setopenProject] = useState(false);
   const [openDescriptionModal, setopenDescriptionModal] = useState(false);
+  const [opening, setopening] = useState(null);
 
-
+  
   //desciptionModal
 
   const handleOpenDescription = () => {
@@ -33,6 +34,18 @@ const Header = (props) => {
   const closeDescription = () => {
     setopenDescriptionModal(false);
   };
+
+ //workspace
+
+ 
+ const handleClicking = (event) => {
+  setopening(event.currentTarget);
+
+};
+
+const handleclosing = () => {
+  setopening(null);
+};
 
 
 
@@ -65,6 +78,21 @@ const Header = (props) => {
   };
 
 
+
+  // statics modal
+  
+  const [statAnchorEl, setStatAnchorEl] = useState(null);
+
+  const handleOpenStat = (event) => {
+    setStatAnchorEl(event.currentTarget);
+  };
+
+  const handleStatClosed = () => {
+    setStatAnchorEl(null);
+  };
+  
+
+
   
   const handleClick1 = (event) => {
     setopen(event.currentTarget);
@@ -90,7 +118,12 @@ const Header = (props) => {
   const buttoncolor = anchorEl ? '' : 'rgb(60 73 95)';
   const buttonBgColorr = opened ? 'rgb(231 236 251 / 85%)' : '';
   const buttoncolorr = opened ? '' : 'rgb(60 73 95)';
+  const buttonBgColorring = opening ? 'rgb(231 236 251 / 85%)' : '';
+  const buttoncoloor = opening ? '' : 'rgb(60 73 95)';;
+  const buttoncoloored = statAnchorEl ? '' : 'rgb(60 73 95)';;
+  const buttonBgColorred = statAnchorEl ? 'rgb(231 236 251 / 85%)' : '';
 
+  
   const [isMobileSidebarOpenned, setMobileSidebarOpened] = useState(false);
 
   const toggleMobileNavbar = () => {
@@ -128,26 +161,35 @@ const Header = (props) => {
               color="rgb(60 73 95)"
             /> */}
 
-            <SidebarMenu
+<SidebarMenu
+        isMobileSidebarOpened={isMobileSidebarOpenned}
+        onSidebarClosed={() => setMobileSidebarOpened(false)}
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+        handleNavigate={handleNavigate}
+        handleOpen={handleOpen}
+        handleClick={handleClick}
+        buttonBgColor={buttonBgColor}
+        buttoncolor={buttoncolor}
+        handleClick1={handleClick1}
+        handleClosed={handleClosed}
+        opened={opened}
+        buttonBgColorr={buttonBgColorr}
+        buttoncolorr={buttoncolorr}
+        handleOpenDescription={handleOpenDescription}
+        opening={opening}
+        handleClicking={handleClicking}
+        handleClosing={handleclosing}
+        buttoncoloor={buttoncoloor}
+        buttonBgColorring={buttonBgColorring}
+        
+        statAnchorEl={statAnchorEl}
+        handleStatClosed={handleStatClosed}
+        handleOpenStat={handleOpenStat}
+        buttonBgColorred={buttonBgColorred}
+        buttoncoloored={buttoncoloored}
+      />
 
-              isMobileSidebarOpened={isMobileSidebarOpenned}
-              onSidebarClosed={() => setMobileSidebarOpened(false)}
-              anchorEl={anchorEl}
-              handleClose={handleClose}
-              handleNavigate={handleNavigate}
-              handleOpen={handleOpen}
-              handleClick={handleClick}
-              buttonBgColor={buttonBgColor}
-              buttoncolor={buttoncolor}
-              handleClick1={handleClick1}
-              handleClosed={handleClosed}
-              opened={opened}
-              buttonBgColorr={buttonBgColorr}
-              buttoncolorr={buttoncolorr}
-              handleOpenDescription={handleOpenDescription}
-
-
-            />
             <ProjectDescription
               openDescriptionModal={openDescriptionModal}
               closeDescription={closeDescription}

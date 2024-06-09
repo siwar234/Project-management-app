@@ -1,5 +1,5 @@
 const express = require('express');
-const { createEquipe, signinAfterInvitation ,getListequipes,getEquipesByUserId, signupAfterInvitation, getEquipesById, deleteEquipeById, invitepeople, leaveTeam, UpdateEquipe, addtoteam} = require('../controllers/equipe');
+const { createEquipe, signinAfterInvitation ,getListequipes,getEquipesByUserId, signupAfterInvitation, getEquipesById, deleteEquipeById, invitepeople, leaveTeam, UpdateEquipe, addtoteam, getEquipesByOwner} = require('../controllers/equipe');
 const router = express.Router()
 const authMiddleware=require('../middlewares/authMiddleware')
 
@@ -17,7 +17,10 @@ router.put('/leave/:equipeId/:id',leaveTeam);
 
 router.get('/equipes/:userId', getEquipesByUserId)
 
+router.get('/equipesowner/:userId', getEquipesByOwner)
+
 router.get('/liste-equipe',getListequipes)
+
 router.get('/equipe/:id',getEquipesById)
 
 router.put('/updateequipe/:id', UpdateEquipe);

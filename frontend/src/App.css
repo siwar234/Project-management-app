@@ -1,4 +1,8 @@
 
+
+
+
+
 @keyframes App-logo-spin {
     from {
       transform: rotate(0deg);
@@ -7,7 +11,11 @@
       transform: rotate(360deg);
     }
   }
-  
+  .editor-content img {
+    max-width: 150px; 
+    max-height: 150px; 
+}
+
   .swiper {
     width: 100%;
     padding-top: 50px;
@@ -84,6 +92,9 @@
       transition: all 0.3s ease;
   }
 
+  .hover-underline:hover {
+    text-decoration: underline;
+  }
   
   
   .menuitems:hover::before{
@@ -91,3 +102,94 @@
       opacity: 1;
       transform: translateX(0);
   }
+
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .backlogMessage {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  .Wrapper {
+    margin-bottom: 2rem;
+  }
+  .ViewContainer {
+    list-style: none;
+    -ms-box-orient: horizontal;
+    display: flex;
+    -webkit-justify-content: flex-end;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: white;
+    width: fit-content;
+    opacity: 20;
+
+  }
+ 
+ 
+
+  .Button {
+    border: none;
+    padding: 7px 16px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    font-size: inherit;
+    text-align: center;
+    font-weight: 500;
+    font-family: inherit;
+    transition: opacity 0.3s ease 0s; 
+    border-radius: 5px; 
+
+    
+  }
+  
+
+  .Switch {
+    margin: 4px 15px;
+    font-size: 14px;
+    font-family: "Arial, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .Switch_Toggle {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    margin-right: 5px;
+  }
+  
+  
+  
+  .rows > rect {
+    fill: #ffffff;
+  }
+  
+  .rows > rect:hover {
+    fill: #F6F6F6;
+  }
+  
+  .rows > rect:nth-child(even) {
+    fill: #fefefe;
+  }
+
+ 
+  .rows > rect:nth-child(even):hover {
+    fill: #F6F6F6;
+  }
+  
+  
+  .calendar > rect {
+    fill: #f4f5f7;
+  }
+  

@@ -72,7 +72,7 @@ exports.getUser = async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(id).populate({
       path: 'equipes',
-      populate: { path: 'members.memberId', model: 'User' } // Assuming 'members' field references users
+      populate: { path: 'members.memberId', model: 'User' }
     });
     res.status(200).json(user);
   } catch (err) {

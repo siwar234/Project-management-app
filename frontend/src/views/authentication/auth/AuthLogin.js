@@ -31,10 +31,11 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   const params = new URLSearchParams(location.search);
   const token = params.get('token');
   const equipeId = params.get('equipeId');
+  const signInGoogle=()=>{
+        
+    window.location.replace("http://localhost:8000/auth/google");
 
-  const signInGoogle = () => {
-    window.location.replace('http://localhost:8000/auth/google/callback');
-  };
+}
 
   const isInvitationUrl = () => {
     const params = new URLSearchParams(location.search);

@@ -44,9 +44,9 @@ const isValidEmail = (email) => {
 
   
 
-  const signInGoogle=()=>{
+const signInGoogle=()=>{
         
-    window.location.replace("http://localhost:8000/auth/google/callback");
+  window.location.replace("http://localhost:8000/auth/google");
 
 }
 

@@ -256,6 +256,7 @@ const EquipeDetails = () => {
                     ),
                   )}
                 </Menu>
+                
                 <DeleteEquipeModal
                   open={openDeleteConfirmation}
                   handleClose={handleCloseConfirmation}
@@ -322,12 +323,12 @@ const EquipeDetails = () => {
                   >
                     <Avatar
                       justifyContent="left"
-                      style={{ marginLeft: '2px', fontSize:"15px" ,backgroundColor: '#42a5f5',
+                      style={{ marginLeft: '2px', fontSize:"14px" ,backgroundColor: '#42a5f5',width:"35px",height:"35px"
                     }}
                       alt="Your Name"
                       src={OwnerProfilePicture}
                     >
-                      {/* {ownerFirstName?.substring(0, 2).toUpperCase()} */}
+                      {ownerFirstName?.substring(0, 2).toUpperCase()}
                       </Avatar>
                   </Tooltip>
                   <Typography
@@ -340,7 +341,7 @@ const EquipeDetails = () => {
                     members
                   </Typography>
                   <Box display="flex" flexDirection={'row'}>
-                    <AvatarGroup max={4} style={{ justifyContent: 'left', marginTop: '10px' }}>
+                    <AvatarGroup max={4} style={{ justifyContent: 'left', marginTop: '10px',width:"35px",height:"35px" }}>
                       {equipes?.members &&
                         equipes?.members?.map((member) => (
                           <Tooltip
@@ -353,9 +354,9 @@ const EquipeDetails = () => {
                               alt={member?.memberId.firstName}
                               src={member?.memberId.profilePicture}
                               justifyContent="left"
-                              style={{ marginTop: '10px',fontSize:"15px" ,backgroundColor: 'rgb(78 123 159)' }}
+                              style={{ marginTop: '10px',fontSize:"14px" ,backgroundColor: 'rgb(78 123 159)',width:"35px",height:"35px" }}
                             >
-                               {/* {member?.memberId?.firstName.substring(0,2).toUpperCase()} */}
+                               {member?.memberId?.firstName.substring(0,2).toUpperCase()}
                             </Avatar>
                           </Tooltip>
                         ))}

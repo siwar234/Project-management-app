@@ -5,13 +5,13 @@ import {
   CREATE_EQUIPE_FAIL,
   FETCH_EQUIPES_REQUEST,
   FETCH_EQUIPES_SUCCESS,
-  FETCH_ALLEQUIPES_SUCCESS,
   FETCH_EQUIPES_FAILURE,
   DELETE_EQUIPE_SUCCESS,
   LEAVE_EQUIPE_SUCCESS,
   UPDATE_EQUIPE_SUCCESS,
   FETCH_EQUIPES,
-  ADD_TO_TEAM
+  ADD_TO_TEAM,
+  GET_EQUIPES_SUCCESS
 } from '../actionTypes/equipe';
 import {
   STOP_LOADING
@@ -26,7 +26,9 @@ const initialState = {
   equipes: [],
   error: null,
   equipe:[],
-  allEquipes : []
+  EquipesOwner:[]
+
+
   
 };
 
@@ -52,8 +54,13 @@ const equipeReducer = (state = initialState, { type, payload }) => {
         loadequipe: true,
         error: null,
       };
-
-
+      
+      case GET_EQUIPES_SUCCESS:
+        return {
+          ...state,
+          loadequipe: false,
+          EquipesOwner: payload.EquipesOwner,
+        };
       
       case FETCH_EQUIPES:
       return {
@@ -69,13 +76,7 @@ const equipeReducer = (state = initialState, { type, payload }) => {
         loadequipe: false,
         equipes: payload.equipes,
       };
-      case FETCH_ALLEQUIPES_SUCCESS:
-        return {
-          ...state,
-          loadequipe: false,
-          allEquipes: payload.allEquipes,
-
-        };
+     
     case FETCH_EQUIPES_FAILURE:
       return {
         ...state,

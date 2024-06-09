@@ -2,7 +2,7 @@ import React from 'react';
 import PageContainer from 'src/components/container/PageContainer';
 
 import { Grid, Box } from '@mui/material';
-import ProductPerformance from '../dashboard/components/ProductPerformance';
+import ProjectList from '../dashboard/components/ProjectList';
 
 
 const SamplePage = () => {
@@ -15,7 +15,7 @@ const SamplePage = () => {
             <Grid container spacing={3}>
              
           <Grid item xs={12} lg={8}>
-            <ProductPerformance />
+            <ProjectList />
           </Grid>
         </Grid>
         </Grid>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from 'src/components/container/PageContainer';
-import { Box, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
+import { Box, Typography, TextField, IconButton } from '@mui/material';
 import { SliderComp } from './SliderComp';
 import DashboardCard from '../../components/shared/DashboardCard';
 import TeamsModal from 'src/layouts/full/header/TeamsModal';

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CREATE_EQUIPE_SUCCESS, CREATE_EQUIPE_FAIL ,ADD_TO_TEAM,FETCH_ALLEQUIPES_SUCCESS,FETCH_EQUIPES,UPDATE_EQUIPE_SUCCESS,LEAVE_EQUIPE_SUCCESS,DELETE_EQUIPE_SUCCESS,FAIL_EQUIPE,FETCH_EQUIPES_SUCCESS,FETCH_EQUIPES_FAILURE, LOAD_EQUIPE} from '../actionTypes/equipe';
+import { CREATE_EQUIPE_SUCCESS, CREATE_EQUIPE_FAIL ,GET_EQUIPES_SUCCESS,ADD_TO_TEAM,FETCH_ALLEQUIPES_SUCCESS,FETCH_EQUIPES,UPDATE_EQUIPE_SUCCESS,LEAVE_EQUIPE_SUCCESS,DELETE_EQUIPE_SUCCESS,FAIL_EQUIPE,FETCH_EQUIPES_SUCCESS,FETCH_EQUIPES_FAILURE, LOAD_EQUIPE} from '../actionTypes/equipe';
 import { toast } from 'react-toastify';
 
 export const createEquipe = (formData,id) => async (dispatch) => {
@@ -34,6 +34,24 @@ export const fetchEquipes = (userId) => async (dispatch) => {
       dispatch({ type: FETCH_EQUIPES_FAILURE, payload: error.message });
     }
   };
+
+  export const GetchEquipesOwner = (userId) => async (dispatch) => {
+  
+    try {
+      const options = {
+        headers: { authorization: localStorage.getItem("token") },
+      };
+      const result = await axios.get(
+        `http://localhost:8000/api/equipe/equipesowner/${userId}`,
+        options
+      );
+    
+      dispatch({ type: GET_EQUIPES_SUCCESS, payload: { EquipesOwner: result.data } });
+    } catch (error) {
+      dispatch({ type: FETCH_EQUIPES_FAILURE, payload: error.message });
+    }
+  };
+
 
 
 
@@ -100,21 +118,21 @@ export const leaveEquipe = (equipeId,id) => async (dispatch) => {
   };
 
 
-  export const fetchequipes = () => async (dispatch) => {
-    try {
-      const options = {
-        headers: { authorization: localStorage.getItem("token") },
-      };
-      const result = await axios.get(
-        `http://localhost:8000/api/equipe/liste-equipe`,
-        options
-      );
-        dispatch({ type: FETCH_ALLEQUIPES_SUCCESS,  payload: { allEquipes: result.data }  });
+  // export const fetchequipes = () => async (dispatch) => {
+  //   try {
+  //     const options = {
+  //       headers: { authorization: localStorage.getItem("token") },
+  //     };
+  //     const result = await axios.get(
+  //       `http://localhost:8000/api/equipe/liste-equipe`,
+  //       options
+  //     );
+  //       dispatch({ type: FETCH_ALLEQUIPES_SUCCESS,  payload: { allEquipes: result.data }  });
       
-    } catch (error) {
-      dispatch({ type: FETCH_EQUIPES_FAILURE, payload: error?.response?.data?.errors });
-    }
-  };
+  //   } catch (error) {
+  //     dispatch({ type: FETCH_EQUIPES_FAILURE, payload: error?.response?.data?.errors });
+  //   }
+  // };
 
 
   export const deleteEquipe = (equipeId) => async (dispatch) => {

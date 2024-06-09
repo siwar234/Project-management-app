@@ -123,7 +123,7 @@ const Profile = () => {
               variant="body2"
               style={{ fontSize: '15px', fontWeight: '1000px', marginLeft: '15px' }}
             >
-              {user.firstName}
+              {user?.firstName}
             </Typography>
             <Typography
               variant="body2"

@@ -1,47 +1,82 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Fade, TextField, Typography, Button, Box, Select, MenuItem } from '@mui/material';
+import {
+  Modal,
+  Fade,
+  TextField,
+  Typography,
+  Avatar,
+  Button,
+  Box,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import image from '../../../assets/images/scrum.gif';
 import { useDispatch, useSelector } from 'react-redux';
 import { createProject } from 'src/JS/actions/project';
-import { fetchequipes } from 'src/JS/actions/equipe';
+import { GetchEquipesOwner, fetchequipes } from 'src/JS/actions/equipe';
 
 const ProjectsModal = ({ openProject, handleCloseProject }) => {
   const dispatch = useDispatch();
   const [projectName, setProjectName] = useState('');
   const [selectedProjectType, setSelectedProjectType] = useState('');
   const [customProjectType, setCustomProjectType] = useState('');
-
   const [selectedTeam, setSelectedTeam] = useState('');
+  const [selectedResponsable, setSelectedResponsable] = useState('');
+  const [teamMembers, setTeamMembers] = useState([]);
 
   const handleSubmit = async () => {
     try {
-      const formData = {
-        projectName,
-        type: selectedProjectType || customProjectType,
-        equipeId: selectedTeam,
+      let formData = {
+        projectName: projectName,
+        type: selectedProjectType === 'Other' ? customProjectType.trim() : selectedProjectType,
       };
-
+  
+      if (selectedTeam !== '') {
+        formData.equipeId = selectedTeam;
+      }
+  
+      if (selectedResponsable !== '') {
+        formData.ResponsableId = selectedResponsable;
+      }
+  
       await dispatch(createProject(formData));
-
+  
+      // Reset state
       setProjectName('');
       setSelectedProjectType('');
       setCustomProjectType('');
       setSelectedTeam('');
+      setSelectedResponsable('');
       handleCloseProject();
     } catch (error) {
       console.error('Error creating project:', error);
     }
   };
+  
+  const user = useSelector((state) => state.userReducer.user);
+  const userId = user._id;
 
   useEffect(() => {
-    dispatch(fetchequipes());
+    dispatch(GetchEquipesOwner(userId));
   }, [dispatch]);
 
-  const user = useSelector((state) => state.userReducer.user);
-  const equipes = useSelector((state) => state.equipeReducer.allEquipes);
+  const equipesOwner = useSelector((state) => state.equipeReducer.EquipesOwner);
 
-  const userEquipes = equipes.filter((equipe) => equipe.owner === user._id);
+  const handleTeamChange = (teamId) => {
+    const selectedTeam = equipesOwner.find((equipe) => equipe._id === teamId);
+    if (selectedTeam) {
+      setTeamMembers(selectedTeam.members);
+    }
+    setSelectedResponsable('');
+  };
+
+  const handleTypeChange = (event) => {
+    setSelectedProjectType(event.target.value);
+    if (event.target.value !== 'Other') {
+      setCustomProjectType(''); 
+    }
+  };
 
   return (
     <Modal open={openProject}>
@@ -59,8 +94,8 @@ const ProjectsModal = ({ openProject, handleCloseProject }) => {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'flex-start',
-              width: '920px',
-              height: '530px',
+              width: '960px',
+              height: '630px',
               padding: '20px',
               background: '#fff',
               borderRadius: '5px',
@@ -100,25 +135,12 @@ const ProjectsModal = ({ openProject, handleCloseProject }) => {
                     projectName.trim() === '' && projectName !== '' ? 'Team Name is required' : ''
                   }
                 />
+
                 <Typography mt={2} variant="body1" gutterBottom>
                   Choose your Project Type <span style={{ color: 'red' }}>*</span>
                 </Typography>
-                <Select
-                  fullWidth
-                  value={selectedProjectType}
-                  onChange={(e) => {
-                    if (e.target.value === 'Other') {
-                      setCustomProjectType(''); 
-                    }
-                    setSelectedProjectType(e.target.value);
-                  }}
-                  displayEmpty
-                  variant="outlined"
-                  style={{ marginBottom: '10px' }}
-                >
-                  <MenuItem value="" disabled>
-                    Select Project Type
-                  </MenuItem>
+                <Select fullWidth value={selectedProjectType} onChange={handleTypeChange}>
+                  <MenuItem value="">Select Project Type</MenuItem>
                   <MenuItem value="Software development">Software development</MenuItem>
                   <MenuItem value="Marketing">Marketing</MenuItem>
                   <MenuItem value="Design">Design</MenuItem>
@@ -127,23 +149,24 @@ const ProjectsModal = ({ openProject, handleCloseProject }) => {
                 </Select>
                 {selectedProjectType === 'Other' && (
                   <TextField
+                    style={{ marginTop: '10px' }}
                     fullWidth
-                    placeholder="Enter custom project type"
-                    variant="outlined"
                     value={customProjectType}
                     onChange={(e) => setCustomProjectType(e.target.value)}
-                    style={{ marginBottom: '10px' }}
+                    placeholder="Enter custom project type"
                   />
                 )}
 
-               
                 <Typography mt={2} variant="body1" gutterBottom>
                   Assign a team <span style={{ color: 'red' }}>*</span>
                 </Typography>
                 <Select
                   fullWidth
                   value={selectedTeam}
-                  onChange={(e) => setSelectedTeam(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedTeam(e.target.value);
+                    handleTeamChange(e.target.value);
+                  }}
                   displayEmpty
                   variant="outlined"
                   style={{ marginBottom: '10px' }}
@@ -151,16 +174,74 @@ const ProjectsModal = ({ openProject, handleCloseProject }) => {
                   <MenuItem value="" disabled>
                     Select a Team
                   </MenuItem>
-                  {userEquipes.map((equipe) => (
+                  {equipesOwner.map((equipe) => (
                     <MenuItem key={equipe._id} value={equipe._id}>
                       {equipe.NameEquipe}
                     </MenuItem>
                   ))}
                 </Select>
+
+                {selectedTeam && (
+                  <div>
+                    <Typography mt={2} variant="body1" gutterBottom>
+                      Choose Responsible <span style={{ color: 'red' }}>*</span>
+                    </Typography>
+                    <Select
+                      fullWidth
+                      value={selectedResponsable}
+                      onChange={(e) => setSelectedResponsable(e.target.value)}
+                      displayEmpty
+                      variant="outlined"
+                      style={{ marginBottom: '10px' }}
+                    >
+                      <MenuItem value="" disabled>
+                        Select Responsible
+                      </MenuItem>
+                      <MenuItem value={user._id}>
+                        <Avatar
+                          src={user?.profilePicture}
+                          sx={{
+                            bgcolor: '#42a5f5',
+                            width: 30,
+                            height: 30,
+                            marginRight: 1,
+                            fontSize: '13px',
+                          }}
+                        >
+                          {' '}
+                          {user?.firstName && user?.firstName.substring(0, 2).toUpperCase()}
+                        </Avatar>
+
+                        <span>{user.firstName}</span>
+                      </MenuItem>
+
+                      {teamMembers.map((member) => (
+                        <MenuItem key={member.memberId._id} value={member.memberId._id}>
+                          <Avatar
+                            src={member.memberId.profilePicture}
+                            sx={{
+                              bgcolor: '#42a5f5',
+                              width: 30,
+                              height: 30,
+                              marginRight: 1,
+                              fontSize: '13px',
+                            }}
+                          >
+                            {' '}
+                            {member.memberId.firstName &&
+                              member.memberId.firstName.substring(0, 2).toUpperCase()}
+                          </Avatar>
+
+                          <span> {member.memberId.firstName}</span>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div>
+                )}
               </div>
             </div>
             <Box style={{ display: 'flex', flexDirection: 'column' }}>
-              <img src={image} alt="teamimg" style={{ width: '350px', marginTop: '35px' }} />
+              <img src={image} alt="teamimg" style={{ width: '350px', marginTop: '140px' }} />
               <Box
                 maxWidth="100%"
                 maxHeight={'90%'}

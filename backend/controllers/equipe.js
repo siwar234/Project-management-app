@@ -169,11 +169,9 @@ exports.invitepeople = async (req, res) => {
 
 exports.addtoteam = async (req, res) => {
   try {
-    // Verify the activation token and extract the user's email
     const user = jwt.verify(req.params.activation_token, process.env.JWT_SECRET);
     const { email } = user;
 
-    // Find the existing user based on the email
     const existingUser = await User.findOne({ email });
 
     // Check if the user exists
@@ -181,7 +179,6 @@ exports.addtoteam = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Find the equipe by ID if provided
     const equipeId = req.params.equipeId;
     let equipe;
 
@@ -201,10 +198,8 @@ exports.addtoteam = async (req, res) => {
       equipe.members.push({ memberId: existingUser._id });
       await equipe.save();
 
-      // Return the equipe after successful addition
       return res.status(200).json({ equipe });
     } else {
-      // Return a message indicating that the user is already a member of the equipe
       return res.status(400).json({ error: 'User is already a member of the team' });
     }
   } catch (error) {
@@ -267,13 +262,29 @@ exports.getEquipesByUserId = async (req, res) => {
 }
 
 
+exports.getEquipesByOwner = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const equipes = await Equipe.find({ 'owner': userId })
+                                  .populate('owner') 
+                                  .populate('members.memberId')
+                                  .exec();
+    res.status(200).json(equipes);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}
+
+
+
+
 
 exports.getListequipes = async (req, res) => {
   try {
-      const equipes = await Equipe.find();
-      res.status(200).json(equipes);
+    const equipes = await Equipe.find()
+    res.status(200).json(equipes);
   } catch (error) {
-      res.status(404).json({ message: error.message });
+    res.status(404).json({ message: error.message });
   }
 }
 

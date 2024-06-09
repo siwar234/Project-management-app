@@ -28,22 +28,27 @@ import { useDispatch } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 
 export const loginUser = (userData, navigate) => async (dispatch) => {
-    dispatch({ type: LOAD_USER });
-  
-    try {
+  dispatch({ type: LOAD_USER });
+
+  try {
       const response = await axios.post('http://localhost:8000/api/auth/login', userData);
       dispatch({ type: SIGN_IN_USER, payload: response.data });
-      navigate(`/profileuser/${response.data.token}/${response.data.user._id}`);
-      toast.success('Login successful!');
 
-    } catch (error) {
+      const { token, user } = response.data;
+      if (user.isAdmin) {
+          navigate('/user/management');
+      } else {
+          navigate(`/profileuser/${token}/${user._id}`);
+      }
+      toast.success('Login successful!');
+  } catch (error) {
       if (error.response && error.response.status === 400 && error.response.data.message === "passwordinvalid") {
-   dispatch({ type: PASSWORD_INVALID });
-  } else {
-   
-      dispatch({ type: FAIL_USER, payload: error.response.data });
-    }
-  };}
+          dispatch({ type: PASSWORD_INVALID });
+      } else {
+          dispatch({ type: FAIL_USER, payload: error.response.data });
+      }
+  }
+};
 
 
   export const signinAfterInvitation = (activationToken,email, equipeId, password,navigate) => async (dispatch) => {

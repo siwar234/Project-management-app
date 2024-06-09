@@ -5,7 +5,7 @@ import { Modal, Fade, TextField, Tooltip, Typography, Chip, Box, Button } from '
 import image from '../../../assets/images/10590.jpg';
 import { BsExclamationCircleFill } from 'react-icons/bs';
 import { useState } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createEquipe } from 'src/JS/actions/equipe';
 
 const TeamsModal = ({ ouvrir, handleClosee }) => {
@@ -14,7 +14,7 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
   const [inputValue, setInputValue] = useState('');
   const [emails, setEmails] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState('');
-   
+
   const handleInputChange = (event) => {
     setSelectedEmail(event.target.value);
   };
@@ -30,13 +30,14 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
     setEmails(emails.filter((_, idx) => idx !== index));
   };
   const user = useSelector((state) => state.userReducer.user);
+  const [equipeNameError, setEquipeNameError] = useState('');
 
   const handleSubmit = () => {
     if (equipeName.trim() === '') {
-      console.error('Team Name is required');
+      setEquipeNameError('Team Name is required');
       return;
     }
-  
+
     const formData = {
       NameEquipe: equipeName,
       emails: emails,
@@ -44,7 +45,14 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
     dispatch(createEquipe(formData, user._id));
     setEmails([]);
     setEquipeName('');
-  };
+    setEquipeNameError('');
+
+};
+
+const handleEquipeNameChange = (e) => {
+  setEquipeNameError('');
+  setEquipeName(e.target.value);
+};
 
   return (
     <Modal open={ouvrir}>
@@ -55,7 +63,6 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
             justifyContent: 'center',
             alignItems: 'center',
             height: '100%',
-            
           }}
         >
           <div
@@ -64,14 +71,13 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
               flexDirection: 'row',
               alignItems: 'flex-start',
               width: '920px',
-              height: '430px',
+              height: '480px',
               padding: '20px',
               background: '#fff',
               borderRadius: '5px',
-              overflow: 'auto', 
+              overflow: 'auto',
               maxWidth: '100%',
-              maxHeight: '100%', 
-
+              maxHeight: '100%',
             }}
           >
             <div style={{ marginRight: '20px' }}>
@@ -96,16 +102,16 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
                 Team Name <span style={{ color: 'red' }}>*</span>
               </Typography>
               <TextField
-  rows={1}
-  placeholder="For ex, HR Team, Management Team ..."
-  variant="outlined"
-  InputLabelProps={{ shrink: true, style: { color: 'black' } }}
-  fullWidth
-  value={equipeName}
-  onChange={(e) => setEquipeName(e.target.value)}
-  error={equipeName.trim() === '' && equipeName !== ''} 
-  helperText={equipeName.trim() === '' && equipeName !== '' ? 'Team Name is required' : ''} // Error message when the field is empty and has been interacted with
-/>
+                rows={1}
+                placeholder="For ex, HR Team, Management Team ..."
+                variant="outlined"
+                InputLabelProps={{ shrink: true, style: { color: 'black' } }}
+                fullWidth
+                value={equipeName}
+                onChange={handleEquipeNameChange}
+                error={!!equipeNameError}
+              helperText={equipeNameError}
+              />
 
               <Typography variant="body2" color={'#8D8B8B'} fontWeight={'200'}>
                 Who can see your team name?{' '}
@@ -142,16 +148,17 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
               />
-              <Box             
+              <Box
                 maxWidth="100%"
                 maxHeight={'90%'}
                 style={{
                   display: 'flex',
-                  justifyContent: 'flex-end', 
-                  
+                  justifyContent: 'flex-end',
+
                   marginTop: '25px',
-                  paddingRight: '20px', 
-                }} >
+                  paddingRight: '20px',
+                }}
+              >
                 <Button
                   color="inherit"
                   variant="contained"

@@ -95,7 +95,7 @@ const Collaboraters = ({ searchQuery }) => {
                       </Avatar>
                     </CardMedia>
                     <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                      <Typography gutterBottom style={{ fontSize: '15px', color: '#555555', justifyContent: 'center' }}>
+                      <Typography gutterBottom style={{ fontSize: '13px',fontWeight:"500",fontFamily:"sans-serif", color: '#555555', justifyContent: 'center',alignItems: 'center' }}>
                         {member.memberId.firstName}
                       </Typography>
                     </CardContent>

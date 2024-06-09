@@ -2,11 +2,14 @@ import { useMediaQuery, Box, Drawer } from '@mui/material';
 import Logo from '../shared/logo/Logo';
 import SidebarItems from './SidebarItems';
 import image1 from "../../../assets/images/logo.png"
+import { useParams } from 'react-router-dom';
+
 const Sidebar = (props) => {
 
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
 
   const sidebarWidth = '270px';
+  const { projectId } = useParams();
 
   if (lgUp) {
     return (
@@ -43,8 +46,8 @@ const Sidebar = (props) => {
             {/* ------------------------------------------- */}
             {/* Logo */}
             {/* ------------------------------------------- */}
-            <Box px={3} marginTop={"14px"} marginRight={"700px"} width={"15px"} textAlign="left"> 
-    <img src={image1}  alt='logoimg' style={{ width: "138px",alignContent:'flex-start' }} />
+            <Box px={3} marginTop={"15px"} marginRight={"700px"} width={"25px"} textAlign="left"> 
+    <img src={image1}  alt='logoimg' style={{ width: "155px",alignContent:'flex-start',marginLeft:"15px" }} />
 </Box>
 
   
@@ -52,7 +55,7 @@ const Sidebar = (props) => {
               {/* ------------------------------------------- */}
               {/* Sidebar Items */}
               {/* ------------------------------------------- */}
-              <SidebarItems />
+              <SidebarItems projectId={projectId} />
               {/* <Upgrade /> */}
             </Box>
             
@@ -78,13 +81,13 @@ const Sidebar = (props) => {
       {/* ------------------------------------------- */}
       {/* Logo */}
       {/* ------------------------------------------- */}
-      <Box px={2}>
-        <Logo />
-      </Box>
+      <Box px={3} marginTop={"15px"} marginRight={"700px"} width={"25px"} textAlign="left"> 
+      <img src={image1}  alt='logoimg' style={{ width: "155px",alignContent:'flex-start',marginLeft:"15px" }} />
+</Box>
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}
       {/* ------------------------------------------- */}
-      <SidebarItems />
+      <SidebarItems projectId={projectId} />
     </Drawer>
   );
 };

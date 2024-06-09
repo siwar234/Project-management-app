@@ -79,7 +79,7 @@ export const EquipeUpdate = ({ equipeId }) => {
             rows={3}
             style={{ width: '250px', fontSize:"18px", marginBottom: '10px',marginLeft:"20px",borderColor:'gray' }}
             InputProps={{
-                style: { fontSize: "12px", height:"50px" } 
+                style: { fontSize: "12px", height:"55px", } 
               }}
           />
           <div style={{ position: 'absolute', bottom: '-35px', left: '210px', display: 'flex' }}>

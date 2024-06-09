@@ -138,6 +138,7 @@ Before you delete, you may want to check if you have files or information you ne
                     delete
                   </Button>
        </Box></div></div>
+      
         </Fade></Modal>
   ); 
 };

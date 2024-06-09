@@ -3,12 +3,12 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { ObjectId } = mongoose.Schema.Types
-const allowedTypes = ["Software development", "Marketing", "Design", "Human Resources", "Custom"];
+const allowedTypes = ["Software development", "Marketing", "Design", "Human Resources"];
 
 
 const projectSchema = new mongoose.Schema(
   {
-    NameProject: {
+    projectName: {
       type: String,
       trim: true,
   
@@ -19,17 +19,18 @@ const projectSchema = new mongoose.Schema(
       trim: true,
   
     },
+
+    Icon: { type: String },
+
   
-    equipe: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipe' },
-
+    Equipe: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipe' },
     
-        Responsable:{type:ObjectId,ref:'User'},
+    Responsable: { type: ObjectId, ref: 'User' },
 
-        TypeProject: {
-            type: String,
-            enum: allowedTypes,
-            default: 'Custom'
-          },
+
+     type: {
+    type: String,
+    },
           
      
 
