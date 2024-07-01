@@ -1,6 +1,7 @@
 import React from 'react'
 import { IconButton, MenuItem,Typography,Box, Avatar, Tooltip, Chip } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
+import { FcLink } from 'react-icons/fc';
 
 export const RelatedTasksnotification = ({notification,image2,image3,handleMarkAsRead}) => {
 
@@ -12,14 +13,27 @@ export const RelatedTasksnotification = ({notification,image2,image3,handleMarkA
         <MenuItem style={{marginTop:"15px"}} >
 {/* <Avatar alt={notification.data.newComment?.commenterId?.firstName} src={notification.data.newComment?.commenterId?.profilePicture} /> */}
        <Box ml={2}>
-         <Typography variant="body1" style={{fontWeight:"bold",marginRight:"5px"}} >
-                         <span style={{marginLeft:"5px"}} >
+      
+ <Typography
+      variant="body1"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        fontWeight: 'bold',
+        marginRight: '5px',
+        justifyContent: 'center', 
+        textAlign: 'center', 
+        position: 'relative' 
+      }}
+    >
+      <FcLink style={{ fontSize: '30px', marginRight: '5px' }} />                         <span style={{marginLeft:"5px"}} >
   {notification.data.task.TaskName} is related to   {notification.data.task.related.TaskName}
 </span>
               <span 
               style={{color:"gray",marginLeft:"10px",fontWeight:"lighter",marginRight:"18px"}}>  
                {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}</span> 
-              <Tooltip title={notification.read ? "read" : "Mark as read"}>
+            
+         </Typography>  <Tooltip title={notification.read ? "read" : "Mark as read"}>
                   <IconButton  
                   
                   onClick={() => !notification.read && handleMarkAsRead(notification._id)}
@@ -30,7 +44,6 @@ export const RelatedTasksnotification = ({notification,image2,image3,handleMarkA
     alt="img" 
   />
    </IconButton></Tooltip>
-         </Typography>
         
        </Box>
      </MenuItem>)} 

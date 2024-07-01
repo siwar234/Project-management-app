@@ -309,14 +309,14 @@ export default function Table() {
 
     return (
         <PageContainer title="Dashboard" description="This is Table">
-            <DashboardCard title="All Tasks">
+            <DashboardCard title="All Tickets">
            
             <FeatureMenu handleMenuToggle={handleMenuToggle} handleMenuClose={handleMenuClose} isMenuOpen={isMenuOpen} anchorEl={anchorEl} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures}/> 
             <TasksMenu selectedTasks={selectedTasks} setselectedTasks={setselectedTasks}  /> 
            
                 <Box style={{ display: 'flex' ,overflow:"auto",maxHeight :"500px"}}>
                     <Box style={{ marginRight: '30px', }}>
-                    <Box style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white', marginBottom: '20px',width:"250px" }}>
+                    <Box style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white', marginBottom: '20px',width:"280px" }}>
                             <div style={{ display: 'flex', alignItems: 'center', marginLeft: '20px', marginTop: '20px' }}>
                                 <div style={{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: '#7ca1f35e', marginRight: '10px' , marginBottom: '10px'}}></div>
                                 <Typography sx={{ fontSize: '13px', color: '#5d5d5d', fontFamily: 'revert', fontWeight: 'bold', marginBottom: '10px' }}>To Do <span style={{marginLeft:"5px"}}>  {toDoTickets.length} </span></Typography>

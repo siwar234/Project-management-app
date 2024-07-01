@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAIL,READ_NOTIFICATIONS_FAIL, NEW_NOTIFICATION,READ_NOTIFICATIONS_SUCCESS } from '../actionTypes/notifications';
+import { GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAIL,READ_NOTIFICATIONS_FAIL, MARK_ALL_NOTIFICATIONS_AS_READ_SUCCESS,
+  NEW_NOTIFICATION,READ_NOTIFICATIONS_SUCCESS,MARK_ALL_NOTIFICATIONS_AS_READ_FAILURE } from '../actionTypes/notifications';
 
 export const getNotifications = (userId) => async (dispatch) => {
   try {
@@ -21,6 +22,16 @@ export const readnotifications = (notificationId) => async (dispatch) => {
     }
   };
 
+
+  export const markAllNotificationsAsRead = (userId) => async (dispatch) => {
+    try {
+      console.log("Sending request to mark all notifications as read for user ID:", userId); // Debug log
+      const response = await axios.put(`http://localhost:8000/api/notifications/readall/${userId}`);
+      dispatch({ type: MARK_ALL_NOTIFICATIONS_AS_READ_SUCCESS, payload: response.data });
+    } catch (error) {
+      dispatch({ type: MARK_ALL_NOTIFICATIONS_AS_READ_FAILURE, payload: error.response.data.message });
+    }
+  };
 
 // export const getTicketNotifications = (userId) => async (dispatch) => {
 //     try {

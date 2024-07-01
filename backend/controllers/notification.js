@@ -1,6 +1,5 @@
 const Notification = require('../models/Notifications');
 
-// Get notifications for a user
 
 exports.getNotifications = async (req, res) => {
     try {
@@ -11,6 +10,7 @@ exports.getNotifications = async (req, res) => {
             .populate( { path: 'data.task.related', model: 'Tasks' })
             .populate( { path: 'data.ticketsToDo.ResponsibleTicket', model: 'User' })
             .populate( { path: 'data.tickets', model: 'Tickets' })
+            .populate( { path: 'data.task.projectId', model: 'Project' })
 
             
             .sort({ timestamp: -1 }); 
@@ -51,6 +51,23 @@ exports.markAsRead = async (req, res) => {
     res.status(200).json(notification);
   } catch (error) {
     console.error('Error marking notification as read:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+exports.markAllAsRead = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const result = await Notification.updateMany(
+      { responsible_user: userId, read: false },
+      { $set: { read: true } }
+    );
+
+    res.status(200).json( result );
+  } catch (error) {
+    console.error('Error marking all notifications as read:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

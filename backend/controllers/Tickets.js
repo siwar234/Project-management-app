@@ -42,51 +42,6 @@ exports.createTickets = async (req, res) => {
 };
 
 
-// exports.createTickets = async (req, res) => {
-//   try {
-//     const { Description, Priority, flag, Etat, ResponsibleTicket, projectId, Type } = req.body;
-//     const TaskId = req.params.id; // Get TaskId from the parameters
-
-//     // Check if TaskId is provided and valid
-//     if (!TaskId || !ObjectId.isValid(TaskId)) {
-//       return res.status(400).json({ error: 'Valid TaskId is required' });
-//     }
-
-//     if (!Description) {
-//       return res.status(400).json({ error: 'Description is required' });
-//     }
-
-//     const ticket = {
-//       Description: Description,
-//       Priority: Priority || 'Low', // Set default value if not provided
-//       flag: flag || '',
-//       Etat: Etat || '',
-//       projectId: projectId,
-//       ResponsibleTicket: ResponsibleTicket,
-//       Type: Type || '',
-//     };
-
-//     // Find the task by ID
-//     const task = await Task.findById(TaskId);
-
-//     if (!task) {
-//       return res.status(404).json({ error: 'Task not found' });
-//     }
-
-//     // Push the new ticket into the tickets array of the task
-//     task.tickets.push(ticket);
-    
-//     // Save the updated task
-//     const updatedTask = await task.save();
-
-//     res.status(201).json(updatedTask); // Return the created ticket
-//   } catch (error) {
-//     console.error('Error creating tickets:', error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
-
-
 
   exports.getListTicketsBytasks = async (req, res) => {
     try {
@@ -366,8 +321,8 @@ exports.updateTicketfeature = async (req, res) => {
           { _id: oldFeatureId },
           {
             $pull: { Tickets: req.params.id },
-            startDate: null, // Resetting to null as we'll recalculate it
-            endDate: null // Resetting to null as we'll recalculate it
+            startDate: null, 
+            endDate: null 
           }
         );
 

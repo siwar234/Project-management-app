@@ -513,6 +513,8 @@ cron.schedule('0 */3 * * *', () => {
   // console.log('Running checkOverdueTasks every 3 hours');
   checkOverdueTasks();
     approachingDeadline();
+     inactiveMember()
+
 
   
 });
@@ -520,42 +522,11 @@ cron.schedule('0 */3 * * *', () => {
 
 
 // Schedule the task to run every 5 seconds just for test
-cron.schedule('*/5 * * * * *', () => {
-  console.log('Running checkOverdueTasks every 5 seconds');
-  // inactiveMember()
-  // approachingDeadline()
-});
+// cron.schedule('*/5 * * * * *', () => {
+//   console.log('Running checkOverdueTasks every 5 seconds');
+//   // inactiveMember()
+//   // approachingDeadline()
+// });
 
 
-// exports.leaveTeam = async (req, res) => {
-//   try {
-//     const equipeId = req.params.equipeId;
-//     const id = req.params.id; 
-//     // const io = req.io; 
 
-//     await User.updateMany({}, { $pull: { equipes: equipeId } });
-//     await Equipe.updateMany({ _id: equipeId }, { $pull: { members: { memberId: id } } });
-
-//     const updatedEquipe = await Equipe.findById(equipeId).populate('owner');
-
-//     // Fetch the updated list of projects for the user
-//     const equipes = await Equipe.find({
-//       $or: [
-//         { owner: id },
-//         { 'members.memberId': id }
-//       ]
-//     });
-
-//     const equipeIds = equipes.map(equipe => equipe._id);
-
-//     const projects = await Project.find({
-//       'Equipe': { $in: equipeIds }
-//     }).populate('Equipe').populate('Responsable', 'firstName profilePicture');
-//     io.emit('updateProjects', projects);
-
-//     res.status(200).json({ updatedEquipe, projects });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'An error occurred while leaving the team' });
-//   }
-// };

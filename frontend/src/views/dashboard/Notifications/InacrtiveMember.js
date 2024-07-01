@@ -36,7 +36,7 @@ export const InacrtiveMember = ({notification,image2,image3,handleMarkAsRead}) =
         <Typography variant="body1" style={{ fontWeight: 'bold', marginRight: '5px' }}>
           these members are inactive in 
           <span style={{ marginLeft: '5px' }}>
-            {notification.data.task.TaskName}
+            {notification.data.task.TaskName} in {notification.data.task.projectId.projectName}
           </span>
           <span 
             style={{ color: 'gray', marginLeft: '10px', fontWeight: 'lighter', marginRight: '18px' }}
