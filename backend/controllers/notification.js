@@ -8,6 +8,11 @@ exports.getNotifications = async (req, res) => {
             .populate('data.User')
             .populate('data._id')
             .populate( { path: 'data.projectId', model: 'Project' })
+            .populate( { path: 'data.task.related', model: 'Tasks' })
+            .populate( { path: 'data.ticketsToDo.ResponsibleTicket', model: 'User' })
+            .populate( { path: 'data.tickets', model: 'Tickets' })
+
+            
             .sort({ timestamp: -1 }); 
 
         

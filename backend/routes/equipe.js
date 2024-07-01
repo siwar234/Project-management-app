@@ -3,7 +3,8 @@ const { createEquipe, signinAfterInvitation ,getListequipes,getEquipesByUserId, 
      deleteEquipeById, invitepeople, UpdateEquipe, leaveTeam,addtoteam, getEquipesByOwner,
      addLink,
      getLinks,
-     deleteLink} = require('../controllers/equipe');
+     deleteLink,
+     updateLink} = require('../controllers/equipe');
 const router = express.Router()
 const authMiddleware=require('../middlewares/authMiddleware');
 
@@ -33,5 +34,6 @@ router.put('/updateequipe/:id', UpdateEquipe);
 router.put('/addlink/:equipeId', addLink);
 router.get('/links/:equipeId', getLinks);
 router.delete('/deletelink/:equipeId/:linkId', deleteLink);
+router.put('/:equipeId/updatelink/:linkId', updateLink);
 
 module.exports = router;

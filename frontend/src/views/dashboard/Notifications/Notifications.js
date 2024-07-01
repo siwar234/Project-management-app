@@ -13,6 +13,10 @@ import image1 from '../../../assets/images/bugging.png';
 import io from 'socket.io-client';
 import ApprochingDeadlinenotification from './ApprochingDeadlinenotification';
 import { OverdueNotification } from './OverdueNotification';
+import { RelatedTasksnotification } from './RelatedTasksnotification';
+import { InacrtiveMember } from './InacrtiveMember';
+import { FcAdvertising } from "react-icons/fc";
+
 const socket = io('http://localhost:4100'); // Adjust URL based on your backend configuration
 const Notifications = ({ userId }) => {
   const dispatch = useDispatch();
@@ -77,9 +81,10 @@ const Notifications = ({ userId }) => {
       open={Boolean(anchorEl)}
       onClose={handleClose}
     >
-       <Box p={2}>
-        <Typography variant="h6">Notifications</Typography>
-      </Box>
+         <Box p={2} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left' }}>
+      <FcAdvertising style={{ fontSize: '25px', marginRight: '5px' }} />
+      <Typography variant="h6">Notifications</Typography>
+    </Box>
       {error && <MenuItem>{error}</MenuItem>}
       {notifications.length === 0 ? (
        <MenuItem onClick={handleClose} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' ,width:"350px",height:"300px",flexDirection:"column"}}>
@@ -152,7 +157,7 @@ const Notifications = ({ userId }) => {
             {notification.data && notification.type === 'ticketnotification' && (
               <MenuItem style={{marginTop:"15px"}}>
   <Avatar alt={notification.data.ticket?.User?.firstName} src={notification.data.ticket?.User?.profilePicture} />
-             <Box ml={2}>
+             <Box ml={1}>
                <Typography variant="body1" style={{fontWeight:"bold",marginRight:"5px"}} >
                {notification.data.ticket?.User?.firstName} <span>
                     has assigned you as the responsible  for this ticket</span> 
@@ -190,7 +195,7 @@ const Notifications = ({ userId }) => {
            {notification.data && notification.type === 'feedbacknotification' && (
               <MenuItem style={{marginTop:"15px"}}>
   <Avatar alt={notification.data.newComment?.commenterId?.firstName} src={notification.data.newComment?.commenterId?.profilePicture} />
-             <Box ml={2}>
+             <Box ml={1}>
                <Typography variant="body1" style={{fontWeight:"bold",marginRight:"5px"}} >
                {notification.data.newComment?.commenterId?.firstName}
                                <span style={{marginLeft:"5px"}} >
@@ -222,6 +227,8 @@ const Notifications = ({ userId }) => {
 
            <OverdueNotification notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead} />
              <ApprochingDeadlinenotification notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead}  />
+             <RelatedTasksnotification notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead} />
+             <InacrtiveMember notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead}/>
             </React.Fragment>
           ))} 
         </>

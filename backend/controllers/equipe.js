@@ -317,7 +317,7 @@ exports.deleteEquipeById = async (req, res) => {
 
     await User.updateMany({}, { $pull: { equipes: equipeId } });
 
-    res.status(200).json({ message: 'user left the team' });
+    res.status(200).json({ message: ' the team is deleted' });
 
     
   } catch (error) {
@@ -439,6 +439,35 @@ exports.addLink = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while adding the link' });
+  }
+};
+
+exports.updateLink = async (req, res) => {
+  try {
+    const { equipeId, linkId } = req.params;
+    const { webAddress, title, description } = req.body;
+
+    const updatedEquipe = await Equipe.findOneAndUpdate(
+      { _id: equipeId, 'links._id': linkId },
+      {
+        $set: {
+          'links.$.webAddress': webAddress,
+          'links.$.title': title,
+          'links.$.description': description,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedEquipe) {
+      return res.status(404).json({ error: 'Link not found or equipe not found' });
+    }
+    const updatedLink = updatedEquipe.links.find(link => link._id.toString() === linkId);
+
+    res.status(200).json(updatedLink);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the link' });
   }
 };
 

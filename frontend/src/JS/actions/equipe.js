@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { CREATE_EQUIPE_SUCCESS, CREATE_EQUIPE_FAIL, GET_EQUIPES_SUCCESS, ADD_TO_TEAM, FETCH_EQUIPES, UPDATE_EQUIPE_SUCCESS, LEAVE_EQUIPE_SUCCESS, DELETE_EQUIPE_SUCCESS, FAIL_EQUIPE, FETCH_EQUIPES_SUCCESS, FETCH_EQUIPES_FAILURE, LOAD_EQUIPE, ADD_LINK_SUCCESS, GET_LINKS_SUCCESS, DELETE_LINK_SUCCESS } from '../actionTypes/equipe';
+import { CREATE_EQUIPE_SUCCESS, CREATE_EQUIPE_FAIL, FAIL_UPDATE_LINK,UPDATE_LINK_SUCCESS,
+  GET_EQUIPES_SUCCESS, ADD_TO_TEAM, FETCH_EQUIPES, UPDATE_EQUIPE_SUCCESS, LEAVE_EQUIPE_SUCCESS, DELETE_EQUIPE_SUCCESS, FAIL_EQUIPE, FETCH_EQUIPES_SUCCESS, FETCH_EQUIPES_FAILURE, LOAD_EQUIPE, ADD_LINK_SUCCESS, GET_LINKS_SUCCESS, DELETE_LINK_SUCCESS } from '../actionTypes/equipe';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 import { getprojectbyuser } from './project';
@@ -183,11 +184,22 @@ export const leaveEquipe = (equipeId,id) => async (dispatch) => {
       };
       const response = await axios.put(`http://localhost:8000/api/equipe/addlink/${equipeId}`, linkData, options);
       dispatch({ type: ADD_LINK_SUCCESS, payload: response.data });
-      // dispatch(getLinks(equipeId));
+      dispatch(getLinks(equipeId));
     } catch (error) {
       dispatch({ type: FAIL_EQUIPE, payload: error.response.data });
     }
   };
+
+
+  export const updateLink = (equipeId, linkId, updatedLinkData) => async (dispatch) => {
+    try {
+      const response = await axios.put(`http://localhost:8000/api/equipe/${equipeId}/updatelink/${linkId}`, updatedLinkData);
+      dispatch({ type: UPDATE_LINK_SUCCESS, payload: { equipeId, linkId, updatedLink: response.data } });
+    } catch (error) {
+      dispatch({ type: FAIL_UPDATE_LINK, payload: error.response.data });
+    }
+  };
+  
   
   export const getLinks = (equipeId) => async (dispatch) => {
     try {
@@ -208,7 +220,6 @@ export const leaveEquipe = (equipeId,id) => async (dispatch) => {
       };
       await axios.delete(`http://localhost:8000/api/equipe/deletelink/${equipeId}/${linkId}`, options);
       dispatch({ type: DELETE_LINK_SUCCESS, payload: linkId });
-      dispatch(getLinks(equipeId));
     } catch (error) {
       dispatch({ type: FAIL_EQUIPE, payload: error.response.data });
     }

@@ -15,6 +15,8 @@ import {
   ADD_LINK_SUCCESS,
   GET_LINKS_SUCCESS,
   DELETE_LINK_SUCCESS,
+  FAIL_UPDATE_LINK,
+  UPDATE_LINK_SUCCESS
 
 } from '../actionTypes/equipe';
 import {
@@ -136,6 +138,31 @@ const equipeReducer = (state = initialState, { type, payload }) => {
             links: state.links.filter(link => link._id !== payload),
             loading: false,
           };
+
+          case UPDATE_LINK_SUCCESS:
+      const { equipeId, linkId, updatedLink } = payload;
+      // Update the links array immutably
+      const updatedLinks = state.links.map(link =>
+        link._id === linkId ? { ...link, ...updatedLink } : link
+      );
+
+      return {
+        ...state,
+        links: updatedLinks,
+      };
+          case FAIL_UPDATE_LINK:
+            return {
+              ...state,
+              loading: false,
+              error: payload,
+            };
+
+            case 'DELETE_LINK_SUCCESS':
+      return {
+        ...state,
+        equipe: payload, 
+        error: null,
+      };
    
     default:
       return state;

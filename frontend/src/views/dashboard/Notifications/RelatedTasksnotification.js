@@ -2,19 +2,19 @@ import React from 'react'
 import { IconButton, MenuItem,Typography,Box, Avatar, Tooltip, Chip } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
 
-export const OverdueNotification = ({notification,image2,image3,handleMarkAsRead}) => {
+export const RelatedTasksnotification = ({notification,image2,image3,handleMarkAsRead}) => {
 
 
   return (
 <>
 
-    {notification.data && notification.type === 'overdueTask' && (
+    {notification.data && notification.type === 'relatedTasksNotification' && (
         <MenuItem style={{marginTop:"15px"}} >
 {/* <Avatar alt={notification.data.newComment?.commenterId?.firstName} src={notification.data.newComment?.commenterId?.profilePicture} /> */}
-       <Box ml={1}>
+       <Box ml={2}>
          <Typography variant="body1" style={{fontWeight:"bold",marginRight:"5px"}} >
                          <span style={{marginLeft:"5px"}} >
-  {notification.data.TaskName} is overdue in  {notification.data.projectId.projectName}
+  {notification.data.task.TaskName} is related to   {notification.data.task.related.TaskName}
 </span>
               <span 
               style={{color:"gray",marginLeft:"10px",fontWeight:"lighter",marginRight:"18px"}}>  
@@ -31,20 +31,7 @@ export const OverdueNotification = ({notification,image2,image3,handleMarkAsRead
   />
    </IconButton></Tooltip>
          </Typography>
-         <Typography variant="body2" color="textSecondary">
-          <div style={{ display: 'flex', alignItems: 'center',flexDirection:"row"}}>
-            
-          <span style={{ marginLeft: 8, fontSize: "13px",marginTop:"5px" }}>
-            incompleted tickets. 
-            
-             <Chip label={notification.data.tickets.length} style={{ width: "35px", height: "15px", marginLeft: '20px', justifyContent: 'center', alignContent: "center" }} >
-          </Chip>
-          
-         
-</span>
-             
-           </div>
-         </Typography>
+        
        </Box>
      </MenuItem>)} 
        

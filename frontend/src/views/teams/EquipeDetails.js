@@ -4,7 +4,7 @@ import PageContainer from 'src/components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
 import { Box, Button, Typography, Tooltip, Divider } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteEquipe, fetchEquipesbyId, getLinks, leaveEquipe } from 'src/JS/actions/equipe';
+import { deleteEquipe, deleteLink, fetchEquipesbyId, getLinks, leaveEquipe } from 'src/JS/actions/equipe';
 import Card from '@mui/material/Card';
 import image from '../../assets/images/jira.png';
 import { useParams } from 'react-router';
@@ -22,7 +22,10 @@ import {  useNavigate } from 'react-router-dom';
 import { EquipeUpdate } from './EquipeUpdate';
 import UpdateModal from './UpdateModal';
 import LinkModal from './LinkModal';
+import { FaPlus } from 'react-icons/fa';
 
+import { FaTrash, FaEdit } from 'react-icons/fa';
+import UpdateLinkModal from './UpdateLinkModal';
 
 const EquipeDetails = () => {
   const navigate = useNavigate();
@@ -147,6 +150,22 @@ const EquipeDetails = () => {
   const ownerid = equipes?.owner ? equipes.owner?._id : '';
   const equipeId=equipes?._id
 
+  //hover cards
+  const [hoveredCard, setHoveredCard] = useState(null);
+
+  const handleMouseEnter = (index) => {
+    setHoveredCard(index);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredCard(null);
+  };
+
+  const handleDelete = (link) => {
+    dispatch(deleteLink(equipeId, link));
+  };
+
+
   if (!equipes) {
     navigate('/team/teams');
   }
@@ -156,6 +175,14 @@ const EquipeDetails = () => {
 
   const handleOpen = () => setOpen(true);
   const handleClosed = () => setOpen(false);
+
+  //modify link modal
+
+  const [opened, setopened] = useState(false);
+
+  const ModifyLink = () => setopened(true);
+  const closelink = () => setopened(false);
+
 
 
    //fetch links
@@ -420,25 +447,117 @@ const EquipeDetails = () => {
                 </Box>
               </Box>
             </Card>
+            <div style={{ display: 'flex', alignItems: 'center', maxWidth: '690px',              width: '100%', 
+
+ }}>
+      <Typography fontSize={"15px"} color={'black'} fontWeight={"bold"} mb={1} marginLeft={"210px"}>
+        Links
+      </Typography>
+      {links && links.length > 0 && (
+        <Tooltip title='add a link'>
+        <IconButton          
+        onClick={handleOpen}
+        style={{
+          marginLeft: 'auto', 
+          display: 'inline-block',
+          width:'35px',
+          height:"28px",
+          padding:"0px",
+          // // borderRadius: '2px',
+          // borderWidth: '3px',
+          // borderStyle: 'solid',
+          // borderImage: 'linear-gradient(to bottom, rgb(85, 191, 240), #9eb5f7) 1', 
+         
+
+        }}>
+          <FaPlus style={{ color: '#4ca5ce', fontSize: '15px', alignContent:'center'}} />
+        </IconButton></Tooltip>
+      )}
+    </div>
             {links && links.length > 0 ? (
         links.map((link, index) => (
-            <Card
-              sx={{
-                mt: 2.5,
-                mb: 2,
-                mx: 3,
-                py: 2,
-                px: 2,
-                color: 'white',
-                width: '480px',
-                opacity: '2',
-                borderRadius: '0.2rem',
-                height: '149px',
-                marginLeft: '210px',
-                background: 'white',
+        
+          <Card
+          key={index}
+             onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={handleMouseLeave}
+          sx={{
+            mt: 1.5,
+            mx: 3,
+            py: 2,
+            px: 2,
+            color: 'white',
+            width: '100%', 
+            maxWidth: '480px',
+            opacity: '2',
+            borderRadius: '0.2rem',
+            height: 'auto',
+            marginLeft: '210px',
+            background: 'white',
+            position: 'relative', 
+            overflow: 'hidden', 
+            borderWidth: '3px',
+            borderStyle: 'solid',
+            borderImage: 'linear-gradient(to bottom, rgb(85, 191, 240), #9eb5f7) 1',
+            transition: 'background-color 0.3s ease',
+            '&:hover': {
+              backgroundColor: '#f5f5f5', 
+            },
+          }}
+        >
+          <Box style={{ width: '90%', float: 'left', marginLeft: '10px' }}>
+            <Typography fontSize={"15px"} color={'black'} fontWeight={"bold"} mb={2}>
+              {link.title}
+            </Typography>
+            <Typography variant="body2" color={'#615e5e'} mb={2}>
+              {link.description}
+            </Typography>
+            <Box display="flex" alignItems="center">
+              <a href={link.webAddress} target="_blank" rel="noopener noreferrer">
+                {link.webAddress}
+              </a>
+            </Box>
+          </Box>
+    
+          {hoveredCard === index && (
+            <Box
+              style={{
+                position: 'absolute',
+                bottom: '10px',
+                right: '10px',
+                display: 'flex',
+                alignItems: 'center',
               }}
             >
-              <Box display={'flex'} flexDirection="row">
+                <Button onClick={()=>handleDelete(link._id)} style={{ marginRight: '10px', padding: '5px' }}>
+          Delete
+        </Button>
+              <Button  onClick ={ModifyLink} style={{ padding: '5px' }}>
+               Modify
+              </Button>
+              <UpdateLinkModal opened={opened} closelink={closelink} equipeId={equipes._id} links={link}/>
+            </Box>
+          )}
+        </Card>
+        ))
+      ) : (
+        <Card
+          sx={{
+            mt: 2.5,
+            mb: 2,
+            mx: 3,
+            py: 2,
+            px: 2,
+            color: 'white',
+            width: '480px',
+            opacity: '2',
+            borderRadius: '0.2rem',
+            height: 'auto',
+            marginLeft: '210px',
+            background: 'white',
+          }}
+        >
+        <Box display={'flex'} flexDirection="row">
                 <Box style={{ width: '50%', float: 'left', marginTop: '1px' }}>
                   <img
                     src={
@@ -449,24 +568,6 @@ const EquipeDetails = () => {
                   />{' '}
                 </Box>
                 <Box style={{ width: '90%', float: 'left', marginLeft: '10px' }}>
-               
-          <Box key={index} sx={{ mb: 2 }}>
-            <Typography variant="h6" color={'black'} fontWeight={'bold'}>
-              {link.title}
-            </Typography>
-            <Typography variant="body2" color={'black'}>
-              {link.description}
-            </Typography>
-            <Box display="flex" alignItems="center">
-              <img src="link-icon.png" alt="Link Icon" style={{ width: '24px', marginRight: '8px' }} />
-              <a href={link.webAddress} target="_blank" rel="noopener noreferrer">
-                {link.webAddress}
-              </a>
-            </Box>
-          </Box>
-        ))
-      ) : ( 
-        <>
                   <Typography color={'black'} fontWeight={'bold'} mb={2}>
                     Share the knowledge
                   </Typography>
@@ -474,8 +575,9 @@ const EquipeDetails = () => {
                     Add links to let your team know where your works.
                   </Typography>
                   <Button
-                    variant="contained"
                     onClick={handleOpen}
+
+                    variant="contained"
                     sx={{
                       border: 'none',
                       fontWeight: 'bold',
@@ -492,11 +594,12 @@ const EquipeDetails = () => {
                   >
                     add a link
                   </Button>
-                  <LinkModal open={openLink} handleClose={handleClosed} equipeId={equipes._id} />
-                  </>
-               </Box> 
+                </Box>
               </Box>
-            </Card>)} 
+        </Card>
+      )} 
+                  <LinkModal open={openLink} handleClose={handleClosed} equipeId={equipeId} />
+
           </Box>
         </Box>
         <InvitationModal openModal={openModal} handleclosing={handleCloseModal} id={id} />

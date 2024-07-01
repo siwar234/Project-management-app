@@ -14,7 +14,7 @@ const Tasks=require('../backend/models/Tasks');
 const cron = require('node-cron');
 const Equipe=require('../backend/models/Equipe')
 const Project = require('../backend/models/Project');
-
+const Ticket=require('../backend/models/Tickets')
 const oneDay = 86400000;
 
 // Session setup
@@ -214,6 +214,83 @@ const approachingDeadline = async () => {
   }
 };
 
+//inactive users 
+const inactiveMember = async () => {
+  try {
+    const now = new Date();
+    const twoDaysFromNow = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
+
+    // Fetch tasks that match the criteria
+    const tasks = await Tasks.find({
+      $or: [
+        // Condition 1: Task has StartDate, Duration, and no EndDate
+        {
+          $and: [
+            { StartDate: { $exists: true } },
+            { Duration: { $exists: true } },
+            { EndDate: { $eq: null } }
+          ]
+        },
+        // Condition 2: Task has StartDate and EndDate
+        {
+          $and: [
+            { StartDate: { $exists: true } },
+            { EndDate: { $exists: true } }
+          ]
+        }
+      ]
+    })
+    .populate({
+      path: 'tickets',
+      match: { Etat: 'TO DO' } 
+    })
+    .populate({
+      path: 'tickets',
+      populate: { path: 'ResponsibleTicket', model: 'User' } 
+    })
+    .populate('projectId');
+
+    // Filter tasks where the deadline is approaching and all tickets are 'TO DO'
+    const approachingDeadlineTasks = tasks.filter(task => {
+      if (task.EndDate) {
+        // Condition 2: Task has StartDate and EndDate
+        const endDateMinusTwoDays = new Date(task.EndDate.getTime() - 2 * 24 * 60 * 60 * 1000);
+        return endDateMinusTwoDays < now;
+      } else if (task.StartDate && task.Duration) {
+        // Condition 1: Task has StartDate and Duration, EndDate is null
+        const endDate = new Date(task.StartDate.getTime() + parseDuration(task.Duration));
+        return endDate < twoDaysFromNow;
+      }
+      return false;
+    });
+
+    for (const task of approachingDeadlineTasks) {
+      // Populate ResponsibleTicket for each ticket in ticketsToDo
+      const ticketsToDo = await Ticket.find({ _id: { $in: task.tickets.map(ticket => ticket._id) } })
+        .populate('ResponsibleTicket');
+
+      const notificationData = new Notification({
+        type: 'inactiveMember',
+        data: {
+          task: task,
+          ticketsToDo: ticketsToDo
+        },
+        read: false,
+        responsible_user: task.projectId.Responsable,
+        timestamp: new Date()
+      });
+
+      const savedNotification = await notificationData.save();
+      console.log('Notification saved to MongoDB:', savedNotification);
+
+      // Emit 'inactiveMember' event to all connected clients
+      io.emit('messages', { type: 'inactiveMember', ...savedNotification._doc });
+    }
+  } catch (error) {
+    console.error('Error checking tasks approaching deadline:', error);
+  }
+};
+
 
 
 
@@ -394,6 +471,33 @@ io.on('connection', (socket) => {
     }
   });
 
+
+      
+  socket.on('relatedTasksNotification', async (data) => {
+    // console.log('new project:', data);
+    try {
+
+      const notificationData = new Notification({
+        type: 'relatedTasksNotification',
+        data: data,
+        read: false,
+        responsible_user: data.task.projectId.Responsable,
+        timestamp: new Date(),
+      });
+
+      const savedNotification = await notificationData.save();
+      // console.log('Notification saved to MongoDB:', savedNotification);
+
+      // Emit 'messages' event to all connected clients with type project
+      io.emit('messages', { type: 'relatedTasksNotification', ...notificationData._doc });
+
+      
+    } catch (error) {
+      console.error('Error handling project notification:', error);
+    }
+  });
+
+
   
 
 
@@ -415,11 +519,12 @@ cron.schedule('0 */3 * * *', () => {
 
 
 
-// // Schedule the task to run every 5 seconds just for test
-// cron.schedule('*/5 * * * * *', () => {
-//   console.log('Running checkOverdueTasks every 5 seconds');
-//   approachingDeadline();
-// });
+// Schedule the task to run every 5 seconds just for test
+cron.schedule('*/5 * * * * *', () => {
+  console.log('Running checkOverdueTasks every 5 seconds');
+  // inactiveMember()
+  // approachingDeadline()
+});
 
 
 // exports.leaveTeam = async (req, res) => {

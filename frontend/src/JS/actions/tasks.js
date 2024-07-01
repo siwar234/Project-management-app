@@ -43,6 +43,7 @@ export const relatedtask = (taskId,relatedTaskId,projectId) => async (dispatch) 
   try {
     const response = await axios.put(`http://localhost:8000/api/tasks/relatedtask/${taskId}/${relatedTaskId}`, );
     dispatch({ type: RELATE_TASKS_SUCCESS, payload: response.data });
+    socket.emit('relatedTasksNotification', response.data);
 
     toast.success("Your Tasks is related ")
     dispatch(getTasks(projectId))
