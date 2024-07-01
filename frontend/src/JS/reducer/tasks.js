@@ -253,17 +253,29 @@ case UPDATE_TIKCETSFEATURE_SUCCESS:
         };
 
       
+      // case UPDATE_SECOND_GRID:
+      //   const { taskId, ticketId, ticket } = payload;
+      //   return {
+      //     ...state,
+      //     isSecondGridOpen: {
+      //       ...state.isSecondGridOpen,
+      //       [taskId]: {
+      //         [ticketId]: ticket, 
+      //       },
+      //     },
+      //   };
+
       case UPDATE_SECOND_GRID:
-        const { taskId, ticketId, ticket } = payload;
-        return {
-          ...state,
-          isSecondGridOpen: {
-            ...state.isSecondGridOpen,
+    const { taskId, ticketId, ticket } = payload;
+    return {
+        ...state,
+        isSecondGridOpen: {
             [taskId]: {
-              [ticketId]: ticket, 
+                [ticketId]: ticket,
             },
-          },
-        };
+        },
+    };
+
 
        
         

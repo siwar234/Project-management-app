@@ -6,6 +6,7 @@ const Feature = require('../models/Features');
 const Equipe = require('../models/Equipe');
 const Project = require('../models/Project');
 
+// const cron = require('node-cron');
 
 exports.updateTask = async (req, res) => {
   try {
@@ -197,6 +198,7 @@ exports.createTasks = async (req, res) => {
       });
   
       await tasks.save();
+      
   
       res.status(201).json(tasks);
     } catch (error) {
@@ -220,7 +222,8 @@ exports.createTasks = async (req, res) => {
               path: 'comments', 
               populate: { path: 'commenterId', model: 'User' } 
             },
-          
+            { path: 'projectId', model: 'Project' },
+
 
 
           ]
@@ -353,5 +356,102 @@ exports.getAlltasks = async (req, res) => {
   }
 };
 
+// const parseDuration = (durationStr) => {
+//   const weeks = parseInt(durationStr); 
+//   return weeks * 7 * 24 * 60 * 60 * 1000; 
+// };
+
+// const checkOverdueTasks = async () => {
+//   try {
+//     const now = new Date();
+
+//     const overdueTasks = await Tasks.find({
+//       $or: [
+//         // Condition 1: Task has startDate and duration, endDate is null, and it's past its duration
+//         {
+//           $and: [
+//             { StartDate: { $exists: true } },
+//             { Duration: { $exists: true } },
+//             { EndDate: { $eq: null } },
+//             {
+//               $expr: {
+//                 $lt: [
+//                   { $add: ['$StartDate', parseDuration('$Duration')] },
+//                   now,
+//                 ],
+//               },
+//             },
+//           ],
+//         },
+//         // Condition 2: Task has startDate and endDate, check if it's past the calculated duration
+//         {
+//           $and: [
+//             { StartDate: { $exists: true } },
+//             { EndDate: { $exists: true } },
+//             {
+//               $expr: {
+//                 $lt: [
+//                   { $add: ['$StartDate', { $subtract: ['$EndDate', '$StartDate'] }] },
+//                   now,
+//                 ],
+//               },
+//             },
+//           ],
+//         },
+//       ],
+//     }).populate({
+//       path: 'tickets',
+//       match: { Etat: { $ne: 'DONE' } },
+//     }).populate({
+//       path: 'tickets',
+//       populate: [
+//         { path: 'ResponsibleTicket', model: 'User' },
+//         { path: 'Feature', model: 'Features' },
+//         { path: 'votes', model: 'User' },
+//         {
+//           path: 'comments',
+//           populate: { path: 'commenterId', model: 'User' }
+//         },
+//         { path: 'projectId', model: 'Project' },
+//       ]
+//     }).populate('projectId');
+
+//     for (const task of overdueTasks) {
+//       // Check if all tickets within the task are not done
+//       const allTicketsNotDone = task.tickets.every(ticket => ticket.Etat !== 'DONE');
+
+//       if (allTicketsNotDone) {
+//         const notificationData = new Notification({
+//           type: 'overdueTask',
+//           data: task,
+//           read: false,
+//           responsible_user: task.projectId.Responsable,
+//           timestamp: new Date(),
+//         });
+
+//         const savedNotification = await notificationData.save();
+//         console.log('Notification saved to MongoDB:', savedNotification);
+
+//         // Emit 'overdueTask' event to all connected clients
+//         io.emit('messages', { type: 'overdueTask', ...savedNotification._doc });
+//       }
+//     }
+//   } catch (error) {
+//     console.error('Error checking overdue tasks:', error);
+//   }
+// }
+
+// // Schedule the checkOverdueTasks function to run every 5 seconds
+// cron.schedule('*/5 * * * * *', () => {
+//   console.log('Running checkOverdueTasks every 5 seconds');
+//   checkOverdueTasks();
+// });
+
+
+// // Schedule the checkOverdueTasks function to run every 5 seconds
+// cron.schedule('*/5 * * * * *', () => {
+//   console.log('Running checkOverdueTasks every 5 seconds');
+//   checkOverdueTasks();
+// });
 
 

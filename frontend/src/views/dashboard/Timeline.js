@@ -77,7 +77,7 @@ export default function Timeline() {
     const dispatch = useDispatch();
     const [view, setView] = useState(ViewMode.Day);
     const [isChecked, setIsChecked] = useState(true);
-    const tasks = useSelector((state) => state.tasksReducer.tasks);
+    const tasks = useSelector((state) => state.tasksReducer.tasks.filter(task => task.StartDate ));
     const [initializedTasks, setInitializedTasks] = useState([]);
     const [initializedFeatures, setInitializedFeatures] = useState([]);
     const features = useSelector((state) => state.featureReducer.features.filter(feature => feature.startDate && feature.endDate));
@@ -98,35 +98,41 @@ export default function Timeline() {
     }, [projectId, dispatch]);
 
     useEffect(() => {
-        const newInitializedTasks = tasks.map((task) => {
-            const startDate = new Date(task.StartDate);
-            let endDate = null;
-            if (task.EndDate) {
-                endDate = new Date(task.EndDate);
-            } else if (task.Duration) {
-                const durationMatch = task.Duration.match(/(\d+)\s+weeks?/);
-                const weeks = durationMatch ? parseInt(durationMatch[1]) : 0;
-                endDate = new Date(startDate.getTime() + weeks * 7 * 24 * 60 * 60 * 1000);
-            }
-            return {
-                id: task._id,
-                name: task.TaskName,
-                start: startDate,
-                end: endDate,
-                styles: {
-                    backgroundColor: "#DEEBFF",
-                }
-            };
-        });
-        setInitializedTasks(newInitializedTasks);
-    }, [tasks]);
+      const newInitializedTasks = tasks.map((task) => {
+          let startDate = null; // Initialize startDate with null
+          if (task.StartDate) {
+              startDate = new Date(task.StartDate);
+          }
+          let endDate = null;
+          if (task.EndDate) {
+              endDate = new Date(task.EndDate);
+          } else if (task.Duration && startDate) {
+              const durationMatch = task.Duration.match(/(\d+)\s+weeks?/);
+              const weeks = durationMatch ? parseInt(durationMatch[1]) : 0;
+              endDate = new Date(startDate.getTime() + weeks * 7 * 24 * 60 * 60 * 1000);
+          }
+          return {
+              id: task._id,
+              name: task.TaskName,
+              start: startDate,
+              end: endDate,
+              styles: {
+                  backgroundColor: "#DEEBFF",
+              }
+          };
+      });
+      setInitializedTasks(newInitializedTasks);
+  }, [tasks]);
+  
 
     useEffect(() => {
+      
         const newInitializedFeatures = features.map((feature) => ({
+          
             id: feature._id,
             name: feature.titleF,
-            start: new Date(feature.startDate),
-            end: new Date(feature.endDate),
+            start: new Date(feature?.startDate),
+            end: new Date(feature?.endDate),
             progress:feature.iconF,
             styles: {
                 backgroundColor: feature?.iconF,
@@ -180,7 +186,7 @@ export default function Timeline() {
     let columnWidth = 105;
     if (view === ViewMode.Year) {
         columnWidth = 350;
-    } else if (view === ViewMode.Month) {
+    }  if (view === ViewMode.Month) {
         columnWidth = 300;
     } else if (view === ViewMode.Week) {
         columnWidth = 250;

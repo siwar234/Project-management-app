@@ -3,7 +3,7 @@ import {
     FAIL_PROJECT,
     CREATE_PROJECT_SUCCESS,
     GET_PROJECT_SUCCESS,
-    SELECT_PROJECT,
+    UPDATE_PROJECTS,
     GET_PROJECTBYID_SUCCESS,
     UPDATE_PROJECT_SUCCESS,
     DELETE_PROJECT_SUCCESS
@@ -41,7 +41,7 @@ import {
         return { ...state, loadproject: false, errors: payload };
      
       case CREATE_PROJECT_SUCCESS:
-        return { ...state, loadproject: false, isSuccess: true,};
+        return { ...state, loadproject: false, isSuccess: true,project:payload};
       
         case UPDATE_PROJECT_SUCCESS:
           return {
@@ -65,11 +65,8 @@ import {
         case GET_PROJECTBYID_SUCCESS:
           return { ...state, loadproject: false, isSuccess: true,
             project:payload.project};
-      case SELECT_PROJECT:
-        return {
-          ...state,
-          selectedProject:payload.selectedProject
-        };
+            case UPDATE_PROJECTS:
+              return { ...state, project: payload.projects };
     
     default:
       return state;

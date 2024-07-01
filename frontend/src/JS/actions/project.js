@@ -6,21 +6,24 @@ import {
   FAIL_PROJECT,
   GET_PROJECT_SUCCESS,
   LOAD_PROJECT,
-  SELECT_PROJECT,
+  UPDATE_PROJECTS,
   UPDATE_PROJECT_SUCCESS,
   GET_PROJECTBYID_SUCCESS ,
   DELETE_PROJECT_SUCCESS
   
 } from '../actionTypes/project';
 import { toast } from 'react-toastify';
-import { fetchEquipesbyId } from './equipe';
+import io from 'socket.io-client';
+ const socket = io('http://localhost:4100');
 
 export const createProject = (projectData) => async (dispatch, getState) => {
   dispatch({ type: LOAD_PROJECT });
 
   try {
     const response = await axios.post('http://localhost:8000/api/project/createproject', projectData);
+
     dispatch({ type: CREATE_PROJECT_SUCCESS, payload: response.data });
+     socket.emit('projectnotification',response.data)
 
     const { user } = getState().userReducer;
     const userId = user._id;
@@ -103,3 +106,9 @@ export const getprojectbyuser = (userId) => async (dispatch) => {
   }
 };
 
+
+
+export const updateProjects = (projects) => ({
+  type: UPDATE_PROJECTS,
+  payload: { projects }
+});

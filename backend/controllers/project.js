@@ -1,9 +1,12 @@
 const Project = require('../models/Project');
 const Equipe = require('../models/Equipe');
+const Notification = require('../models/Notifications');  
+// const { getUser, io } = require('../../socket/index'); 
+
 
 exports.createProject = async (req, res) => {
   try {
-    const { projectName, type, equipeId, ResponsableId } = req.body;
+    const { projectName, type, equipeId, ResponsableId,senderId } = req.body;
 
     let equipe;
     if (equipeId) {
@@ -15,6 +18,7 @@ exports.createProject = async (req, res) => {
 
     const project = new Project({
       projectName: projectName,
+      User:senderId,
       type: type, 
       Equipe: equipeId || null,
       Responsable: ResponsableId || null
@@ -22,12 +26,33 @@ exports.createProject = async (req, res) => {
 
     await project.save();
 
-    res.status(201).json(project);
+    // if (ResponsableId) {
+    //   const notification = new Notification({
+    //     responsible_user: ResponsableId,
+    //     project: project._id,
+    //     read: false,
+    //     sender: senderId,
+    //   });
+    //   await notification.save();
+
+    //   console.log(`Checking for user with ResponsableId: ${ResponsableId}`);
+    //   const user = getUser(ResponsableId);
+    //   if (user) {
+    //     console.log(`Emitting notification to user with socketId ${user.socketId}`);
+    //     io.to(user.socketId).emit('notification', notification);
+    //   } else {
+    //     console.log('User not found or not connected');
+    //   }
+    // }
+    const populatedProject = await Project.findById(project._id).populate('User');
+
+    res.status(201).json(populatedProject);
   } catch (error) {
     console.error('Error creating project:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 exports.UpdateProject = async (req, res) => {
   try {

@@ -45,7 +45,7 @@ export default function MenuFeature({ticketid,feature,isSecondGridOpen}) {
         <>
         {!feature && (
            <Tooltip title="add feature">
-                                           <Button
+               <Button
                 onClick={handleMenuopen}
                 id="menu-feature-button"
                 aria-controls={openmenu ? 'menu-feature' : undefined}
@@ -53,11 +53,11 @@ export default function MenuFeature({ticketid,feature,isSecondGridOpen}) {
                 aria-haspopup="true"
                 style={{
                     backgroundColor:  'rgb(227 226 226 / 55%)',
-                    color: 'rgb(107 107 107)',
+                    color: '#5a6b78',
                     fontWeight: '700',
                     marginLeft: isSecondGridOpen ? "8px" : "150px" ,
                     marginRight: isSecondGridOpen ? "5px" :"0px",
-                    fontSize :"13px",
+                    fontSize :"12.5px",
                     fontFamily: 'sans-serif',
 
                     marginTop: '-2px'
@@ -77,6 +77,7 @@ export default function MenuFeature({ticketid,feature,isSecondGridOpen}) {
             </Tooltip>
 
             )}
+            {features.length > 0 && (
             <Menu
                 id="menu-feature"
                 anchorEl={anchorEl}
@@ -123,7 +124,7 @@ export default function MenuFeature({ticketid,feature,isSecondGridOpen}) {
                 <Typography sx={{ color: "#1C1B3E", fontSize: "13.5px", marginLeft: "15px",marginTop:"8px",fontWeight:"bold" }} noWrap>
                     View all Features </Typography> */}
             </Menu>
-            
+            )}
         </>
     );
 }

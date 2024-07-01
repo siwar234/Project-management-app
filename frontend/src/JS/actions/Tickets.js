@@ -31,6 +31,8 @@ import {
 import { toast } from 'react-toastify';
 import { getTasks, updateSecondGrid } from './tasks';
 import { getAllFeatures } from './feature';
+import io from 'socket.io-client';
+ const socket = io('http://localhost:4100');
 
 // export const createTickets = (id,ticketsData) => async (dispatch, getState) => {
 //   dispatch({ type: LOAD_TICKETS });
@@ -106,15 +108,23 @@ export const createTickets = (ticketsData,projectId) => async (dispatch, getStat
   }
 };
 
-export const updatetickets = (projectId, userId, id, ticketsData) => async (dispatch, getState) => {
+export const updatetickets = (projectId, userId,id, ticketsData) => async (dispatch, getState) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tickets/Updatetickets/${id}`, ticketsData);
-   const { task,ticketId, taskid, ticket } = response.data;
+    const response = await axios.put(`http://localhost:8000/api/tickets/Updatetickets/${id}`, {
+      ...ticketsData,
+      User:userId
+    });
+     const { task,ticketId, taskid, ticket } = response.data;
 
     dispatch({
       type: UPDATE_TIKCETS_SUCCESS,
       payload: { task, ticketId,taskid, ticket }, 
     });
+
+     // Check if the ResponsibleTicket field is being updated
+     if (ticketsData.ResponsibleTicket) {
+      socket.emit('ticketnotification', response.data);
+    }
     const isSecondGridOpen = getState().tasksReducer.isSecondGridOpen[taskid];
     if (isSecondGridOpen) {
       dispatch(updateSecondGrid(ticketId, taskid, ticket));
@@ -161,7 +171,8 @@ export const addCommentToTicket = (projectId,ticketid, commenterId,commentText) 
       type: ADD_COMMENT,
       payload: response.data, 
     });
-
+      socket.emit('feedbacknotification', response.data);
+    
     dispatch(updateSecondGrid(ticketId, taskid, ticketcomment)); 
     dispatch(getTasks(projectId))
 
@@ -215,7 +226,7 @@ export const deleteCommentFromTicket = (ticketid, commentId, commenterId) => asy
 
     dispatch(updateSecondGrid(ticketId, taskId, ticket)); 
 
-    toast.success("Comment deleted successfully");
+    // toast.success("Comment deleted successfully");
   } catch (error) {
     dispatch({
       type: FAIL_TASKS,

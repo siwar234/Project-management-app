@@ -256,20 +256,28 @@ const EpicModal = ({openEpic,handleCloseEpic,setTextFieldVisible,isTextFieldVisi
     </Box>
 
     <Box display="flex" alignItems="center" flexWrap="wrap">
-            {feature.Tickets && [...new Set(feature.Tickets.map(ticket => ticket.Etat))].map((etat, index) => (
-              <div key={index} style={{ marginRight: '5px', marginBottom: '5px', width: `${90 / feature.Tickets.length}%` }}>
-                <Tooltip title={etat} key={index}>
-                  <ProgressBar
-                    value={calculateProgress(feature, etat)}
-                    style={{
-                      height: '6px',
-                      backgroundColor: etat === 'IN_PROGRESS' ? 'rgb(227 226 226 / 55%)' : etat === 'TO DO' ? '#7ca1f35e' : 'rgb(214 247 210)',
-                    }}
-                  />
-                </Tooltip>
-              </div>
-            ))}
-          </Box>
+  {feature.Tickets && [...new Set(feature.Tickets.map(ticket => ticket.Etat))].map((etat, index) => {
+    const etatTickets = feature.Tickets.filter(ticket => ticket.Etat === etat);
+    const totalTickets = feature.Tickets.length;
+    return (
+      <div key={index} style={{ marginRight: '5px', marginBottom: '5px', width: `${90 / feature.Tickets.length}%` }}>
+        <Tooltip 
+          title={ ` ${etat} :  ${etatTickets.length} tickets of ${totalTickets}`}
+          key={index}
+        >
+          <ProgressBar
+            value={calculateProgress(feature, etat)}
+            style={{
+              height: '6px',
+              backgroundColor: etat === 'IN_PROGRESS' ? 'rgb(227 226 226 / 55%)' : etat === 'TO DO' ? '#7ca1f35e' : 'rgb(214 247 210)',
+            }}
+          />
+        </Tooltip>
+      </div>
+    );
+  })}
+</Box>
+
     {isArrowclicked[feature._id] && (
         <>   
 <Typography mt={2} style={{ fontFamily: "sans-serif", fontSize: 13, fontWeight: "bold", marginLeft:'20px' }}>
@@ -416,11 +424,15 @@ const EpicModal = ({openEpic,handleCloseEpic,setTextFieldVisible,isTextFieldVisi
 <Box display="flex" alignItems="center" flexWrap="wrap">
   {feature.Tickets && [...new Set(feature.Tickets.map(ticket => ticket.Etat))].map((etat, index) => {
     const progress = calculateProgress(feature, etat);
+    const etatTickets = feature.Tickets.filter(ticket => ticket.Etat === etat);
+
+    const totalTickets = feature.Tickets.length;
+
     // const progressLabel = etat === 'DONE' ? `Progress: ${progress.toFixed(0)}%` : ''; 
     return (
         
       <div key={index} style={{ marginRight: '5px', marginBottom: '5px', width: `${90 / feature.Tickets.length}%`, display: "flex", flexDirection: "column" }}>
-        <Tooltip title={etat} key={index}>
+            <Tooltip title={ ` ${etat} :  ${etatTickets.length} tickets of ${totalTickets}`}>
           <ProgressBar
             value={progress}
             style={{

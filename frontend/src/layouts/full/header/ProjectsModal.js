@@ -15,6 +15,7 @@ import image from '../../../assets/images/scrum.gif';
 import { useDispatch, useSelector } from 'react-redux';
 import { createProject } from 'src/JS/actions/project';
 import { GetchEquipesOwner, fetchequipes } from 'src/JS/actions/equipe';
+import socket from './socket'; // Import the socket instance
 
 const ProjectsModal = ({ openProject, handleCloseProject }) => {
   const dispatch = useDispatch();
@@ -24,39 +25,73 @@ const ProjectsModal = ({ openProject, handleCloseProject }) => {
   const [selectedTeam, setSelectedTeam] = useState('');
   const [selectedResponsable, setSelectedResponsable] = useState('');
   const [teamMembers, setTeamMembers] = useState([]);
+ 
+  // const ENDPOINT = 'http://localhost:8000';
 
-  const handleSubmit = async () => {
-    try {
-      let formData = {
-        projectName: projectName,
-        type: selectedProjectType === 'Other' ? customProjectType.trim() : selectedProjectType,
-      };
-  
-      if (selectedTeam !== '') {
-        formData.equipeId = selectedTeam;
-      }
-  
-      if (selectedResponsable !== '') {
-        formData.ResponsableId = selectedResponsable;
-      }
-  
-      await dispatch(createProject(formData));
-  
-      // Reset state
-      setProjectName('');
-      setSelectedProjectType('');
-      setCustomProjectType('');
-      setSelectedTeam('');
-      setSelectedResponsable('');
-      handleCloseProject();
-    } catch (error) {
-      console.error('Error creating project:', error);
-    }
-  };
-  
   const user = useSelector((state) => state.userReducer.user);
   const userId = user._id;
 
+
+  // useEffect(() => {
+  //   const socket = io.connect('http://localhost:8000'); 
+  //     console.log(socket.on("firstevent",(msg)=>{
+  //         console.log(msg)
+  //     }));
+  
+
+   
+  // }, []);
+
+
+  // useEffect(() => {
+  //   const socket = socketIOClient(ENDPOINT);
+
+  //   // Join the user-specific room
+  //   socket.emit('join', { userId: user._id });
+
+  //   socket.on('projectAssigned', (data) => {
+  //     alert(`You have been assigned to project: ${data.projectName}`);
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, [user._id]);
+
+
+ 
+const handleSubmit = async () => {
+  try {
+    let formData = {
+      projectName: projectName,
+      senderId:user._id,
+      type: selectedProjectType === 'Other' ? customProjectType.trim() : selectedProjectType,
+    };
+
+    if (selectedTeam !== '') {
+      formData.equipeId = selectedTeam;
+    }
+
+    if (selectedResponsable !== '') {
+      formData.ResponsableId = selectedResponsable;
+
+     
+    }
+
+    await dispatch(createProject(formData));
+
+    // Reset state
+    setProjectName('');
+    setSelectedProjectType('');
+    setCustomProjectType('');
+    setSelectedTeam('');
+    setSelectedResponsable('');
+    handleCloseProject();
+  } catch (error) {
+    console.error('Error creating project:', error);
+  }
+};
+  
   useEffect(() => {
     dispatch(GetchEquipesOwner(userId));
   }, [dispatch]);

@@ -18,7 +18,8 @@ import {
   
 } from '../actionTypes/tasks';
 import { toast } from 'react-toastify';
-
+import io from 'socket.io-client';
+ const socket = io('http://localhost:4100');
 export const createTasks = (tasksData) => async (dispatch) => {
   dispatch({ type: LOAD_TASKS });
 
@@ -75,7 +76,7 @@ export const getallTasks = (userId) => async (dispatch) => {
   try {
     const response = await axios.get(`http://localhost:8000/api/tasks/getalltasks/${userId}`);
     dispatch({ type: GET_ALL_TASKS_SUCCESS, payload: response.data });
-
+    
    
   } catch (error) {
     dispatch({ type: FAIL_TASKS, payload: error.message });
@@ -90,6 +91,7 @@ export const getTasks = (projectId) => async (dispatch) => {
   try {
     const response = await axios.get(`http://localhost:8000/api/tasks/getlisttask/${projectId}`);
     dispatch({ type: GET_TASKS_SUCCESS, payload: response.data });
+    // socket.emit('overdueTask', response.data);
 
    
   } catch (error) {

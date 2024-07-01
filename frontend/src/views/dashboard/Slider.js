@@ -178,7 +178,7 @@ export const Slider = ({ searchQuery, handlecreate }) => {
               </CardContent>
             </CardActionArea>
           </Card>
-          {projects
+          {projects &&  projects
     .filter(project => project.projectName.toLowerCase().includes(searchQuery))
     .map((project, index) => {
       const filteredTickets = tickets.filter(ticket => {

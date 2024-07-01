@@ -62,7 +62,9 @@ const TicketsSchema = new mongoose.Schema(
         Type :{
           type: String,
           trim: true,
+          default:"Task"
       },
+      User :{ type: mongoose.Schema.Types.ObjectId,ref: 'User'},
 
      comments: [{
   commenterId: {

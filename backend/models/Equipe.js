@@ -22,7 +22,6 @@ const equipeSchema = new mongoose.Schema(
     
         owner:{type:ObjectId,ref:'User'},
 
-        
      
 
    members:  {     
@@ -32,6 +31,30 @@ const equipeSchema = new mongoose.Schema(
      }
    ],
  },
+
+ links: [
+  {
+    webAddress: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (v) {
+          return /^https?:\/\/\S+/.test(v);
+        },
+        message: (props) => `${props.value} is not a valid web address!`,
+      },
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+  },
+],
 
    emails: [{
     email: {

@@ -4,7 +4,7 @@ import PageContainer from 'src/components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
 import { Box, Button, Typography, Tooltip, Divider } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteEquipe, fetchEquipesbyId, leaveEquipe } from 'src/JS/actions/equipe';
+import { deleteEquipe, fetchEquipesbyId, getLinks, leaveEquipe } from 'src/JS/actions/equipe';
 import Card from '@mui/material/Card';
 import image from '../../assets/images/jira.png';
 import { useParams } from 'react-router';
@@ -21,6 +21,7 @@ import LeaveTeamModal from './LeaveTeamModal';
 import {  useNavigate } from 'react-router-dom';
 import { EquipeUpdate } from './EquipeUpdate';
 import UpdateModal from './UpdateModal';
+import LinkModal from './LinkModal';
 
 
 const EquipeDetails = () => {
@@ -37,7 +38,7 @@ const EquipeDetails = () => {
   const [emails, setEmails] = useState([]);
   
 
-
+ 
   //updtaModal
   const [openupdateModal, setOpenUpdateModal] = useState(false);
 
@@ -144,10 +145,28 @@ const EquipeDetails = () => {
   const ownerFirstName = equipes?.owner ? equipes.owner?.firstName : '';
   const OwnerProfilePicture = equipes?.owner ? equipes.owner?.profilePicture : '';
   const ownerid = equipes?.owner ? equipes.owner?._id : '';
+  const equipeId=equipes?._id
 
   if (!equipes) {
     navigate('/team/teams');
   }
+
+  //link modal
+  const [openLink, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClosed = () => setOpen(false);
+
+
+   //fetch links
+   const links = useSelector((state) => state.equipeReducer.links); 
+
+
+   useEffect(() => {
+    if (equipeId) {
+      dispatch(getLinks(equipeId)); 
+    }
+  }, [dispatch, equipeId]);
 
 
   return (
@@ -401,6 +420,8 @@ const EquipeDetails = () => {
                 </Box>
               </Box>
             </Card>
+            {links && links.length > 0 ? (
+        links.map((link, index) => (
             <Card
               sx={{
                 mt: 2.5,
@@ -428,6 +449,24 @@ const EquipeDetails = () => {
                   />{' '}
                 </Box>
                 <Box style={{ width: '90%', float: 'left', marginLeft: '10px' }}>
+               
+          <Box key={index} sx={{ mb: 2 }}>
+            <Typography variant="h6" color={'black'} fontWeight={'bold'}>
+              {link.title}
+            </Typography>
+            <Typography variant="body2" color={'black'}>
+              {link.description}
+            </Typography>
+            <Box display="flex" alignItems="center">
+              <img src="link-icon.png" alt="Link Icon" style={{ width: '24px', marginRight: '8px' }} />
+              <a href={link.webAddress} target="_blank" rel="noopener noreferrer">
+                {link.webAddress}
+              </a>
+            </Box>
+          </Box>
+        ))
+      ) : ( 
+        <>
                   <Typography color={'black'} fontWeight={'bold'} mb={2}>
                     Share the knowledge
                   </Typography>
@@ -436,6 +475,7 @@ const EquipeDetails = () => {
                   </Typography>
                   <Button
                     variant="contained"
+                    onClick={handleOpen}
                     sx={{
                       border: 'none',
                       fontWeight: 'bold',
@@ -452,9 +492,11 @@ const EquipeDetails = () => {
                   >
                     add a link
                   </Button>
-                </Box>
+                  <LinkModal open={openLink} handleClose={handleClosed} equipeId={equipes._id} />
+                  </>
+               </Box> 
               </Box>
-            </Card>
+            </Card>)} 
           </Box>
         </Box>
         <InvitationModal openModal={openModal} handleclosing={handleCloseModal} id={id} />

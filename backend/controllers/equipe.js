@@ -7,6 +7,8 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const { activeEmail } = require('../controllers/auth');
 const Role = require("../models/role");
+const Project = require('../models/Project');
+const { emitUpdateProjects } = require('../server'); // Adjust the path as per your file structure
 
 exports.createEquipe = async (req, res) => {
   try {
@@ -328,17 +330,35 @@ exports.leaveTeam = async (req, res) => {
   try {
     const equipeId = req.params.equipeId;
     const id = req.params.id; 
+    // const io = req.io; 
 
     await User.updateMany({}, { $pull: { equipes: equipeId } });
-
     await Equipe.updateMany({ _id: equipeId }, { $pull: { members: { memberId: id } } });
 
-    res.status(200).json({ message: 'Equipe deleted successfully' });
+    const updatedEquipe = await Equipe.findById(equipeId).populate('owner');
+
+    // Fetch the updated list of projects for the user
+    const equipes = await Equipe.find({
+      $or: [
+        { owner: id },
+        { 'members.memberId': id }
+      ]
+    });
+
+    const equipeIds = equipes.map(equipe => equipe._id);
+
+    const projects = await Project.find({
+      'Equipe': { $in: equipeIds }
+    }).populate('Equipe').populate('Responsable', 'firstName profilePicture');
+    req.io.emit('updateProjects', projects); // Emit updateProjects event
+
+    res.status(200).json({ updatedEquipe, projects });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while deleting the equipe' });
+    res.status(500).json({ error: 'An error occurred while leaving the team' });
   }
 };
+
 
 
 
@@ -394,6 +414,77 @@ exports.signupAfterInvitation = async (req, res) => {
 };
 
 
+
+
+exports.addLink = async (req, res) => {
+  try {
+    const { equipeId } = req.params;
+    const { webAddress, title, description } = req.body;
+
+    const updatedEquipe = await Equipe.findByIdAndUpdate(
+      equipeId,
+      {
+        $push: {
+          links: { webAddress, title, description },
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedEquipe) {
+      return res.status(404).json({ error: 'Equipe not found' });
+    }
+
+    res.status(200).json(updatedEquipe);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while adding the link' });
+  }
+};
+
+
+exports.getLinks = async (req, res) => {
+  try {
+    const { equipeId } = req.params;
+
+    const equipe = await Equipe.findById(equipeId).select('links');
+
+    if (!equipe) {
+      return res.status(404).json({ error: 'Equipe not found' });
+    }
+
+    res.status(200).json(equipe.links);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the links' });
+  }
+};
+
+
+exports.deleteLink = async (req, res) => {
+  try {
+    const { equipeId, linkId } = req.params;
+
+    const updatedEquipe = await Equipe.findByIdAndUpdate(
+      equipeId,
+      {
+        $pull: {
+          links: { _id: linkId },
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedEquipe) {
+      return res.status(404).json({ error: 'Equipe not found' });
+    }
+
+    res.status(200).json(updatedEquipe);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while deleting the link' });
+  }
+};
 
 
 

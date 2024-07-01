@@ -30,22 +30,23 @@ const SidebarItems = ({projectId}) => {
  
   return (
     <Box sx={{ px: 3 }}>
+      {!isadmin &&
      <Box mt={8} mb={5} display={'flex'} flexDirection={"row"} alignItems="center">
   <img src={project?.Icon || image5} style={{width:'32px', marginRight: '10px'}} alt="projectIcon" />
   <div>
     <Typography style={{fontWeight:"bold"}}>{project.projectName}</Typography>
     <Typography>{project?.type}</Typography>
   </div>
-</Box>
+</Box>}
       <List sx={{ pt: 0 }} className="sidebarNav">
         {menuItems.map((item) => {
           if (item.subheader) {
             return <NavGroup item={item} key={item.subheader} />;
           } else {
             if (item.title === 'User management' && isadmin) {
-              return <NavItem item={item} key={item.id} pathDirect={pathDirect} />;
-            } else if (item.title === 'Board' && !isadmin) {
-              return <NavItem                 item={{ ...item, href: `/dashboard/${projectId}` }} 
+              return  <NavItem item={item} key={item.id} pathDirect={pathDirect} />;
+            } else if (item.title === 'BackLog' && !isadmin) {
+              return  <NavItem                 item={{ ...item, href: `/dashboard/${projectId}` }} 
               key={item.id} pathDirect={pathDirect} />;
             } else if (item.title === 'Table' && !isadmin) {
               return <NavItem                 item={{ ...item, href: `/Table/${projectId}` }} 
@@ -56,12 +57,8 @@ const SidebarItems = ({projectId}) => {
               
               
               key={item.id} pathDirect={pathDirect} />;
-            // } else if (item.title === 'Statistics' && !isadmin) {
-            //   return <NavItem                 item={{ ...item, href: `/statistic` }} 
-              
-              
-            //   key={item.id} pathDirect={pathDirect} />;
-            } else if (item.title !== 'User management' && item.title !== 'Board'  && item.title !== 'Table' && item.title !== 'Timeline' ) {
+          
+            } else if (item.title !== 'User management' && item.title !== 'BackLog'  && item.title !== 'Table' && item.title !== 'Timeline' ) {
               return <NavItem item={item} key={item.id} pathDirect={pathDirect} />;
             }
           }

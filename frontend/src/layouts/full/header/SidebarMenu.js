@@ -167,7 +167,7 @@ const SidebarMenu = ({
         <div key={ticket?._id}>
             <div style={{ display: 'flex', alignItems: 'center',marginBottom:"15px"}}>
                 <img
-                    src={ticket.Type === 'Bug' ? img : image}
+                    src={ticket?.Type === 'Bug' ? img : image}
                     alt="icon"
                     style={{
                         width: '18px',
@@ -180,7 +180,7 @@ const SidebarMenu = ({
                     <div style={{
                      
                       fontFamily:"sans-serif"
-                    }}>{ticket.Description}</div>
+                    }}>{ticket?.Description}</div>
                     <div  style={{
                       fontSize:"11.5px",
                       color:"gray",
@@ -212,7 +212,7 @@ const SidebarMenu = ({
   <div key={ticket._id}>
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: "15px" }}>
       <img
-        src={ticket.ticketId.Type === 'Bug' ? img : image}
+        src={ticket.ticketId?.Type === 'Bug' ? img : image}
         alt="icon"
         style={{
           width: '18px',
@@ -221,7 +221,7 @@ const SidebarMenu = ({
           marginTop: "2px"
         }}
       />
-      <div style={{ fontFamily: "sans-serif" }}>{ticket.ticketId.Description}</div>
+      <div style={{ fontFamily: "sans-serif" }}>{ticket.ticketId?.Description}</div>
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
         <Star
         onClick={()=>(handleremovefavourite(ticket.ticketId._id))}
@@ -369,7 +369,7 @@ const SidebarMenu = ({
               sx={{
                 '& .MuiMenu-paper': {
                   width: '290px',
-                  height: projects.length > 0 ? '290px ' : '180',
+                  height: projects && projects.length > 0 ? '290px ' : '180',
                   marginTop: '45px',
                 },
               }}
@@ -380,7 +380,7 @@ const SidebarMenu = ({
                 </Typography>
               </MenuItem>
               <Divider />
-              {projects.length > 0 && ( 
+              {projects && projects.length > 0 && ( 
                 <>
                   <Typography
                     mb={1}
@@ -394,7 +394,7 @@ const SidebarMenu = ({
                   >
                     Recent
                   </Typography>
-                  {projects.slice(0, 5).map((project) => (
+                  {projects && projects.slice(0, 5).map((project) => (
                     <MenuItem
                       key={project?._id}
                       style={{ display: 'flex', alignItems: 'center' }}
@@ -415,7 +415,7 @@ const SidebarMenu = ({
     </Typography>
 
                         <Typography style={{ fontSize: '13px', fontWeight: '400' }}>
-                          {project.type}
+                          {project?.type}
                         </Typography>
                       </Box>
                     </MenuItem>

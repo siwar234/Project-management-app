@@ -30,7 +30,7 @@ import { Navigate } from 'react-router';
               })
               .catch((error) => {
               console.log(error);
-                  toast.error("Server error");
+                  // toast.error("Server error");
                 }
               )
           },

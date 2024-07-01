@@ -32,7 +32,7 @@ const projectSchema = new mongoose.Schema(
     type: String,
     },
           
-     
+    User :{ type: mongoose.Schema.Types.ObjectId,ref: 'User'},
 
 
         

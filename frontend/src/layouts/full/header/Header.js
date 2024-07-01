@@ -15,6 +15,9 @@ import { CgSearch } from 'react-icons/cg';
 import SidebarMenu from './SidebarMenu';
 import ProjectsModal from './ProjectsModal';
 import ProjectDescription from './ProjectDescription';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router';
+import Notifications from 'src/views/dashboard/Notifications/Notifications';
 
 const Header = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -24,7 +27,10 @@ const Header = (props) => {
   const [openDescriptionModal, setopenDescriptionModal] = useState(false);
   const [opening, setopening] = useState(null);
 
-  
+  const user = useSelector((state) => state.userReducer.user);
+  const userId = user._id;
+    // const { userId } = useParams();
+//  console.log("siwar",userId)
   //desciptionModal
 
   const handleOpenDescription = () => {
@@ -212,12 +218,13 @@ const handleclosing = () => {
             <img src={menu} alt="Menu" width="26" height="26" />
           </IconButton>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton size="large" aria-label="show 11 new notifications" color="#f8f8f8">
+            {/* <IconButton size="large" aria-label="show 11 new notifications" color="#f8f8f8">
               <Badge variant="dot" color="primary">
                 <IconBellRinging size="21" stroke="1.5" />
               </Badge>
-            </IconButton>
-            <Profile />
+            </IconButton> */}
+        <Notifications userId={userId} />
+        <Profile />
           </div>
         </Toolbar>
       </AppBar>

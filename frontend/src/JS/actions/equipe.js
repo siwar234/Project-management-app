@@ -1,6 +1,10 @@
 import axios from 'axios';
-import { CREATE_EQUIPE_SUCCESS, CREATE_EQUIPE_FAIL ,GET_EQUIPES_SUCCESS,ADD_TO_TEAM,FETCH_ALLEQUIPES_SUCCESS,FETCH_EQUIPES,UPDATE_EQUIPE_SUCCESS,LEAVE_EQUIPE_SUCCESS,DELETE_EQUIPE_SUCCESS,FAIL_EQUIPE,FETCH_EQUIPES_SUCCESS,FETCH_EQUIPES_FAILURE, LOAD_EQUIPE} from '../actionTypes/equipe';
+import { CREATE_EQUIPE_SUCCESS, CREATE_EQUIPE_FAIL, GET_EQUIPES_SUCCESS, ADD_TO_TEAM, FETCH_EQUIPES, UPDATE_EQUIPE_SUCCESS, LEAVE_EQUIPE_SUCCESS, DELETE_EQUIPE_SUCCESS, FAIL_EQUIPE, FETCH_EQUIPES_SUCCESS, FETCH_EQUIPES_FAILURE, LOAD_EQUIPE, ADD_LINK_SUCCESS, GET_LINKS_SUCCESS, DELETE_LINK_SUCCESS } from '../actionTypes/equipe';
 import { toast } from 'react-toastify';
+import io from 'socket.io-client';
+import { getprojectbyuser } from './project';
+import { GET_PROJECT_SUCCESS,GET_PROJECTBYID_SUCCESS } from '../actionTypes/project';
+ const socket = io('http://localhost:4100');
 
 export const createEquipe = (formData,id) => async (dispatch) => {
   // dispatch({ type: LOAD_E }); 
@@ -61,8 +65,19 @@ export const leaveEquipe = (equipeId,id) => async (dispatch) => {
     const options = {
       headers: { authorization: localStorage.getItem("token") },
     };
-    await axios.put(`http://localhost:8000/api/equipe/leave/${equipeId}/${id}`, null, options);
+   const res= await axios.put(`http://localhost:8000/api/equipe/leave/${equipeId}/${id}`, null, options);
     dispatch({ type: LEAVE_EQUIPE_SUCCESS, payload: equipeId });
+
+    dispatch(fetchEquipesbyId(equipeId))
+
+    const {  projectdata } = res.data;
+    dispatch({ type: GET_PROJECT_SUCCESS, payload: { projects: projectdata}  });
+    dispatch({ type: GET_PROJECTBYID_SUCCESS, payload: { project: projectdata }  });
+
+    
+    // dispatch(getprojectbyuser(id))
+    socket.emit('leaveTeamnotification',res.data)
+
   } catch (error) {
     dispatch({ type: FAIL_EQUIPE, payload: error.response.data });
   }
@@ -158,4 +173,43 @@ export const leaveEquipe = (equipeId,id) => async (dispatch) => {
       } catch (error) {
           dispatch({ type: CREATE_EQUIPE_FAIL, payload: error.response.data.error }); 
       }
+  };
+
+//links
+  export const addLink = (equipeId, linkData) => async (dispatch) => {
+    try {
+      const options = {
+        headers: { authorization: localStorage.getItem("token") },
+      };
+      const response = await axios.put(`http://localhost:8000/api/equipe/addlink/${equipeId}`, linkData, options);
+      dispatch({ type: ADD_LINK_SUCCESS, payload: response.data });
+      // dispatch(getLinks(equipeId));
+    } catch (error) {
+      dispatch({ type: FAIL_EQUIPE, payload: error.response.data });
+    }
+  };
+  
+  export const getLinks = (equipeId) => async (dispatch) => {
+    try {
+      const options = {
+        headers: { authorization: localStorage.getItem("token") },
+      };
+      const response = await axios.get(`http://localhost:8000/api/equipe/links/${equipeId}`, options);
+      dispatch({ type: GET_LINKS_SUCCESS, payload: response.data });
+    } catch (error) {
+      dispatch({ type: FAIL_EQUIPE, payload: error.response.data });
+    }
+  };
+  
+  export const deleteLink = (equipeId, linkId) => async (dispatch) => {
+    try {
+      const options = {
+        headers: { authorization: localStorage.getItem("token") },
+      };
+      await axios.delete(`http://localhost:8000/api/equipe/deletelink/${equipeId}/${linkId}`, options);
+      dispatch({ type: DELETE_LINK_SUCCESS, payload: linkId });
+      dispatch(getLinks(equipeId));
+    } catch (error) {
+      dispatch({ type: FAIL_EQUIPE, payload: error.response.data });
+    }
   };

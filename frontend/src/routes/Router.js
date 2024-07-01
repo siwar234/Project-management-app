@@ -150,10 +150,10 @@ const Router = () => {
     },
 
     {
-      path: '/landingpage',
+      path: '/Teamsyn',
       element: <LandingPage />,
       children: [
-        { path: '/landingpage/page', element: <LandingPage /> },
+        { path: '/Teamsyn/', element: <LandingPage /> },
       ],
     },
     {

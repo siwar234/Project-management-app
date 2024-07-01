@@ -69,7 +69,7 @@ export default function TicketDetail({  isSecondGridOpen }) {
   };
   
 //add favouirtes
-const userId=user._id
+const userId=user?._id
 
 useEffect(() => {
   dispatch(getFavorites(userId));
@@ -85,7 +85,7 @@ console.log('Favorites:', favorites);
 const handleToggleFavorite = (ticketid) => {
   console.log('Favorites:', favorites);
 
-  if (Array.isArray(favorites) && favorites.find(favorite => favorite.ticketId._id === ticketid)) {
+  if (Array.isArray(favorites) && favorites.find(favorite => favorite.ticketId?._id === ticketid)) {
     dispatch(removeFavorites(ticketid, userId));
   } else {
     dispatch(addFavorites(ticketid, userId));
@@ -98,7 +98,7 @@ const handleToggleFavorite = (ticketid) => {
   
   const handleTextFieldKeyDown = (event, ticketId, commentId) => {
     if (event.key === 'Enter') {
-      const commenterId = user._id;
+      const commenterId = user?._id;
       const updatedCommentText = updatedComments[commentId];
       dispatch(updateComment(ticketId, commentId, commenterId, updatedCommentText));
       setEditingComment(null);
@@ -117,7 +117,7 @@ const handleToggleFavorite = (ticketid) => {
   };
 
   const handleKeyDown = (event,ticketId, ) => {
-    const commenterId=user._id
+    const commenterId=user?._id
     if (event.key === 'Enter' && commentText.trim() !== '') {
        dispatch(addCommentToTicket(projectId,ticketId, commenterId, commentText));
       setCommentText('');
@@ -221,7 +221,7 @@ const handleToggleFavorite = (ticketid) => {
 
   //deletecomment
   const handleDeleteComment = (ticketId,commentId) => {
-    const commenterId=user._id
+    const commenterId=user?._id
  
     dispatch(deleteCommentFromTicket(ticketId,commentId, commenterId));
     dispatch(getTasks(projectId))
@@ -337,6 +337,11 @@ const insertImages = (editorState, imageUrls) => {
     }));
   };
 
+
+  //export csv 
+
+  
+
   return (
     <>
       <Grid
@@ -388,7 +393,7 @@ const insertImages = (editorState, imageUrls) => {
     onClick={() => handleToggleFavorite(ticketId)}
 >
   
-{Array.isArray(favorites) && favorites.some(favorite => favorite.ticketId._id.toString() === ticketId.toString()) ?  <Star style={{color:"#c2c251"}} /> : <StarOutline  />}
+{Array.isArray(favorites) && favorites.some(favorite => favorite.ticketId?._id.toString() === ticketId.toString()) ?  <Star style={{color:"#c2c251"}} /> : <StarOutline  />}
 
 </IconButton>
 
@@ -799,7 +804,7 @@ const insertImages = (editorState, imageUrls) => {
                                           isSecondGridOpen[taskId][ticketId].Feature?.iconF === '#ffc0ca' ? '#CC596B' : '#878787',
                                           backgroundColor: isSecondGridOpen[taskId][ticketId].Feature?.iconF}}
                                       >
-                                        <span>{ isSecondGridOpen[taskId][ticketId].Feature.titleF}</span></Button>
+                                        <span>{ isSecondGridOpen[taskId][ticketId].Feature?.titleF}</span></Button>
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
       <div style={{ marginLeft: "10px", marginTop: "10px",color: "rgb(71 71 71)" }}>Task</div>

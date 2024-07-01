@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const Tickets=require('../models/Tickets');
 const Task = require('../models/Tasks');
 const Features = require('../models/Features');
+const Notification = require('../models/Notifications');  
+// const { getUser } = require('../../socket/index');
 
 const { ObjectId } = require('mongoose').Types;
 
@@ -28,9 +30,10 @@ exports.createTickets = async (req, res) => {
 
       const savedTicket = await tickets.save();
 
-      // Update the specific task with the new ticket ID
+
       await Task.findByIdAndUpdate(TaskId, { $push: { tickets: savedTicket._id } });
 
+     
       res.status(201).json(savedTicket);
   } catch (error) {
       console.error('Error creating tickets:', error);
@@ -194,11 +197,11 @@ exports.createTickets = async (req, res) => {
   
 exports.updateTicket = async (req, res) => {
   try {
-    const { Description, ResponsibleTicket, Etat, Type, Priority  } = req.body;
+    const { Description, ResponsibleTicket, Etat, Type, Priority,User  } = req.body;
     
     const updatedTicket = await Tickets.findOneAndUpdate(
       { _id: req.params.id }, 
-      { Description, ResponsibleTicket, Etat, Type, Priority  },
+      { Description, ResponsibleTicket, Etat, Type, Priority ,User  },
       { new: true }
     );
 
@@ -231,6 +234,7 @@ exports.updateTicket = async (req, res) => {
     const ticket = await Tickets.findById(ticketId)
     .populate('ResponsibleTicket')
     .populate('Feature')
+    .populate('User')
     .populate('votes').populate({
       path: "comments",
       populate: {
@@ -238,7 +242,9 @@ exports.updateTicket = async (req, res) => {
         model: "User"
       }
     });   
-   
+
+ 
+
     res.status(200).json({task,taskid,ticketId,ticket});
 
   } catch (error) {
@@ -440,7 +446,7 @@ exports.updateTicketfeature = async (req, res) => {
 exports.addComment = async (req, res) => {
   try {
     const { ticketid } = req.params;
-    const { commenterId, commentText } = req.body;
+    const { commenterId, commentText} = req.body;
 
     const commenticket = await Tickets.findByIdAndUpdate(
       ticketid,
@@ -484,11 +490,15 @@ exports.addComment = async (req, res) => {
         ]
       });
 
+     
+
     if (!task) {
       return res.status(404).json({ error: 'Task not found' });
     }
+    const newCommentId = commenticket.comments[commenticket.comments.length - 1]._id;
+    const newComment = ticketcomment.comments.find(comment => comment._id.toString() === newCommentId.toString());
 
-    res.status(200).json({ task, ticketId, taskid, ticketcomment });
+    res.status(200).json({ task, ticketId, taskid, ticketcomment,newComment});
   } catch (error) {
     console.error('Error adding comment:', error);
     res.status(500).json({ error: 'Internal server error' }); 

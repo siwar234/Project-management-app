@@ -11,7 +11,11 @@ import {
   UPDATE_EQUIPE_SUCCESS,
   FETCH_EQUIPES,
   ADD_TO_TEAM,
-  GET_EQUIPES_SUCCESS
+  GET_EQUIPES_SUCCESS,
+  ADD_LINK_SUCCESS,
+  GET_LINKS_SUCCESS,
+  DELETE_LINK_SUCCESS,
+
 } from '../actionTypes/equipe';
 import {
   STOP_LOADING
@@ -26,7 +30,8 @@ const initialState = {
   equipes: [],
   error: null,
   equipe:[],
-  EquipesOwner:[]
+  EquipesOwner:[],
+  links: [],
 
 
   
@@ -111,6 +116,26 @@ const equipeReducer = (state = initialState, { type, payload }) => {
           equipes: payload,
           errors: [], 
         };
+
+
+        case ADD_LINK_SUCCESS:
+          return {
+            ...state,
+            links: [...state.links, payload],
+            loading: false,
+          };
+        case GET_LINKS_SUCCESS:
+          return {
+            ...state,
+            links: payload,
+            loading: false,
+          };
+        case DELETE_LINK_SUCCESS:
+          return {
+            ...state,
+            links: state.links.filter(link => link._id !== payload),
+            loading: false,
+          };
    
     default:
       return state;

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { getTasks } from 'src/JS/actions/tasks';
 import {  updatetickets } from 'src/JS/actions/Tickets';
 
-export default function ResponsibleMenu({ MenuResponsible, handleclosedResponsible,projectId,Responsibleid,ResponsibleTicket,handleAssignResponsible }) {
+export default function ResponsibleMenu({ MenuResponsible, handleclosedResponsible,responsible,Responsibleid,ResponsibleTicket,handleAssignResponsible }) {
   const projects = useSelector((state) => state.projectReducer.project);
 
   const equipes = projects?.Equipe;
@@ -48,7 +48,10 @@ export default function ResponsibleMenu({ MenuResponsible, handleclosedResponsib
   onClick={() => handleAssignResponsible('')}
 >
   <Avatar
+          src={responsible?.profilePicture}
+
     sx={{
+      
       bgcolor: '#42a5f5',
       width: 25,
       height: 25,

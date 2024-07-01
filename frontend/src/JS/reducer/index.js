@@ -6,7 +6,7 @@ import tasksReducer from "./tasks";
 import ticketsReducer from "./tickets";
 import featureReducer from "./feature"
 import favouritesReducer from "./favourites"
-
+import notificationReducer from "./notifications"
 const rootReducer = combineReducers({
   userReducer,
   equipeReducer,
@@ -15,6 +15,7 @@ const rootReducer = combineReducers({
   ticketsReducer,
   featureReducer,
   favouritesReducer,
+  notificationReducer
 
   
 });

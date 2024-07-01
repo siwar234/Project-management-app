@@ -14,7 +14,7 @@ const Menuitems = (projectId) => [
   },
   {
     id: uniqueId(),
-    title: 'Board',
+    title: 'BackLog',
     icon: IconLayoutDashboard,
     href: `/dashboard/${projectId}`,
   },
