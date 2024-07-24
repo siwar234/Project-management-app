@@ -28,7 +28,21 @@ const TicketsSchema = new mongoose.Schema(
         }
       },
       
-
+      CoverImage: [{
+        colorimage: {
+          type: String,
+          trim: true,
+        },
+        size :{
+          type: String,
+          trim: true,
+        }
+    }],
+    position: {
+      type: Number,
+     
+    },
+     
     featureid: { type: ObjectId, ref: 'Features' },
       
       ResponsibleTicket : { type: ObjectId, ref: 'User' },

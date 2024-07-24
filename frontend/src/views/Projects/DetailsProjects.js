@@ -173,6 +173,9 @@ const handleSelectIcon = (iconUrl) => {
       >
         <MoreVertIcon />
       </IconButton>
+
+      {
+  projects.Responsable._id === userid && (
       <Menu
         id="long-menu"
         MenuListProps={{
@@ -188,12 +191,14 @@ const handleSelectIcon = (iconUrl) => {
           },
         }}
       >
-        {options.map((option) => (
-          <MenuItem key={option} selected={option === 'move to trash'} onClick={handleOpenConfirmation}>
-            {option}
-          </MenuItem>
-        ))}
-      </Menu>
+      {options.map((option) => (
+    <MenuItem key={option} selected={option === 'move to trash'} onClick={handleOpenConfirmation}>
+      {option}
+    </MenuItem>
+  
+))}
+
+      </Menu>)}
         </Box>
         <Box
           display="flex"

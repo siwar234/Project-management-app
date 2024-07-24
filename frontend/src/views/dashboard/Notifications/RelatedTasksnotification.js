@@ -3,13 +3,13 @@ import { IconButton, MenuItem,Typography,Box, Avatar, Tooltip, Chip } from '@mui
 import { formatDistanceToNow } from 'date-fns';
 import { FcLink } from 'react-icons/fc';
 
-export const RelatedTasksnotification = ({notification,image2,image3,handleMarkAsRead}) => {
+export const RelatedTasksnotification = ({notification,image2,image3,handleMarkAsRead,userId}) => {
 
 
   return (
 <>
 
-    {notification.data && notification.type === 'relatedTasksNotification' && (
+    {notification.data && notification.type === 'relatedTasksNotification' &&   userId===notification.responsible_user && (
         <MenuItem style={{marginTop:"15px"}} >
 {/* <Avatar alt={notification.data.newComment?.commenterId?.firstName} src={notification.data.newComment?.commenterId?.profilePicture} /> */}
        <Box ml={2}>

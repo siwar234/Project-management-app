@@ -1,13 +1,7 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Button, Box, Modal, Fade, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import image1 from "../../assets/images/icons/audiance.png"
-import image2 from "../../assets/images/icons/boost.png"
-import image3 from "../../assets/images/icons/brush.png"
-import image4 from "../../assets/images/icons/brush.png"
-import image5 from "../../assets/images/icons/goal.png"
-import image6 from "../../assets/images/icons/keyword.png"
+
 
 function importAll(r) {
     let images = {};

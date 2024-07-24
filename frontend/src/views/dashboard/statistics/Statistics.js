@@ -20,7 +20,11 @@ import TicketsPerPriority from './TicketsPerPriority ';
 const Statistics = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state.tasksReducer.alltasks);
-  const [selectedProject, setSelectedProject] = useState('');
+  //filter by project
+  const [selectedProjectCompleted, setSelectedProjectCompleted] = useState('');
+  const [selectedProjectIncompleted, setSelectedProjectIncompleted] = useState('');
+
+
   const projects = useSelector((state) => state.projectReducer.projects);
   const user = useSelector((state) => state.userReducer.user);
   const userid=user._id
@@ -64,12 +68,12 @@ const totalDoneTicketsAll = tasks.reduce((total, task) => {
     return total + task.tickets.filter(ticket => ticket.Etat === 'DONE').length;
 }, 0);
 
-const totalDoneTickets = selectedProject ? tasks
-    .filter(task => task.projectId._id === selectedProject)
+const totalDoneTickets = selectedProjectCompleted ? tasks
+    .filter(task => task.projectId._id === selectedProjectCompleted)
     .reduce((total, task) => total + task.tickets.filter(ticket => ticket.Etat === 'DONE').length, 0)
     : 0;
     const handleProjectSelection = (projectId) => {
-        setSelectedProject(projectId);
+      setSelectedProjectCompleted(projectId);
         handleCloseMenu();
     };
 
@@ -81,14 +85,14 @@ const totalunDoneTicketsAll = tasks.reduce((total, task) => {
   return total + task.tickets.filter(ticket => ticket.Etat === 'IN_PROGRESS').length;
 }, 0);
 
-const totalUNDoneTickets = selectedProject ? tasks
-  .filter(task => task.projectId._id === selectedProject)
+const totalUNDoneTickets = selectedProjectIncompleted ? tasks
+  .filter(task => task.projectId._id === selectedProjectIncompleted)
   .reduce((total, task) => total + task.tickets.filter(ticket => ticket.Etat === 'IN_PROGRESS').length, 0)
   : 0;
   
 
   const handleProject = (projectId) => {
-    setSelectedProject(projectId);
+    setSelectedProjectIncompleted(projectId);
     handleClose();
 };
 
@@ -153,7 +157,7 @@ const count = countTasksWithCriteria();
                 marginLeft: '15px',
             }}
         >
-            {selectedProject ? totalDoneTickets : totalDoneTicketsAll}
+            {selectedProjectCompleted ? totalDoneTickets : totalDoneTicketsAll}
         </Typography>
         <Typography
             style={{
@@ -280,7 +284,7 @@ const count = countTasksWithCriteria();
                 marginLeft: '15px',
             }}
         >
-            {selectedProject ? totalUNDoneTickets : totalunDoneTicketsAll}
+            {selectedProjectIncompleted ? totalUNDoneTickets : totalunDoneTicketsAll}
         </Typography>
         <Typography
             style={{

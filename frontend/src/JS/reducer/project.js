@@ -6,8 +6,8 @@ import {
     UPDATE_PROJECTS,
     GET_PROJECTBYID_SUCCESS,
     UPDATE_PROJECT_SUCCESS,
-    DELETE_PROJECT_SUCCESS
-   
+    DELETE_PROJECT_SUCCESS,
+    ARCHIVE_PROJECT_SUCCESS
   } from '../actionTypes/project';
   import {
     STOP_LOADING
@@ -50,6 +50,16 @@ import {
             projects: payload,
             errors: [], 
           };
+
+
+          case ARCHIVE_PROJECT_SUCCESS:
+            return {
+              ...state,
+              loading: false,
+              projects: state.projects.map((project) =>
+                project._id === payload._id ? payload : project
+              ),
+            };
           case DELETE_PROJECT_SUCCESS:
       return {
         ...state,

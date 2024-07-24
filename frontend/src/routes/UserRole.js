@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import {  useDispatch } from 'react-redux';
 // import { useNavigate } from 'react-router-dom';
 import { currentUser } from "src/JS/actions/user";
+
 function UserRole({ children }) {
 
   // Check if user has isAdmin role

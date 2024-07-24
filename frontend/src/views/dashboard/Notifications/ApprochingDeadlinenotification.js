@@ -3,11 +3,11 @@ import { IconButton, MenuItem,Typography,Box, Avatar, Tooltip, Chip } from '@mui
 import { formatDistanceToNow } from 'date-fns';
 import { FcAlarmClock } from "react-icons/fc";
 
-const ApprochingDeadlinenotification = ({notification,image2,image3,handleMarkAsRead}) => {
+const ApprochingDeadlinenotification = ({notification,image2,image3,handleMarkAsRead,userId}) => {
   return (
 <>
 
-{notification.data && notification.type === 'approachingDeadline' && (
+{notification.data && notification.type === 'approachingDeadline' && userId===notification.responsible_user && (
     <MenuItem style={{marginTop:"15px"}} >
 {/* <Avatar alt={notification.data.newComment?.commenterId?.firstName} src={notification.data.newComment?.commenterId?.profilePicture} /> */}
    <Box ml={1}>

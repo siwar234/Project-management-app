@@ -6,7 +6,7 @@ const Notification = require('../models/Notifications');
 
 exports.createProject = async (req, res) => {
   try {
-    const { projectName, type, equipeId, ResponsableId,senderId } = req.body;
+    const { projectName, type, equipeId, ResponsableId,senderId ,archiver} = req.body;
 
     let equipe;
     if (equipeId) {
@@ -21,6 +21,7 @@ exports.createProject = async (req, res) => {
       User:senderId,
       type: type, 
       Equipe: equipeId || null,
+      archiver: archiver || false ,
       Responsable: ResponsableId || null
     });
 
@@ -65,6 +66,50 @@ exports.UpdateProject = async (req, res) => {
     
   } catch (error) {
     console.log(error.message);
+  }
+};
+
+
+exports.archiverproject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId).populate('Equipe').populate('Responsable', 'firstName profilePicture');
+   
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    project.archiver = true;
+    await project.save();
+
+    res.status(201).json(project);
+
+  } catch (error) {
+    console.error('Error archiving project:', error);
+    throw error;
+  }
+};
+
+
+exports.unarchiverproject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId).populate('Equipe').populate('Responsable', 'firstName profilePicture');
+   
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    project.archiver = false;
+    await project.save();
+
+    res.status(201).json(project);
+
+  } catch (error) {
+    console.error('Error archiving project:', error);
+    throw error;
   }
 };
 

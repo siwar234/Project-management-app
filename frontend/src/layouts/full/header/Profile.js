@@ -140,8 +140,10 @@ const Profile = () => {
         </MenuItem>
 
         <Divider />
-        <MenuItem>
-          <ListItemIcon onClick={handleProfileClick}>
+        <MenuItem onClick={handleProfileClick}>
+          <ListItemIcon 
+          // onClick={handleProfileClick}
+          >
             <img alt="imageuser" src={image1} width={23} />
           </ListItemIcon>
           <div
@@ -156,6 +158,7 @@ const Profile = () => {
               <Typography
                 variant="body2"
                 style={{ fontSize: '14px', fontFamily: 'Plus Jakarta Sans' }}
+                
               >
                 My Profile
               </Typography>
@@ -179,7 +182,7 @@ const Profile = () => {
               textOverflow: 'ellipsis',
             }}
           >
-            <ListItemText onClick={handleProfileClick}>
+            <ListItemText >
               <Typography
                 variant="body2"
                 style={{ fontSize: '14px', fontFamily: 'Plus Jakarta Sans' }}

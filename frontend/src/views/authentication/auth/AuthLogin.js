@@ -72,9 +72,12 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       if (isInvitationUrl()) {
         await dispatch(
           signinAfterInvitation(token, invitationEmail, equipeId, values.password, navigate),
+          
         );
       } else {
         await dispatch(loginUser(values, navigate));
+
+
       }
       setSubmitting(false);
     } catch (error) {

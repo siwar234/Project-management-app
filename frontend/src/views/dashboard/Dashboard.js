@@ -20,7 +20,7 @@ import PageContainer from 'src/components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
 import { Button, TextField, MenuItem, Menu, Typography } from '@mui/material';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import CreateTastsModal from './components/CreateTastsModal';
+import CreateTastsModal from './Tasks/CreateTastsModal';
 import Tooltip from '@mui/material/Tooltip';
 import { useDispatch, useSelector } from 'react-redux';
 import { getprojectbyid, updateProjects } from 'src/JS/actions/project';
@@ -30,22 +30,21 @@ import { createTickets, updatetickets, updateticketsFeature } from 'src/JS/actio
 import { close, getTasks, unrelatedtask, updateSecondGrid } from 'src/JS/actions/tasks';
 
 import AddIcon from '@mui/icons-material/Add';
-import WorkflowMenu from './WorkflowMenu';
+import WorkflowMenu from './Tickets/WorkflowMenu';
 import image from '../../assets/images/checking.webp';
 import image1 from '../../assets/images/bugging.png';
-import PriorityMenu from './PriorityMenu';
+import PriorityMenu from './Tickets/PriorityMenu';
 import { GrClose, GrCheckmark } from 'react-icons/gr';
-import UpdateTaskModal from './components/UpdateTaskModal';
-import DeleteTaskModal from './DeleteTaskModal';
+import UpdateTaskModal from './Tasks/UpdateTaskModal';
+import DeleteTaskModal from './Tasks/DeleteTaskModal';
 import { set } from 'lodash';
-import TerminateTask from './TerminateTask';
-import ResponsibleMenu from './ResponsibleMenu';
+import TerminateTask from './Tasks/TerminateTask';
+import ResponsibleMenu from './Tickets/ResponsibleMenu';
 
-import FeaturesMenu from './FeaturesMenu';
-import MenuFeature from './MenuFeature';
-import Featureupdate from './Featureupdate';
-import TicketDetail from './components/TicketDetail';
-import { TbCirclesRelation } from 'react-icons/tb';
+import FeaturesMenu from './Features/FeaturesMenu';
+import MenuFeature from './Features/MenuFeature';
+import Featureupdate from './Features/Featureupdate';
+import TicketDetail from './Tickets/TicketDetail';
 import { FcLink } from 'react-icons/fc';
 import io from 'socket.io-client';
 
@@ -81,7 +80,7 @@ const Dashboard = () => {
       socket.off('updateProjects');
     };
   }, [dispatch, projectId]);
-  const options = ['edit task', 'delete task', 'relate task'];
+  const options = ['edit task', 'delete task','Add To a discussion space' ,'relate task'];
 
   const handleClicked = (event, ticketId) => {
     setAnchorEls({ ...anchorEls, [ticketId]: event.currentTarget });
@@ -626,9 +625,11 @@ const Dashboard = () => {
                     </Button>
                     <LongMenu
                       setDeletemodal={setDeletemodal}
-                      taskId={task._id}
+                      taskId={task?._id}
                       options={options}
                       projectId={projectId}
+                      task={task}
+                      
                     />
                   </Box>
 

@@ -2,13 +2,13 @@ import React from 'react'
 import { IconButton, MenuItem,Typography,Box, Avatar, Tooltip, Chip } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
 
-export const OverdueNotification = ({notification,image2,image3,handleMarkAsRead}) => {
+export const OverdueNotification = ({notification,image2,image3,handleMarkAsRead,userId}) => {
 
 
   return (
 <>
 
-    {notification.data && notification.type === 'overdueTask' && (
+    {notification.data && notification.type === 'overdueTask' &&   userId===notification.responsible_user && (
         <MenuItem style={{marginTop:"15px"}} >
 {/* <Avatar alt={notification.data.newComment?.commenterId?.firstName} src={notification.data.newComment?.commenterId?.profilePicture} /> */}
        <Box ml={1}>

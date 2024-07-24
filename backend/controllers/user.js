@@ -6,14 +6,12 @@ const User=require('../models/User');
 exports.banUser = async (req, res) => {
     const { userID, banDate } = req.body;
   
-    // Validate if banDate is a valid date
     if (!banDate || isNaN(new Date(banDate))) {
       return res
         .status(400)
         .send({ success: false, error: "Invalid date format for banDate" });
     }
   
-    // check if user exists in the database
     const user = await User.findOne({ _id: new mongoose.Types.ObjectId(userID) });
     if (!user) {
       return res.status(404).send({ success: false, error: "User not found" });
@@ -21,6 +19,7 @@ exports.banUser = async (req, res) => {
   
     // ban user
     user.isBanned = new Date(banDate);
+    user.failedLoginAttempts = 0;
     await user.save();
 
     const updatedUsers = await User.find(); 

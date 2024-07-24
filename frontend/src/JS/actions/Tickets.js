@@ -7,8 +7,8 @@ import {
   UPDATE_TIKCET_SUCCESS,
   DELETE_TICKETS_SUCCESS,
   GET_ALLTICKETS_SUCCESS,
-  
-  
+  DELETE_IMAGE,
+  UPDATE_POSITION_SUCCESS
   
 } from '../actionTypes/tickets';
 import {
@@ -32,39 +32,9 @@ import { toast } from 'react-toastify';
 import { getTasks, updateSecondGrid } from './tasks';
 import { getAllFeatures } from './feature';
 import io from 'socket.io-client';
- const socket = io('http://localhost:4100');
-
-// export const createTickets = (id,ticketsData) => async (dispatch, getState) => {
-//   dispatch({ type: LOAD_TICKETS });
-
-//   try {
-//     const response = await axios.post(`http://localhost:8000/api/tickets/createtickets/${id}`, ticketsData);
-//     dispatch({ type: CREATE_TICKETS_SUCCESS, payload: response.data });
-    
-//     const { TaskId } = ticketsData;
-    
-//     dispatch(getTickets(TaskId)); 
-    
-//     toast.success("Your Ticket is created");
-//   } catch (error) {
-//     dispatch({ type: FAIL_TICKETS, payload: error.message });
-//   }
-// };
+ const socket = io('http://localhost:4101');
 
 
-
-// export const getTickets = (TaskId) => async (dispatch, getState) => {
-//   dispatch({ type: LOAD_TICKETS });
-
-//   try {
-//     const response = await axios.get(`http://localhost:8000/api/tickets/getlistickets/${TaskId}`);
-//     dispatch({ type: GET_TICKETS_SUCCESS, payload: { tickets: response.data } });
-
-   
-//   } catch (error) {
-//     dispatch({ type: FAIL_TICKETS, payload: error.message });
-//   }
-// };
 export const getListTicketsByproject = (projectId) => async (dispatch, getState) => {
   dispatch({ type: LOAD_TICKETS });
 
@@ -143,6 +113,18 @@ export const updatetickets = (projectId, userId,id, ticketsData) => async (dispa
 
 
 
+export const updateTicketPosition = (ticketId, updatedData,projectid) => async (dispatch) => {
+  try {
+    const response = await axios.put(`http://localhost:8000/api/tickets/updatepositon/${ticketId}`, updatedData);
+    dispatch({ type: UPDATE_POSITION_SUCCESS, payload: response.data });
+    // toast.success("postion update");
+    dispatch(getListTicketsByproject(projectid))
+
+
+  } catch (error) {
+  }
+};
+
 export const updatingtickets = (projectid,id, ticketsData) => async (dispatch) => {
   try {
     const response = await axios.put(`http://localhost:8000/api/tickets/updateticket/${id}`, ticketsData);
@@ -175,6 +157,7 @@ export const addCommentToTicket = (projectId,ticketid, commenterId,commentText) 
     
     dispatch(updateSecondGrid(ticketId, taskid, ticketcomment)); 
     dispatch(getTasks(projectId))
+    dispatch(getListTicketsByproject(projectId));
 
     
   } catch (error) {
@@ -383,6 +366,30 @@ try {
     // dispatch(getprojectbyid(taskId));
   } catch (error) {
     dispatch({ type: FAIL_TICKETS, payload: error.response.data });
+  }
+};
+
+
+export const deleteImage = (ticketId, imageIndex,projectId) => async (dispatch) => {
+
+  try {
+    const response = await fetch(`http://localhost:8000/api/tickets/${ticketId}/images/${imageIndex}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    // dispatch({ type: DELETE_IMAGE, payload: response.data });
+
+    dispatch(getListTicketsByproject(projectId))
+
+    if (!response.ok) {
+      throw new Error('Failed to delete image');
+    }
+
+   
+  } catch (error) {
+    console.error('Error deleting image:', error);
   }
 };
 

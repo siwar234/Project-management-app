@@ -1,7 +1,7 @@
 import React from 'react'
 import PageContainer from 'src/components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
-import ProductPerformance from '../dashboard/components/ProductPerformance';
+import ProductPerformance from './ProjectTable';
 
 const ViewProjects = () => {
   return (

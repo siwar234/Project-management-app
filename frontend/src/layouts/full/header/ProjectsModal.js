@@ -14,8 +14,7 @@ import {
 import image from '../../../assets/images/scrum.gif';
 import { useDispatch, useSelector } from 'react-redux';
 import { createProject } from 'src/JS/actions/project';
-import { GetchEquipesOwner, fetchequipes } from 'src/JS/actions/equipe';
-import socket from './socket'; // Import the socket instance
+import { GetchEquipesOwner } from 'src/JS/actions/equipe';
 
 const ProjectsModal = ({ openProject, handleCloseProject }) => {
   const dispatch = useDispatch();
@@ -26,37 +25,9 @@ const ProjectsModal = ({ openProject, handleCloseProject }) => {
   const [selectedResponsable, setSelectedResponsable] = useState('');
   const [teamMembers, setTeamMembers] = useState([]);
  
-  // const ENDPOINT = 'http://localhost:8000';
 
   const user = useSelector((state) => state.userReducer.user);
   const userId = user._id;
-
-
-  // useEffect(() => {
-  //   const socket = io.connect('http://localhost:8000'); 
-  //     console.log(socket.on("firstevent",(msg)=>{
-  //         console.log(msg)
-  //     }));
-  
-
-   
-  // }, []);
-
-
-  // useEffect(() => {
-  //   const socket = socketIOClient(ENDPOINT);
-
-  //   // Join the user-specific room
-  //   socket.emit('join', { userId: user._id });
-
-  //   socket.on('projectAssigned', (data) => {
-  //     alert(`You have been assigned to project: ${data.projectName}`);
-  //   });
-
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, [user._id]);
 
 
  

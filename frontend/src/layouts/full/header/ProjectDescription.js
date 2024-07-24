@@ -6,7 +6,9 @@ import image1 from '../../../assets/images/bug.png';
 
 import CloseIcon from '@mui/icons-material/Close';
 
-const ProjectDescription = ({ openDescriptionModal,closeDescription ,handleOpenProject,handleOpenDescription}) => {
+const ProjectDescription = ({ openDescriptionModal,closeDescription ,handleOpenProject}) => {
+
+
   return (
     <Modal open={openDescriptionModal}>
       <Fade in={openDescriptionModal}>
@@ -320,7 +322,6 @@ const ProjectDescription = ({ openDescriptionModal,closeDescription ,handleOpenP
 ProjectDescription.propTypes = {
   openDescriptionModal: PropTypes.bool.isRequired,
   closeDescription:PropTypes.func.isRequired,
-  handleOpenDescription:PropTypes.func.isRequired,
   
 
 };

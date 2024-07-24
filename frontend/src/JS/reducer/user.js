@@ -71,7 +71,7 @@ const userReducer = (state = initialState, { type, payload }) => {
         isAdmin: payload.user.isAdmin
       };
     case LOGOUT_USER:
-      localStorage.removeItem('token');
+      localStorage.clear(); 
       return {
         ...state,
         loadUser: false,

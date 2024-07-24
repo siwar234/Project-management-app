@@ -12,6 +12,9 @@ const userSchema = new mongoose.Schema(
       trim: true,
   
     },
+
+ failedLoginAttempts: { type: Number, default: 0 },
+  lastFailedAttempt: { type: Date, default: null },
     
     isBanned: Date,
 

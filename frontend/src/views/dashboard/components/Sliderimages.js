@@ -78,7 +78,7 @@ export const Sliderimages = ({ images, isSecondGridOpen, taskId, ticketId }) => 
           {isSecondGridOpen[taskId][ticketId]?.descriptionticket?.imageD && isSecondGridOpen[taskId][ticketId]?.descriptionticket?.imageD.slice(currentIndex, currentIndex + slideNum).map((image, index) => (
             <Card
               key={index}
-              sx={{ width: '130px', minWidth: '100px', height: '100px', margin: '0 8px', transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.09)' } }}
+              sx={{ width: '110px', minWidth: '100px', height: '100px', margin: '0 8px', transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.09)' } }}
               onClick={() => openFullScreen(currentIndex + index)}
             >
               <CardActionArea>

@@ -23,33 +23,46 @@ import {
 
 } from "../actionTypes/user"
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
 
 import { jwtDecode } from 'jwt-decode';
+import io from 'socket.io-client';
+ const socket = io('http://localhost:4101');
 
-export const loginUser = (userData, navigate) => async (dispatch) => {
+ export const loginUser = (userData, navigate) => async (dispatch) => {
   dispatch({ type: LOAD_USER });
 
   try {
-      const response = await axios.post('http://localhost:8000/api/auth/login', userData);
-      dispatch({ type: SIGN_IN_USER, payload: response.data });
+    const response = await axios.post('http://localhost:8000/api/auth/login', userData);
+    
+    dispatch({ type: SIGN_IN_USER, payload: response.data });
+    
+    toast.success('Login successful!');
+    
+    navigate('/workspace'); 
 
-      const { token, user } = response.data;
-      if (user.isAdmin) {
-          navigate('/user/management');
-      } else {
-          navigate(`/profileuser/${token}/${user._id}`);
-      }
-      toast.success('Login successful!');
   } catch (error) {
-      if (error.response && error.response.status === 400 && error.response.data.message === "passwordinvalid") {
-          dispatch({ type: PASSWORD_INVALID });
+    if (error.response) {
+      if (error.response.status === 400 && error.response.data.message === "passwordinvalid") {
+        dispatch({ type: PASSWORD_INVALID });
+        toast.error('Invalid password. Please try again.');
+      } else if (error.response.status === 403 && error.response.data.message === "banned") {
+        toast.error('Your account is locked due to multiple failed login attempts. It will be locked for an hour. Please contact the admin if you need assistance.');
+        
+        socket.emit('failedAttemptnotification', {
+          email: userData.email,
+          message: 'A user has failed to login multiple times.',
+        });
+
       } else {
-          dispatch({ type: FAIL_USER, payload: error.response.data });
+        dispatch({ type: FAIL_USER, payload: error.response.data });
+        toast.error('An error occurred during login. Please try again later.');
       }
+    } else {
+      dispatch({ type: FAIL_USER, payload: error.message });
+      toast.error('An error occurred during login. Please try again later.');
+    }
   }
 };
-
 
   export const signinAfterInvitation = (activationToken,email, equipeId, password,navigate) => async (dispatch) => {
     try {

@@ -1,17 +1,15 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import PrivateRouteAD from './PrivateRouteAD';
-import PrivateRole from './PrivateRole';
+import PrivateRole from './AdminRole';
 import UserRole from './UserRole';
 
 import { useSelector } from 'react-redux';
 
 /* ****Pages***** */
 const Dashboard = React.lazy(() => import('../views/dashboard/Dashboard'));
-const SamplePage = React.lazy(() => import('../views/sample-page/SamplePage'));
-const Icons = React.lazy(() => import('../views/icons/Icons'));
-const TypographyPage = React.lazy(() => import('../views/utilities/TypographyPage'));
-const Shadow = React.lazy(() => import('../views/utilities/Shadow'));
+// const SamplePage = React.lazy(() => import('../views/sample-page/SamplePage'));
+const Icons = React.lazy(() => import('../views/Profile/Icons'));
 const ErrorPage = React.lazy(() => import('../views/authentication/Error'));
 const Register = React.lazy(() => import('../views/authentication/Register'));
 const Login = React.lazy(() => import('../views/authentication/Login'));
@@ -28,11 +26,13 @@ const DetailsProjects = React.lazy(() => import('../views/Projects/DetailsProjec
 const Redirect = React.lazy(() => import('../views/Redirect'));
 const Workspace = React.lazy(() => import('../views/dashboard/Workspace'));
 const Table = React.lazy(() => import('../views/dashboard/Table'));
-const Timeline = React.lazy(() => import('../views/dashboard/Timeline'));
+const Timeline = React.lazy(() => import('../views/dashboard/Timeline/Timeline'));
 const Statistics = React.lazy(() => import('../views/dashboard/statistics/Statistics'));
-// const MindNode = React.lazy(() => import('../views/dashboard/MindNode'));
+const Space = React.lazy(() => import('../views/dashboard/communicationspace/CommunicationSpace'));
+const MeetRoom=React.lazy(() => import('../views/dashboard/communicationspace/MeetRoom'));
+const MeetHomePage=React.lazy(() => import('../views/dashboard/communicationspace/MeetPage'));
 
-
+const Posts=React.lazy(() => import('../views/dashboard/communicationspace/PostSpace'));
 
 
 const Teams = React.lazy(() => import('../views/teams/Teams'));
@@ -40,7 +40,6 @@ const EquipeDetails = React.lazy(() => import('../views/teams/EquipeDetails'));
 
 const Router = () => {
   const isAuth = useSelector(state => state.userReducer.isAuth);
-  const user = useSelector(state => state.userReducer.user);
  
 
   return [
@@ -67,6 +66,8 @@ const Router = () => {
         { path: '*', element: <Navigate to="/auth/404" /> },
       ],
     },
+
+    
     {
       path: '/',
       element: <UserRole><FullLayout /></UserRole>,
@@ -94,7 +95,7 @@ const Router = () => {
 
     {
       path: '/',
-      element: <Layout />,
+      element:<PrivateRouteAD><Layout /></PrivateRouteAD>,
       children: [
         { path: '/workspace', exact: true, element: <Workspace /> },
        
@@ -105,7 +106,7 @@ const Router = () => {
 
     {
       path: '/projects',
-      element: !isAuth ? <Login /> :<Layout />,
+      element: !isAuth ? <Login /> : <UserRole><Layout /></UserRole>,
       children: [
         { path: '/projects/viewprojects', exact: true, element:!isAuth ? <Login /> : <Projects /> },
 
@@ -113,7 +114,7 @@ const Router = () => {
     },
     {
       path: '/projects',
-      element: !isAuth ? <Login /> :<FullLayout />,
+      element: !isAuth ? <Login /> : <UserRole><FullLayout /></UserRole>,
       children: [
         { path: '/projects/details/:projectId', exact: true, element:!isAuth ? <Login /> : <DetailsProjects /> },
 
@@ -121,13 +122,13 @@ const Router = () => {
     },
    
    
-    {
-      path: '/',
-      element: <PrivateRouteAD> <PrivateRole><FullLayout /></PrivateRole></PrivateRouteAD>,
-      children: [
-        { path: '/user/management', exact: true, element: <SamplePage /> },
-      ],
-    },
+    // {
+    //   path: '/',
+    //   element:  <PrivateRole><FullLayout /></PrivateRole>,
+    //   children: [
+    //     { path: '/user/management', exact: true, element: <SamplePage /> },
+    //   ],
+    // },
 
     {
       path: '/team',
@@ -136,6 +137,33 @@ const Router = () => {
       
         { path: '/team/teams', exact: true, element: !isAuth ? <Login /> :<Teams /> },
        { path: '/team/equipe/:id', exact: true, element:  <EquipeDetails />},
+
+
+      ],
+    },
+
+    {
+      path: '/communication/space',
+      element: !isAuth ? <Login /> :<UserRole> <FullLayout /></UserRole>,
+      children: [
+      
+        { path: '/communication/space/list/:projectId', exact: true, element: !isAuth ? <Login /> :<Space /> },
+        { path: '/communication/space/posts/:projectId/:taskId', exact: true, element: !isAuth ? <Login /> :<Posts /> },
+     
+
+
+      ],
+    },
+
+
+    {
+      path: '/communication',
+      element: !isAuth ? <Login /> :<UserRole> <Layout /></UserRole>,
+      children: [
+      
+      
+        { path: '/communication/meetRoom/:roomID', exact: true, element: !isAuth ? <Login /> :<MeetRoom /> },
+        { path: '/communication/meetHomePage/:id', exact: true, element: !isAuth ? <Login /> :<MeetHomePage /> },
 
 
       ],

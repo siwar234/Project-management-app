@@ -6,8 +6,8 @@ import {
     UPDATE_TIKCET_SUCCESS ,
     DELETE_TICKETS_SUCCESS,
     GET_ALLTICKETS_SUCCESS,
-    
-
+    DELETE_IMAGE,
+UPDATE_POSITION_SUCCESS
     
    
   } from '../actionTypes/tickets';
@@ -70,7 +70,26 @@ import {
               errors: [], 
             };
 
-        
+      
+            case UPDATE_POSITION_SUCCESS:
+              return {
+                ...state,
+              }
+
+              case DELETE_IMAGE:
+                const { ticketId, imageIndex, projectId } = payload;
+                return {
+                  ...state,
+                  tickets: state.tickets.map(ticket => {
+                    if (ticket._id === ticketId && ticket.projectId === projectId) {
+                      return {
+                        ...ticket,
+                        imagess: ticket.imagess.filter((image, index) => index !== imageIndex),
+                      };
+                    }
+                    return ticket;
+                  }),
+                };
     default:
       return state;
   }

@@ -4,35 +4,7 @@ const User = require("../models/User");
 const Role = require("../models/role");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-// exports.Register=async(req,res)=>{
-//     try{
-//         const isExisting = await User.findOne({email:req.body.email})
-//         if(isExisting){
-//             throw new Error('Email exists already')
-//         }
-//         const hashedPassword = await bcrypt.hash(req.body.password,10)
-//         const userRole = await Role.findOne({ name: 'user' });
-//         const newUser = await User.create({
-//             ...req.body,
-//             password: hashedPassword,
-//             Roles: userRole
-//               ? [{ roleId: userRole._id, name: userRole.name }]
-//               : [],
-//           });
 
-//         const {password , ...others}=newUser._doc
-
-//         res.status(201).json({
-//           sucess: true,
-//           newUser
-
-//       })
-
-//     } catch (err) {
-//         console.error(err);
-//         return res.status(500).json({ error: err.message });
-//       }
-// }
 
 const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
@@ -152,41 +124,87 @@ exports.activeEmail = async (req, res, next) => {
 };
 
 
+// Maximum allowed failed attempts
+const MAX_FAILED_ATTEMPTS = 3; 
+// Block duration in milliseconds (1 hour) 
+const BLOCK_DURATION = 60 * 60 * 1000; 
+
 exports.Login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(400).json({ message: "passwordinvalid" });
     }
-  
+
     if (!user.password) {
       throw new Error("User password is missing");
     }
-    
-    const comparePass = await bcrypt.compare(req.body.password, user.password);
-    
-    if (!comparePass) {
-      return res.status(400).json({ message: "passwordinvalid" });
-    }
-  
-    const { password, ...others } = user._doc;
 
-    if (user.isBanned > new Date()) {
+    if (user.isBanned && user.isBanned > new Date()) {
+      // Send email to banned user
+      await sendEmail({
+        email: user.email,
+        subject: 'Account Banned Notification',
+        message: `<div style="max-width: 700px; margin:auto; padding: 50px 20px; font-size: 110%;">
+        
+      <!-- Image below the main content -->
+      <div style="text-align: center; margin-top: 20px;">
+        <img src="https://www.goodday.work/site/assets/img//solutions/blocks/more-marketing-teams.png" alt="Image" style="max-width: 50%;" />
+      </div>
+            <hr style="border-top: 1px solid #fff;">
+
+        <p>Your account has been banned due to multiple failed login attempts. Please contact admin with email : nfaidhsiwar3@gmail.com to unblock your account </p>`,
+      });
+
       return res.status(403).json({ message: "banned" });
     }
-  
-    const token = jwt.sign({ id: user._id,user:others}, process.env.JWT_SECRET, {
+
+    const comparePass = await bcrypt.compare(req.body.password, user.password);
+
+    if (!comparePass) {
+      // Handle failed login attempt
+      const now = new Date();
+      if (user.lastFailedAttempt && (now - user.lastFailedAttempt) < BLOCK_DURATION) {
+        user.failedLoginAttempts += 1;
+      } else {
+        user.failedLoginAttempts = 1;
+      }
+      user.lastFailedAttempt = now;
+
+      if (user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
+        user.isBanned = new Date(now.getTime() + BLOCK_DURATION);
+        await user.save();
+
+        // Send email to banned user
+        await sendEmail({
+          email: user.email,
+          subject: 'Account Banned Notification',
+          message: '<p>Your account has been banned due to multiple failed login attempts. Please contact support for more information.</p>',
+        });
+
+        return res.status(403).json({ message: "banned" });
+      }
+
+      await user.save();
+      return res.status(400).json({ message: "passwordinvalid" });
+    }
+
+    user.failedLoginAttempts = 0;
+    user.lastFailedAttempt = null;
+    await user.save();
+
+    const { password, ...others } = user._doc;
+
+    const token = jwt.sign({ id: user._id, user: others }, process.env.JWT_SECRET, {
       expiresIn: "5h",
     });
-  
+
     return res.status(200).json({ user: others, token });
   } catch (err) {
     console.error('An error occurred during login:', err);
     return res.status(500).json({ error: "Internal server error" });
   }
-
-}
-
+};
 
 
 const createActivationToken = (payload) => {

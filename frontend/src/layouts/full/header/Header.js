@@ -136,6 +136,12 @@ const handleclosing = () => {
     setMobileSidebarOpened(true);
   };
 
+
+
+  const isAdmin =  user?.Roles?.find(role => role.name === 'admin');
+
+  
+
   return (
     <>
       <AppBar position="sticky" style={{ backgroundColor: 'white', display: 'flex' }} elevation={2}>
@@ -218,11 +224,7 @@ const handleclosing = () => {
             <img src={menu} alt="Menu" width="26" height="26" />
           </IconButton>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {/* <IconButton size="large" aria-label="show 11 new notifications" color="#f8f8f8">
-              <Badge variant="dot" color="primary">
-                <IconBellRinging size="21" stroke="1.5" />
-              </Badge>
-            </IconButton> */}
+               
         <Notifications userId={userId} />
         <Profile />
           </div>

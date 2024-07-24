@@ -1,0 +1,25 @@
+/* Define the horizontal layout for the toolbar */
+.editor-toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .editor-toolbar .rdw-inline-wrapper,
+  .editor-toolbar .rdw-block-wrapper,
+  .editor-toolbar .rdw-fontsize-wrapper,
+  .editor-toolbar .rdw-fontfamily-wrapper,
+  .editor-toolbar .rdw-list-wrapper,
+  .editor-toolbar .rdw-text-align-wrapper,
+  .editor-toolbar .rdw-link-wrapper,
+  .editor-toolbar .rdw-embedded-wrapper,
+  .editor-toolbar .rdw-emoji-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+
+  }
+  

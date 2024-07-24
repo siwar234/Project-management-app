@@ -57,6 +57,8 @@ const SidebarMenu = ({
   const userRole = user?.Roles?.find((role) => role.name === 'user');
   const dispatch = useDispatch();
   const projects = useSelector((state) => state.projectReducer.projects);
+  const unactiveProjects = projects.filter(project => !project?.archiver );
+
   const [value, setValue] = React.useState('1');
   const alltickets = useSelector((state) => state.ticketsReducer.alltickets);
 
@@ -369,7 +371,7 @@ const SidebarMenu = ({
               sx={{
                 '& .MuiMenu-paper': {
                   width: '290px',
-                  height: projects && projects.length > 0 ? '290px ' : '180',
+                  height: unactiveProjects && unactiveProjects.length > 0 ? '290px ' : '180',
                   marginTop: '45px',
                 },
               }}
@@ -380,7 +382,7 @@ const SidebarMenu = ({
                 </Typography>
               </MenuItem>
               <Divider />
-              {projects && projects.length > 0 && ( 
+              {unactiveProjects && unactiveProjects.length > 0 && ( 
                 <>
                   <Typography
                     mb={1}
@@ -394,7 +396,7 @@ const SidebarMenu = ({
                   >
                     Recent
                   </Typography>
-                  {projects && projects.slice(0, 5).map((project) => (
+                  {unactiveProjects && unactiveProjects.slice(0, 5).map((project) => (
                     <MenuItem
                       key={project?._id}
                       style={{ display: 'flex', alignItems: 'center' }}

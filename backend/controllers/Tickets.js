@@ -146,17 +146,38 @@ exports.createTickets = async (req, res) => {
 };
 
     
+exports.updateTicketPosition = async (req, res) => {
+  try {
+    const { position, Etat } = req.body;
+    const { ticketId } = req.params;
+
+    const updatedTicket = await Tickets.findByIdAndUpdate(
+      ticketId,
+      { $set: { position: position, Etat: Etat } }, // Use $set to update specific fields
+      { new: true }
+    );
+
+    if (!updatedTicket) {
+      return res.status(404).json({ error: 'Ticket not found' });
+    }
+
+    res.status(200).json(updatedTicket);
+  } catch (error) {
+    console.error('Error updating ticket position:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
   
   
   
 exports.updateTicket = async (req, res) => {
   try {
-    const { Description, ResponsibleTicket, Etat, Type, Priority,User  } = req.body;
+    const { Description, ResponsibleTicket, Etat, Type, Priority,User ,CoverImage,position } = req.body;
     
     const updatedTicket = await Tickets.findOneAndUpdate(
       { _id: req.params.id }, 
-      { Description, ResponsibleTicket, Etat, Type, Priority ,User  },
+      { Description, ResponsibleTicket, Etat, Type, Priority ,User,CoverImage,position  },
       { new: true }
     );
 
@@ -208,8 +229,32 @@ exports.updateTicket = async (req, res) => {
   }
 };
 
+//delete ticket images
+exports.deleteimage = async (req, res) => {
+  try {
+    const { ticketId, imageIndex } = req.params;
 
+    const ticket = await Tickets.findById(ticketId);
+    if (!ticket) {
+      throw new Error('Ticket not found');
+    }
 
+    // Check if imageIndex is valid
+    if (ticket.descriptionticket.imageD.length > imageIndex) {
+      // Remove the image at the specified index
+      ticket.descriptionticket.imageD.splice(imageIndex, 1);
+      
+      // Save the updated ticket
+      await ticket.save();
+      return res.status(200).json( ticket );
+    } else {
+      return res.status(400).json({ error: 'Invalid image index' });
+    }
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+}
 
 exports.updateTicketfeature = async (req, res) => {
   try {

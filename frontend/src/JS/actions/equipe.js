@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 import { getprojectbyuser } from './project';
 import { GET_PROJECT_SUCCESS,GET_PROJECTBYID_SUCCESS } from '../actionTypes/project';
- const socket = io('http://localhost:4100');
+ const socket = io('http://localhost:4101');
 
 export const createEquipe = (formData,id) => async (dispatch) => {
   // dispatch({ type: LOAD_E }); 

@@ -1,5 +1,5 @@
 import {
-  IconAperture, IconLayoutDashboard, 
+  IconAperture, IconLayoutDashboard,IconLayoutList , IconTimeline ,IconShare 
 } from '@tabler/icons';
 
 import { uniqueId } from 'lodash';
@@ -27,16 +27,29 @@ const Menuitems = (projectId) => [
   {
     id: uniqueId(),
     title: 'Table ',
-    icon: IconAperture,
+    icon: IconLayoutList,
     href: `/Table/${projectId}`,
   },
 
   {
     id: uniqueId(),
     title: 'Timeline ',
-    icon: IconAperture,
+    icon: IconTimeline,
     href: `/Timeline/${projectId}`,
   },
+
+  {
+    navlabel: true,
+    subheader: 'Communication spaces',
+  },
+
+  {
+    id: uniqueId(),
+    title: 'Communication space ',
+    icon: IconShare,
+    href: `/communication/space/list/${projectId}`,
+  },
+
   // {
   //   navlabel: true,
   //   subheader: 'STATISTICS',

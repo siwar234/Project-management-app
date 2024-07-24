@@ -10,9 +10,9 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const dispatch = useDispatch();
   const [email, setEmail] = React.useState('');
-  const [emailError, setEmailError] = React.useState(false); // State to manage email error
-  const [emailRequiredError, setEmailRequiredError] = React.useState(false); // State to manage email required error
-
+  const [emailError, setEmailError] = React.useState(false); 
+  const [emailRequiredError, setEmailRequiredError] = React.useState(false);
+  
   const handleChange = (e) => {
     const newEmail = e.target.value;
     setEmail(newEmail);

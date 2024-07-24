@@ -1,0 +1,7 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore any .zip files in node_modules
+node_modules/**/*.zip
+
+

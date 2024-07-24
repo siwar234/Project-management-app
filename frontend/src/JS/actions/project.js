@@ -9,12 +9,13 @@ import {
   UPDATE_PROJECTS,
   UPDATE_PROJECT_SUCCESS,
   GET_PROJECTBYID_SUCCESS ,
-  DELETE_PROJECT_SUCCESS
+  DELETE_PROJECT_SUCCESS,
+  ARCHIVE_PROJECT_SUCCESS
   
 } from '../actionTypes/project';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
- const socket = io('http://localhost:4100');
+ const socket = io('http://localhost:4101');
 
 export const createProject = (projectData) => async (dispatch, getState) => {
   dispatch({ type: LOAD_PROJECT });
@@ -30,6 +31,48 @@ export const createProject = (projectData) => async (dispatch, getState) => {
     dispatch(getprojectbyuser(userId));
   } catch (error) {
     dispatch({ type: FAIL_PROJECT, payload: error.message });
+  }
+};
+
+
+export const archiveProject = (projectId) => async (dispatch, getState) => {
+  dispatch({ type: LOAD_PROJECT });
+
+  try {
+    const response = await axios.put(`http://localhost:8000/api/project/archiverproject/${projectId}`,);
+
+    dispatch({ type: ARCHIVE_PROJECT_SUCCESS, payload: response.data });
+    // socket.emit('projectnotification', response.data);
+    toast.success("Project successfully archived " )
+
+    // const { user } = getState().userReducer;
+    // const userId = user._id;
+    // dispatch(getprojectbyuser(userId));
+  } catch (error) {
+    dispatch({ type: FAIL_PROJECT, payload: error.message });
+    toast.error(error.message )
+
+  }
+};
+
+
+export const unarchiveProject = (projectId) => async (dispatch, getState) => {
+  dispatch({ type: LOAD_PROJECT });
+
+  try {
+    const response = await axios.put(`http://localhost:8000/api/project/unarchiverproject/${projectId}`,);
+
+    dispatch({ type: ARCHIVE_PROJECT_SUCCESS, payload: response.data });
+    // socket.emit('projectnotification', response.data);
+    toast.success("Project successfully restored " )
+
+    // const { user } = getState().userReducer;
+    // const userId = user._id;
+    // dispatch(getprojectbyuser(userId));
+  } catch (error) {
+    dispatch({ type: FAIL_PROJECT, payload: error.message });
+    toast.error(error.message )
+
   }
 };
 

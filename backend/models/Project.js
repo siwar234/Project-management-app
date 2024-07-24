@@ -26,6 +26,8 @@ const projectSchema = new mongoose.Schema(
     Equipe: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipe' },
     
     Responsable: { type: ObjectId, ref: 'User' },
+    
+    archiver :   { type: Boolean },
 
 
      type: {

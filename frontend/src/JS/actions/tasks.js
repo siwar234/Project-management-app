@@ -19,7 +19,7 @@ import {
 } from '../actionTypes/tasks';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
- const socket = io('http://localhost:4100');
+ const socket = io('http://localhost:4101');
 export const createTasks = (tasksData) => async (dispatch) => {
   dispatch({ type: LOAD_TASKS });
 

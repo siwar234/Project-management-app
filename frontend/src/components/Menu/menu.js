@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box, Divider, TextField } from '@mui/material';
 import { relatedtask } from 'src/JS/actions/tasks';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import DiscussionSpaceModal from 'src/views/dashboard/communicationspace/DiscussionModal';
 
 export default function LongMenu({
   setDeletemodal,
@@ -17,7 +18,8 @@ export default function LongMenu({
   options,
   MoreVertIconstyle,
   ticketId,
-  projectId
+  projectId,
+  task
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isRelateTaskDropdownOpen, setIsRelateTaskDropdownOpen] = useState(false);
@@ -34,6 +36,15 @@ export default function LongMenu({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);}
 
   const handleOpenDelete = (taskId) => {
     setDeletemodal((prevState) => ({
@@ -106,12 +117,12 @@ export default function LongMenu({
         <MoreVertIcon />
       </IconButton>
       <Menu id="long-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}
-  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
-  transformOrigin={{ vertical: 'Top', horizontal: 'right' }}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} 
+  transformOrigin={{ vertical: 'Top', horizontal: 'left' }}
 
       sx={{
         '& .MuiMenu-paper': {
-          width: '150px',
+          width: '210px',
         },
       }}>
         {options.map((option) => (
@@ -136,7 +147,7 @@ export default function LongMenu({
                   sx={{
                     '& .MuiMenu-paper': {
                       width: '220px',
-                      marginTop: '115px',
+                      marginTop: '150px',
                     },
                   }}
                 >
@@ -186,9 +197,11 @@ export default function LongMenu({
                   deletingticketflag(ticketId);
                 } else if (option === 'delete ticket') {
                   handledelete(ticketId);
-                } else {
-                  handleClose();
+                } else if(option==="Add To a discussion space") {
+                  handleOpenModal();
                 }
+                else  {
+                  handleClose()}
               }}
             >
               {option}
@@ -197,6 +210,7 @@ export default function LongMenu({
         </div>
       ))}
     </Menu>
+    <DiscussionSpaceModal  open={isModalOpen} handleClose={handleCloseModal} task={task} projectId={projectId} />
   </div>
 );
 }

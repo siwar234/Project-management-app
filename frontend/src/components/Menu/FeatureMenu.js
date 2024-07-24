@@ -1,16 +1,12 @@
-
-
-import React, { useEffect,useState} from 'react';
-import {  Box, TextField ,MenuItem, ListItem, Checkbox,Menu} from '@mui/material';
+import React, { useState } from 'react';
+import { Box, TextField, MenuItem, ListItem, Checkbox, Menu } from '@mui/material';
 import Button from '@mui/material/Button';
 import { IoIosArrowDown } from 'react-icons/io';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-
-export default function FeatureMenu  ({handleMenuToggle,isMenuOpen,anchorEl,handleMenuClose,selectedFeatures,setSelectedFeatures})  {
+export default function FeatureMenu({ handleMenuToggle, isMenuOpen, anchorEl, handleMenuClose, selectedFeatures, setSelectedFeatures }) {
     const [searchQuery, setSearchQuery] = useState('');
-    //FILTER TICKETS
 
     const handleFeatureCheckboxChange = (feature) => {
         if (selectedFeatures.includes(feature)) {
@@ -25,11 +21,10 @@ export default function FeatureMenu  ({handleMenuToggle,isMenuOpen,anchorEl,hand
     const filteredFeatures = features.filter((feature) =>
         feature.titleF.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    
 
-  return (
-    <>
-    <Button
+    return (
+        <>
+            <Button
                 onClick={handleMenuToggle}
                 id="feature-menu-button"
                 aria-controls={isMenuOpen ? 'feature-menu' : undefined}
@@ -41,8 +36,7 @@ export default function FeatureMenu  ({handleMenuToggle,isMenuOpen,anchorEl,hand
                     fontWeight: '800',
                     marginLeft: '28px',
                     marginTop: '3px',
-                    marginBottom:"25px",
-
+                    marginBottom: "25px",
                 }}
             >
                 Features{' '}
@@ -71,7 +65,7 @@ export default function FeatureMenu  ({handleMenuToggle,isMenuOpen,anchorEl,hand
                 sx={{
                     '& .MuiMenu-paper': {
                         width: '280px',
-                        height: '200px' ,
+                        height: '200px',
                     },
                 }}
             >
@@ -88,26 +82,24 @@ export default function FeatureMenu  ({handleMenuToggle,isMenuOpen,anchorEl,hand
                 />
                 <Box style={{ overflow: "auto", maxHeight: "100px" }}>
                     {filteredFeatures.map((feature, index) => (
-                        <ListItem key={index} disablePadding>
-                            <MenuItem sx={{ 
-        width: "280px", 
-        '&:hover': { 
-            borderLeft: '2px solid #7caaff', 
-            backgroundColor: 'rgb(231 236 251 / 85%)' 
-        }
-    }}>
+                        <MenuItem key={index} sx={{
+                            width: "280px",
+                            '&:hover': {
+                                borderLeft: '2px solid #7caaff',
+                                backgroundColor: 'rgb(231 236 251 / 85%)'
+                            }
+                        }}>
                             <FormControlLabel
-                    control={<Checkbox
-                        checked={selectedFeatures.includes(feature.titleF)}
-                        onChange={() => handleFeatureCheckboxChange(feature.titleF)}
-                        size="small" />}
-                    label={feature.titleF}
-                />
-                            </MenuItem>
-                        </ListItem>
+                                control={<Checkbox
+                                    checked={selectedFeatures.includes(feature.titleF)}
+                                    onChange={() => handleFeatureCheckboxChange(feature.titleF)}
+                                    size="small" />}
+                                label={feature.titleF}
+                            />
+                        </MenuItem>
                     ))}
                 </Box>
-               </Menu>
-               </>
-  )
+            </Menu>
+        </>
+    )
 }
