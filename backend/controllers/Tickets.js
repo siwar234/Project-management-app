@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const Tickets=require('../models/Tickets');
 const Task = require('../models/Tasks');
 const Features = require('../models/Features');
-const Notification = require('../models/Notifications');  
-// const { getUser } = require('../../socket/index');
+const { predictAndUpdateTicketDuration } = require('../controllers/Tasks');
+const moment = require('moment');
+const { io } = require("../server") 
 
-const { ObjectId } = require('mongoose').Types;
 
 
 exports.createTickets = async (req, res) => {
@@ -28,11 +28,16 @@ exports.createTickets = async (req, res) => {
           Type: Type || '',
       });
 
+
+
       const savedTicket = await tickets.save();
 
 
       await Task.findByIdAndUpdate(TaskId, { $push: { tickets: savedTicket._id } });
 
+ // Predict and update the estimated duration for the newly created ticket
+ console.log('Calling predictAndUpdateTicketDuration for ticket:', savedTicket._id);
+ await predictAndUpdateTicketDuration(savedTicket._id);
      
       res.status(201).json(savedTicket);
   } catch (error) {
@@ -953,6 +958,68 @@ exports.deleteticketflag = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
+
+function calculateEndDate(createdAt, estimatedDuration) {
+  if (!createdAt || !estimatedDuration) {
+    throw new Error('Both createdAt and estimatedDuration must be provided');
+  }
+
+  // Define a variable to hold the number of days to add
+  let daysToAdd = 0;
+
+  // Check if the estimatedDuration includes "day" or "week"
+  const durationParts = estimatedDuration.split(' ');
+
+  for (let i = 0; i < durationParts.length; i += 2) {
+    const durationValue = parseInt(durationParts[i]);
+    const durationUnit = durationParts[i + 1].toLowerCase();
+
+    if (durationUnit.includes('day')) {
+      daysToAdd += durationValue; // Add days directly
+    } else if (durationUnit.includes('week')) {
+      daysToAdd += durationValue * 7; // Convert weeks to days
+    }
+  }
+
+  const endDate = new Date(createdAt);
+  endDate.setDate(endDate.getDate() + daysToAdd); // Add the total days
+
+  return endDate;
+}
+
+
+exports.updateAllTicketsEtat = async (io) => {
+  try {
+    const tickets = await Tickets.find({ Etat: { $ne: 'DONE' } }).exec(); 
+    for (const ticket of tickets) {
+    
+      if (ticket.createdAt && ticket.EstimatedDuration) {
+        const endDate = calculateEndDate(ticket.createdAt, ticket.EstimatedDuration);
+        
+        if (new Date() >= endDate) {
+          ticket.Etat = 'DONE';
+          await ticket.save();
+          io.emit('ticketUpdated', ticket); 
+        }
+      } else {
+        console.warn(`Ticket ${ticket._id} has undefined createdAt or EstimatedDuration.`);
+      }
+    }
+  } catch (error) {
+    console.error('Error updating ticket statuses:', error);
+  }
+};
+
+
+
+
+
+// cron.schedule('0 * * * *', async () => {
+//   console.log('Checking ticket statuses...');
+//   await updateAllTicketsEtat();
+// });
 
 
 

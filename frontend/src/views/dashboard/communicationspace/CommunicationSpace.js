@@ -57,10 +57,10 @@ const CommunicationSpace = () => {
     setSearchQuery(event.target.value);
   };
 
-  // Filter communication spaces based on the search query
-  const filteredSpaces = communicationSpaces.filter((space) =>
-    space.projectId.Equipe.NameEquipe.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredSpaces = Array.isArray(communicationSpaces) ? communicationSpaces.filter((space) =>
+    space?.projectId?.Equipe?.NameEquipe.toLowerCase().includes(searchQuery.toLowerCase())
+  ) : [];
+  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -143,7 +143,7 @@ const CommunicationSpace = () => {
             }}
           >
             {activeTab === 'yourSpaces' &&
-              (filteredSpaces.length > 0 ? (
+              (filteredSpaces && filteredSpaces.length > 0 ? (
                 filteredSpaces.map((space) => (
                   <>
                     <ListItem
@@ -167,7 +167,7 @@ const CommunicationSpace = () => {
 
                       />
                       
-                      {space.Privacy==="Privacy" && (
+                      {space.Privacy==="private" && (
                         <Tooltip title={`Private Space: only members of  ${space.projectId.Equipe.NameEquipe}`}>
                         <img src={image1} alt='image1' style={{width:"30px" ,height:"30px",marginRight:"50px"}} /></Tooltip>)
 }

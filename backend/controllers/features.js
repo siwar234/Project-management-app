@@ -6,13 +6,7 @@ exports.createFeature = async (req, res) => {
   try {
     const { titleF, startDate,endDate ,projectId} = req.body;
 
-    // let ticket;
-    // if (ticketid) {
-    //   ticket = await Tickets.findById(ticketid);
-    //   if (!ticket) {
-    //     return res.status(400).json({ error: 'ticket not found' });
-    //   }
-    // }
+  
 
     const feature = new Feature({
         titleF: titleF,
@@ -31,15 +25,6 @@ exports.createFeature = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-// exports.getListfeatures = async (req, res) => {
-//     try {
-//       const feature = await Feature.find()
-//       res.status(200).json(feature);
-//     } catch (err) {
-//       res.status(404).json({ error: err.message });
-//     }
-//   }
 
 
 

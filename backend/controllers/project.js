@@ -3,6 +3,7 @@ const Equipe = require('../models/Equipe');
 const Notification = require('../models/Notifications');  
 // const { getUser, io } = require('../../socket/index'); 
 
+const mongoose = require('mongoose');
 
 exports.createProject = async (req, res) => {
   try {
@@ -27,24 +28,6 @@ exports.createProject = async (req, res) => {
 
     await project.save();
 
-    // if (ResponsableId) {
-    //   const notification = new Notification({
-    //     responsible_user: ResponsableId,
-    //     project: project._id,
-    //     read: false,
-    //     sender: senderId,
-    //   });
-    //   await notification.save();
-
-    //   console.log(`Checking for user with ResponsableId: ${ResponsableId}`);
-    //   const user = getUser(ResponsableId);
-    //   if (user) {
-    //     console.log(`Emitting notification to user with socketId ${user.socketId}`);
-    //     io.to(user.socketId).emit('notification', notification);
-    //   } else {
-    //     console.log('User not found or not connected');
-    //   }
-    // }
     const populatedProject = await Project.findById(project._id).populate('User');
 
     res.status(201).json(populatedProject);
@@ -57,17 +40,26 @@ exports.createProject = async (req, res) => {
 
 exports.UpdateProject = async (req, res) => {
   try {
-      const data = await Project.findOneAndUpdate(
-        { _id: req.params.id },
-        req.body,
-        { new: true }
-      );
-      res.status(201).json(data);
-    
+    console.log('Updating project with ID:', req.params.id);
+    console.log('Update data:', req.body);
+
+    const data = await Project.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
+
+    if (!data) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    res.status(200).json(data);
   } catch (error) {
-    console.log(error.message);
+    console.error('Error updating project:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 
 exports.archiverproject = async (req, res) => {
@@ -112,22 +104,35 @@ exports.unarchiverproject = async (req, res) => {
     throw error;
   }
 };
+exports.getProject = async (req, res) => {
+  const { id } = req.params;
 
-  exports.getProject = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const project = await Project.findById(id).populate('Responsable', 'firstName profilePicture').populate({
+  // Validate ID format
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid project ID format' });
+  }
+
+  try {
+    const project = await Project.findById(id)
+      .populate('Responsable', 'firstName profilePicture')
+      .populate({
         path: 'Equipe',
         populate: [
           { path: 'members.memberId', model: 'User' },
-          { path: 'owner', model: 'User' } 
-        ] 
+          { path: 'owner', model: 'User' }
+        ]
       });
-      res.status(200).json(project);
-    } catch (err) {
-      res.status(404).json({ error: err.message });
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
     }
+
+    res.status(200).json(project);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
   }
+};
+
 
 
   // exports.getAllProject = async (req, res) => {

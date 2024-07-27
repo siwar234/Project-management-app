@@ -68,6 +68,7 @@ const favouiteRoute = require('./routes/favourites');
 const userRoute = require('./routes/user');
 const notificationRoute = require('./routes/notifications');
 const communicationRoute = require('./routes/CommunicationSpace');
+const { updateAllTicketsEtat } = require('./controllers/Tickets');
 // Google OAuth strategy
 require("./controllers/google-auth")(passport);
 
@@ -89,12 +90,13 @@ app.use("/api/communicationspace", communicationRoute);
 app.use('/pdf', express.static(path.join(__dirname, 'pdf')));
 
 // Start server
-const PORT = process.env.PORT || 8001; 
+const PORT = process.env.PORT ; 
+if (process.env.NODE_ENV !== 'test') {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
+}
 app.use('/pdf', express.static(path.join(__dirname,  'pdf')));
 
 app.get('/api/pdf/:filename', (req, res) => {
@@ -124,13 +126,14 @@ const io = require('socket.io')(server, {
 });
 
 
+if (process.env.NODE_ENV !== 'test') {
 
 
 server.listen(PORTT, () => {
   console.log(`Socket server running on port ${PORTT}`);
 });
 
-
+}
 
 
 const parseDuration = (durationStr) => {
@@ -140,6 +143,11 @@ const parseDuration = (durationStr) => {
 
 
 
+cron.schedule('0 0 * * *', async () => {
+  console.log('Checking ticket statuses...');
+  
+  await updateAllTicketsEtat(io); 
+});
 
 
 
@@ -384,6 +392,7 @@ const checkOverdueTasks = async () => {
   }
 }
 
+if (process.env.NODE_ENV !== 'test') {
 
 io.on('connection', (socket) => {
   console.log('New client connected');
@@ -483,29 +492,7 @@ io.on('connection', (socket) => {
   });
 
     
-  // socket.on('leaveTeamnotification', async (data) => {
-  //   // console.log('new project:', data);
-  //   try {
 
-  //     const notificationData = new Notification({
-  //       type: 'leaveTeamnotification',
-  //       data: data,
-  //       read: false,
-  //       responsible_user: data.owner,
-  //       timestamp: new Date(),
-  //     });
-
-  //     const savedNotification = await notificationData.save();
-  //     // console.log('Notification saved to MongoDB:', savedNotification);
-
-  //     // Emit 'messages' event to all connected clients with type project
-  //     io.emit('messages', { type: 'leaveTeamnotification', ...notificationData._doc });
-
-      
-  //   } catch (error) {
-  //     console.error('Error handling project notification:', error);
-  //   }
-  // });
 
 
       
@@ -541,9 +528,10 @@ io.on('connection', (socket) => {
     console.log('Client disconnected');
   });
 });
+}
 
 
-
+if (process.env.NODE_ENV !== 'test') {
 
 cron.schedule('0 */3 * * *', () => {
   // console.log('Running checkOverdueTasks every 3 hours');
@@ -555,42 +543,7 @@ cron.schedule('0 */3 * * *', () => {
   
 });
 
-// const OpenAIApi = require('openai');
-
-// Ensure API key is loaded from environment variables
-// const apiKey = process.env.OPENAI_API_KEY;
-
-// async function testOpenAI() {
-//   try {
-//       // Check if apiKey is defined
-//       if (!apiKey) {
-//           throw new Error('OpenAI API key not found');
-//       }
-
-//       // Initialize OpenAI API instance
-//       const openai = new OpenAIApi({
-//           apiKey: apiKey,
-//       });
-
-//       // Example prompt to test
-//       const prompt = 'This is a test prompt.';
-
-//       // Make a test call to OpenAI API
-//       const response = await openai.completions.create({
-//           model: 'text-davinci-003',
-//           prompt: prompt,
-//           max_tokens: 50, // Adjust max tokens as needed
-//       });
-
-//       console.log('Response from OpenAI:', response);
-//   } catch (error) {
-//       console.error('Error testing OpenAI API:', error);
-//   }
-// }
-
-// // Call the function to test
-// testOpenAI();
-
+}
 
 
 
@@ -602,5 +555,5 @@ cron.schedule('0 */3 * * *', () => {
 //   // approachingDeadline()
 // });
 
+module.exports = {app,io};
 
-module.exports = app; 

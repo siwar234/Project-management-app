@@ -15,8 +15,11 @@ const TicketsSchema = new mongoose.Schema(
         trim: true,
     
       },
-
-
+      
+      EstimatedDuration: {
+        type: String,
+      },
+      
       descriptionticket: {
         imageD: [{
           type: String,

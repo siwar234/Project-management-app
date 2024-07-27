@@ -8,46 +8,33 @@ const bcrypt = require("bcrypt");
 const { activeEmail } = require('../controllers/auth');
 const Role = require("../models/role");
 const Project = require('../models/Project');
-const { emitUpdateProjects } = require('../server'); // Adjust the path as per your file structure
 
-exports.createEquipe = async (req, res) => {
+const createEquipe = async (req, res) => {
   try {
-      const { NameEquipe, emails } = req.body;
-      const id = req.params.id; 
+    const { NameEquipe, emails } = req.body;
+    const id = req.params.id;
 
-      const equipes = await Equipe.create({ NameEquipe: NameEquipe, owner: id });
+    console.log('Creating equipe with:', { NameEquipe, id });
 
-      await sendInvitations(equipes._id, emails);
+    const equipe = await Equipe.create({ NameEquipe, owner: id });
 
-      return res.status(201).json({ success: true, equipes });
+    console.log('Equipe created:', equipe);
+
+    await sendInvitations(equipe._id, emails); 
+
+    return res.status(201).json({  equipes: equipe });
   } catch (error) {
-      console.error('Error creating equipe:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+    console.error('Error creating equipe:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
 
-exports.invitepeople = async (req, res) => {
-  try{
-    const id = req.params.id; 
-
-
-    const {  emails } = req.body;
-
-  await sendInvitations(id, emails);
-
-  return res.status(201).json({ success: true });
-} catch (error) {
-  console.error('sending invitation :', error);
-  return res.status(500).json({ error: 'Internal server error' });
-}}
-
-
-
-  const sendInvitations = async (equipeId, emails) => {
+ const sendInvitations = async (equipeId, emails) => {
     try {
       const equipe = await Equipe.findById(equipeId);
-  
+      console.log('Sending invitations for equipe:', equipe);
+
 
       for (const email of emails) {
 
@@ -87,7 +74,7 @@ exports.invitepeople = async (req, res) => {
 
  
   
-  const sendEmail = async ({ email, subject, message }) => {
+ const  sendEmail = async ({ email, subject, message }) => {
     try {
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -117,7 +104,25 @@ exports.invitepeople = async (req, res) => {
   };
 
 
- exports.signinAfterInvitation = async (req, res) => {
+  
+const invitepeople = async (req, res) => {
+  try{
+    const id = req.params.id; 
+
+
+    const {  emails } = req.body;
+
+  await sendInvitations(id, emails);
+
+  return res.status(201).json({ success: true });
+} catch (error) {
+  console.error('sending invitation :', error);
+  return res.status(500).json({ error: 'Internal server error' });
+}}
+
+
+
+ const signinAfterInvitation = async (req, res) => {
     try {
         const user = jwt.verify(req.params.activation_token, process.env.JWT_SECRET);
         const { email } = user;
@@ -139,25 +144,7 @@ exports.invitepeople = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // let equipe;
-
-        // // Check if the team exists
-        // if (equipeId) {
-        //     equipe = await Equipe.findById(equipeId);
-        //     if (!equipe) {
-        //         console.log('Team not found, proceeding with signup only.');
-        //     }
-        // }
-
-        // // If the team exists and the user is not already a member, add the user to the team
-        // if (equipe && !existingUser.equipes.includes(equipeId)) {
-        //     existingUser.equipes.push(equipeId);
-        //     await existingUser.save();
-
-        //     equipe.members.push({ memberId: existingUser._id });
-        //     await equipe.save();
-        // }
-
+        
         const { password, ...userWithoutPassword } = existingUser._doc;
         const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, { expiresIn: '5h' });
 
@@ -169,7 +156,7 @@ exports.invitepeople = async (req, res) => {
 };
 
 
-exports.addtoteam = async (req, res) => {
+const addtoteam = async (req, res) => {
   try {
     const user = jwt.verify(req.params.activation_token, process.env.JWT_SECRET);
     const { email } = user;
@@ -235,7 +222,7 @@ exports.addtoteam = async (req, res) => {
 
 
 
-exports.UpdateEquipe = async (req, res) => {
+const UpdateEquipe = async (req, res) => {
   try {
       const data = await Equipe.findOneAndUpdate(
         { _id: req.params.id },
@@ -250,7 +237,7 @@ exports.UpdateEquipe = async (req, res) => {
 };
 
 
-exports.getEquipesByUserId = async (req, res) => {
+const getEquipesByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
     const equipes = await Equipe.find({ $or: [{ 'owner': userId }, { 'members.memberId': userId }] })
@@ -264,7 +251,7 @@ exports.getEquipesByUserId = async (req, res) => {
 }
 
 
-exports.getEquipesByOwner = async (req, res) => {
+const getEquipesByOwner = async (req, res) => {
   try {
     const userId = req.params.userId;
     const equipes = await Equipe.find({ 'owner': userId })
@@ -281,7 +268,7 @@ exports.getEquipesByOwner = async (req, res) => {
 
 
 
-exports.getListequipes = async (req, res) => {
+const getListequipes = async (req, res) => {
   try {
     const equipes = await Equipe.find()
     res.status(200).json(equipes);
@@ -294,7 +281,7 @@ exports.getListequipes = async (req, res) => {
 
 
 
-exports.getEquipesById = async (req, res) => {
+const getEquipesById = async (req, res) => {
   try {
     const{id}=req.params;
     const equipes = await Equipe.findById(id).populate('owner') 
@@ -306,7 +293,7 @@ exports.getEquipesById = async (req, res) => {
   }
 }
 
-exports.deleteEquipeById = async (req, res) => {
+const deleteEquipeById = async (req, res) => {
 
   try {
     const equipeId = req.params.equipeId;
@@ -326,7 +313,7 @@ exports.deleteEquipeById = async (req, res) => {
   }
 };
 
-exports.leaveTeam = async (req, res) => {
+const leaveTeam = async (req, res) => {
   try {
     const equipeId = req.params.equipeId;
     const id = req.params.id; 
@@ -362,7 +349,7 @@ exports.leaveTeam = async (req, res) => {
 
 
 
-exports.signupAfterInvitation = async (req, res) => {
+const signupAfterInvitation = async (req, res) => {
 
   try {
 
@@ -416,7 +403,7 @@ exports.signupAfterInvitation = async (req, res) => {
 
 
 
-exports.addLink = async (req, res) => {
+const addLink = async (req, res) => {
   try {
     const { equipeId } = req.params;
     const { webAddress, title, description } = req.body;
@@ -442,7 +429,7 @@ exports.addLink = async (req, res) => {
   }
 };
 
-exports.updateLink = async (req, res) => {
+const updateLink = async (req, res) => {
   try {
     const { equipeId, linkId } = req.params;
     const { webAddress, title, description } = req.body;
@@ -472,7 +459,7 @@ exports.updateLink = async (req, res) => {
 };
 
 
-exports.getLinks = async (req, res) => {
+const getLinks = async (req, res) => {
   try {
     const { equipeId } = req.params;
 
@@ -490,7 +477,7 @@ exports.getLinks = async (req, res) => {
 };
 
 
-exports.deleteLink = async (req, res) => {
+const deleteLink = async (req, res) => {
   try {
     const { equipeId, linkId } = req.params;
 
@@ -517,3 +504,24 @@ exports.deleteLink = async (req, res) => {
 
 
 
+module.exports = {
+  createEquipe,
+  getListequipes,
+  getEquipesByOwner,
+  getEquipesByUserId,
+  UpdateEquipe,
+  signupAfterInvitation,
+  sendInvitations,
+  sendEmail,
+  signinAfterInvitation,
+  addtoteam,
+  deleteLink,
+  getLinks,
+  invitepeople,
+  updateLink,
+  addLink,
+  leaveTeam,
+  getEquipesById,
+  deleteEquipeById,
+  // Export other functions
+};

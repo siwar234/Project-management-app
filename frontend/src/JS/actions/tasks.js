@@ -12,8 +12,9 @@ import {
   UPDATE_SECOND_GRID,
   CLOSE_SECOND_GRID,
   GET_ALL_TASKS_SUCCESS,
-  RELATE_TASKS_SUCCESS
+  RELATE_TASKS_SUCCESS,
   
+  UPDATE_TICKET_IN_TASK
   
   
 } from '../actionTypes/tasks';
@@ -92,13 +93,21 @@ export const getTasks = (projectId) => async (dispatch) => {
   try {
     const response = await axios.get(`http://localhost:8000/api/tasks/getlisttask/${projectId}`);
     dispatch({ type: GET_TASKS_SUCCESS, payload: response.data });
-    // socket.emit('overdueTask', response.data);
-
+    socket.on('updateTickets')
    
   } catch (error) {
     dispatch({ type: FAIL_TASKS, payload: error.message });
   }
 };
+
+
+export const updateTicketInTask = (updatedTicket) => {
+  return {
+    type: UPDATE_TICKET_IN_TASK,
+    payload: updatedTicket,
+  };
+};
+
 
 export const updateSecondGrid = (ticketId, taskId, ticket) => ({
   

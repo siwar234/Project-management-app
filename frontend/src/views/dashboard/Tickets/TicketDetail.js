@@ -367,6 +367,11 @@ const insertImages = (editorState, imageUrls) => {
                       <h3 style={{ marginLeft: '20px' }}>
                         {isSecondGridOpen[taskId][ticketId].Description}
                       </h3>
+                      {isSecondGridOpen[taskId][ticketId].EstimatedDuration && (
+                      <h4 style={{ marginLeft: '20px' }}>
+                       EstimatedDuration :  {isSecondGridOpen[taskId][ticketId].EstimatedDuration}
+                      </h4>)}
+
                       <div
                         style={{
                           display: 'flex',

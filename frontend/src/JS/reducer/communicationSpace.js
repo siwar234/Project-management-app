@@ -15,7 +15,7 @@ import {
   const initialState = {
     loading: false,
     communicationSpaces: [],
-    error: null,
+        error: null,
     posts: {},
   };
   

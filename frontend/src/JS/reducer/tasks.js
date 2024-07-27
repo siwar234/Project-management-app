@@ -14,7 +14,7 @@ import {
   UPDATE_SECOND_GRID,
   CLOSE_SECOND_GRID,
   UPDATE_TIKCETS_FLAG_SUCCESS,
-
+  UPDATE_TICKET_IN_TASK,
 VOTE_TICKET,
 DELETE_VOTE,
 DELETE_COMMENT,
@@ -253,17 +253,18 @@ case UPDATE_TIKCETSFEATURE_SUCCESS:
         };
 
       
-      // case UPDATE_SECOND_GRID:
-      //   const { taskId, ticketId, ticket } = payload;
-      //   return {
-      //     ...state,
-      //     isSecondGridOpen: {
-      //       ...state.isSecondGridOpen,
-      //       [taskId]: {
-      //         [ticketId]: ticket, 
-      //       },
-      //     },
-      //   };
+        case UPDATE_TICKET_IN_TASK:
+          return {
+            ...state,
+            tasks: state.tasks.map((task) => {
+              return {
+                ...task,
+                tickets: task.tickets.map((ticket) =>
+                  ticket._id === payload._id ? payload : ticket
+                ),
+              };
+            }),
+          };
 
       case UPDATE_SECOND_GRID:
     const { taskId, ticketId, ticket } = payload;

@@ -1,5 +1,6 @@
 const express = require('express');
-const { createTasks, getListTasksByproject, updateTask, deleteTaskbyid, moveTicket, getAlltasks, relatedTasks, unrelatedTasks } = require('../controllers/Tasks');
+const {  getListTasksByproject, updateTask, deleteTaskbyid, moveTicket, getAlltasks, relatedTasks, unrelatedTasks,
+    predictAndUpdateTicketDuration, createTasks } = require('../controllers/Tasks');
 const router = express.Router()
 
 
@@ -15,6 +16,8 @@ router.put('/move-ticket', moveTicket);
 
 router.put('/relatedtask/:taskId/:relatedTaskId', relatedTasks);
 router.put('/unrelatedtask/:taskId', unrelatedTasks);
+
+router.post('/tasks/:ticketId/predict-duration', predictAndUpdateTicketDuration);
 
 module.exports = router;
 

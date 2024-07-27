@@ -27,7 +27,7 @@ import { getprojectbyid, updateProjects } from 'src/JS/actions/project';
 import { useParams } from 'react-router';
 import LongMenu from 'src/components/Menu/menu';
 import { createTickets, updatetickets, updateticketsFeature } from 'src/JS/actions/Tickets';
-import { close, getTasks, unrelatedtask, updateSecondGrid } from 'src/JS/actions/tasks';
+import { close, getTasks, unrelatedtask, updateSecondGrid, updateTicketInTask } from 'src/JS/actions/tasks';
 
 import AddIcon from '@mui/icons-material/Add';
 import WorkflowMenu from './Tickets/WorkflowMenu';
@@ -48,7 +48,7 @@ import TicketDetail from './Tickets/TicketDetail';
 import { FcLink } from 'react-icons/fc';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:4000'); // Replace with your server URL
+const socket = io('http://localhost:4101'); 
 // components
 
 const Dashboard = () => {
@@ -69,8 +69,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getprojectbyid(projectId));
-    dispatch(getTasks(projectId));
-
+      dispatch(getTasks(projectId)); 
+    
+      socket.on('ticketUpdated', (updatedTicket) => {
+        // console.log('Updated Ticket Received:', updatedTicket);
+        dispatch(updateTicketInTask(updatedTicket));
+      });
     socket.on('updateProjects', (updatedProjects) => {
       dispatch(updateProjects(updatedProjects));
     });
@@ -478,7 +482,7 @@ const Dashboard = () => {
                           transform: isTaskOpen(task._id) ? 'rotateX(180deg)' : 'none',
                         }}
                       />
-                      <span style={{ marginRight: '8px', fontSize: '15px', marginLeft: '6px' }}>
+                      <span style={{ marginRight: '8px', fontSize: isSecondGridOpen ? '12px' :'15px', marginLeft: '6px' }}>
                         {task.TaskName}{' '}
                         {task.StartDate && task.EndDate && (
                           <span style={{ fontSize: '12px', marginLeft: '12px', color: '#55576c' }}>

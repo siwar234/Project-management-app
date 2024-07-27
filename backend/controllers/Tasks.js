@@ -5,7 +5,13 @@ const Tickets=require('../models/Tickets');
 const Feature = require('../models/Features');
 const Equipe = require('../models/Equipe');
 const Project = require('../models/Project');
+const axios = require('axios'); // Import Axios
+const env = require('dotenv').config();
+const fetch = require('node-fetch'); 
+global.fetch = fetch; 
+global.Headers = fetch.Headers; // Add this line to define Headers globally
 
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 // const cron = require('node-cron');
 
 exports.updateTask = async (req, res) => {
@@ -187,25 +193,28 @@ exports.moveTicket = async (req, res) => {
 
 
 exports.createTasks = async (req, res) => {
-    try {
-      const { TaskName, Duration,projectId } = req.body;
-     
-    
-      const tasks = new Tasks({
-        TaskName: TaskName,
-        Duration: Duration,       
-        projectId:projectId
-      });
-  
-      await tasks.save();
-      
-  
-      res.status(201).json(tasks);
-    } catch (error) {
-      console.error('Error creating tasks:', error);
-      res.status(500).json({ error: 'Internal server error' });
+  try {
+    const { TaskName, Duration, projectId } = req.body;
+
+    if (!projectId || !mongoose.Types.ObjectId.isValid(projectId)) {
+      throw new Error('Invalid or missing projectId');
     }
-  };
+
+    const newTask = new Tasks({
+      TaskName,
+      Duration,
+      projectId,
+    });
+
+    const savedTask = await newTask.save();
+
+    res.status(201).json(savedTask);
+  } catch (error) {
+    console.error('Error creating tasks:', error);
+    res.status(400).json({ message: error.message });
+  }
+};
+
 
   exports.getListTasksByproject = async (req, res) => {
     try {
@@ -356,102 +365,126 @@ exports.getAlltasks = async (req, res) => {
   }
 };
 
-// const parseDuration = (durationStr) => {
-//   const weeks = parseInt(durationStr); 
-//   return weeks * 7 * 24 * 60 * 60 * 1000; 
+
+
+
+
+
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
+// exports.predictAndUpdateTaskDuration = async (req, res) => {
+//   try {
+//     const taskId = req.params.taskId;
+//     console.log('Starting prediction for task:', taskId);
+
+//     const task = await Tasks.findById(taskId).populate('tickets').populate('projectId').exec();
+//     if (!task) {
+//       console.log('Task not found:', taskId);
+//       return res.status(404).json({ error: 'Task not found' });
+//     }
+//     console.log('Task retrieved:', task);
+
+//     const taskData = {
+//       TaskName: task.TaskName,
+//       project: task.projectId.projectName,
+//       tickets: task.tickets.map(ticket => ({
+//         Description: ticket.Description,
+//       }))
+//     };
+
+//     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+//     const prompt = `
+//     Task: ${taskData.TaskName}
+//     Project: ${taskData.project}
+//     Tickets:
+//     ${taskData.tickets.map(ticket => `- ${ticket.Description}`).join('\n')}
+    
+//     Question: Please provide an estimated duration for completing this task in weeks (e.g., 1 week, 2 weeks, 3 weeks, 4 weeks). Just provide the number of weeks.
+//   `;
+
+
+//     console.log('Requesting prediction from Gemini API with prompt:', prompt);
+
+//     const result = await model.generateContent(prompt);
+//     const response = await result.response;
+
+//     // Ensure the response is valid and has the expected structure
+//     if (!response || !response.text) {
+//       console.error('Invalid response from Gemini API');
+//       return res.status(500).json({ error: 'Invalid response from Gemini API' });
+//     }
+
+//     const predictedDuration = response.text(); // Adjust based on the actual response structure
+//     task.Duration = predictedDuration;
+//     await task.save();
+
+//     console.log('Task duration updated successfully:', predictedDuration);
+//     res.status(200).json({ success: true, predictedDuration });
+//   } catch (error) {
+//     console.error('Error in predicting and updating task duration:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
 // };
 
-// const checkOverdueTasks = async () => {
-//   try {
-//     const now = new Date();
 
-//     const overdueTasks = await Tasks.find({
-//       $or: [
-//         // Condition 1: Task has startDate and duration, endDate is null, and it's past its duration
-//         {
-//           $and: [
-//             { StartDate: { $exists: true } },
-//             { Duration: { $exists: true } },
-//             { EndDate: { $eq: null } },
-//             {
-//               $expr: {
-//                 $lt: [
-//                   { $add: ['$StartDate', parseDuration('$Duration')] },
-//                   now,
-//                 ],
-//               },
-//             },
-//           ],
-//         },
-//         // Condition 2: Task has startDate and endDate, check if it's past the calculated duration
-//         {
-//           $and: [
-//             { StartDate: { $exists: true } },
-//             { EndDate: { $exists: true } },
-//             {
-//               $expr: {
-//                 $lt: [
-//                   { $add: ['$StartDate', { $subtract: ['$EndDate', '$StartDate'] }] },
-//                   now,
-//                 ],
-//               },
-//             },
-//           ],
-//         },
-//       ],
-//     }).populate({
-//       path: 'tickets',
-//       match: { Etat: { $ne: 'DONE' } },
-//     }).populate({
-//       path: 'tickets',
-//       populate: [
-//         { path: 'ResponsibleTicket', model: 'User' },
-//         { path: 'Feature', model: 'Features' },
-//         { path: 'votes', model: 'User' },
-//         {
-//           path: 'comments',
-//           populate: { path: 'commenterId', model: 'User' }
-//         },
-//         { path: 'projectId', model: 'Project' },
-//       ]
-//     }).populate('projectId');
+exports.predictAndUpdateTicketDuration = async (ticketId) => {
+  try {
+    console.log('Starting prediction for ticket:', ticketId);
 
-//     for (const task of overdueTasks) {
-//       // Check if all tickets within the task are not done
-//       const allTicketsNotDone = task.tickets.every(ticket => ticket.Etat !== 'DONE');
+    const ticket = await Tickets.findById(ticketId)
+      .populate('featureid')
+      .populate('projectId')
+      .populate('TaskId')
+      .exec();
 
-//       if (allTicketsNotDone) {
-//         const notificationData = new Notification({
-//           type: 'overdueTask',
-//           data: task,
-//           read: false,
-//           responsible_user: task.projectId.Responsable,
-//           timestamp: new Date(),
-//         });
+    if (!ticket) {
+      console.log('Ticket not found:', ticketId);
+      throw new Error('Ticket not found');
+    }
+    console.log('Ticket retrieved:', ticket);
 
-//         const savedNotification = await notificationData.save();
-//         console.log('Notification saved to MongoDB:', savedNotification);
+    const ticketData = {
+      Description: ticket.Description,
+      TaskName: ticket.TaskId.TaskName,
+      Priority: ticket.Priority,
+      ProjectName: ticket.projectId.projectName,
+    };
 
-//         // Emit 'overdueTask' event to all connected clients
-//         io.emit('messages', { type: 'overdueTask', ...savedNotification._doc });
-//       }
-//     }
-//   } catch (error) {
-//     console.error('Error checking overdue tasks:', error);
-//   }
-// }
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-// // Schedule the checkOverdueTasks function to run every 5 seconds
-// cron.schedule('*/5 * * * * *', () => {
-//   console.log('Running checkOverdueTasks every 5 seconds');
-//   checkOverdueTasks();
-// });
+    const prompt = `
+      Ticket Description: ${ticketData.Description}
+      Task Name: ${ticketData.TaskName}
+      Priority: ${ticketData.Priority}
+      Project Name: ${ticketData.ProjectName}
 
+      Question: Please provide an estimated duration for completing this ticket based on its details. Just return 1 day, 2 days, 1 week, 2 weeks, 3 weeks, or 4 weeks.
+    `;
 
-// // Schedule the checkOverdueTasks function to run every 5 seconds
-// cron.schedule('*/5 * * * * *', () => {
-//   console.log('Running checkOverdueTasks every 5 seconds');
-//   checkOverdueTasks();
-// });
+    console.log('Requesting prediction from Gemini API with prompt:', prompt);
 
+    const result = await model.generateContent(prompt);
+    const response = result?.response;
 
+    if (!response || typeof response.text !== 'function') {
+      console.error('Invalid response from Gemini API');
+      throw new Error('Invalid response from Gemini API');
+    }
+
+    const responseText = await response.text();
+    console.log('Received response from Gemini API:', responseText);
+
+    // Extract the duration from the response text (days and weeks)
+    const durationPattern = /\b(1|2)\s*(days?|weeks?)\b/g; // Matches 1 day, 2 days, 1 week, or 2 weeks
+    const matches = responseText.match(durationPattern);
+    const predictedDuration = matches ? matches.join(', ') : 'Unknown duration'; // Join multiple matches if any
+
+    ticket.EstimatedDuration = predictedDuration;
+    await ticket.save();
+
+    console.log('Ticket duration updated successfully:', predictedDuration);
+  } catch (error) {
+    console.error('Error in predicting and updating ticket duration:', error);
+  }
+};
