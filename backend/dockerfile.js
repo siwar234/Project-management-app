@@ -1,20 +1,23 @@
-# Use an official Node runtime as a parent image
-FROM node:14-alpine
+# Use the official Node.js image as the base image
+FROM node:16
 
-# Set the working directory inside the container
-WORKDIR /app
+# Set the working directory
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install npm dependencies
-RUN npm install --production
+# Install dependencies
+RUN npm install
 
-# Copy the entire local directory to the working directory inside the container
+# Install nodemon globally
+RUN npm install -g nodemon
+
+# Copy the rest of the application code
 COPY . .
 
-# Expose the port your app runs on (typically 3000 for Node.js applications)
+# Expose port 8000
 EXPOSE 8000
 
-# Command to run the application
-CMD ["npm", "start"]
+# Command to run the app
+CMD ["nodemon", "server.js"]
