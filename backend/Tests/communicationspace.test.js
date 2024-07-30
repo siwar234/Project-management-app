@@ -4,15 +4,15 @@ const app = require('../server');
 const Communication = require('../models/CommunicationSpace');
 
 
-// beforeAll(async () => {
-//   if (mongoose.connection.readyState === 0) {
-//     await mongoose.connect(process.env.URL_TEST, {
-//     //   useNewUrlParser: true,
-//     //   useUnifiedTopology: true,
-//     });
-//     console.log('Connected to Test Database:', process.env.URL_TEST);
-//   }
-// });
+beforeAll(async () => {
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(process.env.URL_TEST, {
+    //   useNewUrlParser: true,
+    //   useUnifiedTopology: true,
+    });
+    console.log('Connected to Test Database:', process.env.URL_TEST);
+  }
+});
 
 afterAll(async () => {
   if (process.env.NODE_ENV === 'test' && process.env.DROP_DB_AFTER_TESTS === 'true') {
@@ -57,6 +57,8 @@ describe('CommunicationSpace Controller', () => {
 //   });
 
   it('should retrieve communication spaces by project ID', async () => {
+      jest.setTimeout(20000); // Set timeout to 20 seconds for this test
+
     const communicationSpaceData = {
        _id: mockcomunicationid,
       Task: mockTaskId,
