@@ -4,15 +4,13 @@ const { app } = require('../server');
 const Task = require('../models/Tasks');
 const Ticket = require('../models/Tickets');
 const Feature = require('../models/Features');
-const Project = require('../models/Project');
-jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suitable duration
 
-mongose.connect(process.env.URL_TEST, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).catch((err) => {
-  // console.log(err);
-});
+// mongoose.connect(process.env.URL_TEST, {
+// //   useNewUrlParser: true,
+// //   useUnifiedTopology: true,
+// }).catch((err) => {
+//   console.log(err);
+// });
 
 beforeAll(async () => {
   if (mongose.connection.readyState === 0) {

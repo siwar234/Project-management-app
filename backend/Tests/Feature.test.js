@@ -2,11 +2,7 @@ const request = require('supertest');
 const mongose = require('mongoose');
 const { app } = require('../server');
 const Feature = require('../models/Features');
-const Ticket = require('../models/Tickets');
-const Task = require('../models/Tasks');
-const Project = require('../models/Project');
-const Equipe = require('../models/Equipe');
-const User = require('../models/User'); 
+
 jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suitable duration
 
 mongose.connect(process.env.URL_TEST, {
