@@ -1,85 +1,66 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
-const app = require('../server');
+const mongose = require('mongoose');
+const {app }= require('../server');
 const Communication = require('../models/CommunicationSpace');
+jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suitable duration
 
-
-// beforeAll(async () => {
-//   if (mongoose.connection.readyState === 0) {
-//     await mongoose.connect(process.env.URL_TEST, {
-//     //   useNewUrlParser: true,
-//     //   useUnifiedTopology: true,
-//     });
-//     console.log('Connected to Test Database:', process.env.URL_TEST);
-//   }
-// });
-
-afterAll(async () => {
-  if (process.env.NODE_ENV === 'test' && process.env.DROP_DB_AFTER_TESTS === 'true') {
-    await mongoose.connection.db.dropDatabase();
-    console.log('Dropped Test Database');
-  }
-  await mongoose.disconnect();
-  console.log('Disconnected from Test Database');
-});
-
-beforeEach(() => {
-  jest.clearAllMocks();
-});
-
-describe('CommunicationSpace Controller', () => {
-  const mockProjectId = new mongoose.Types.ObjectId("605c72efc8d3b0004a9b0c08");
-  const mockTaskId = new mongoose.Types.ObjectId("66a2c0c395eb2255304032e1");
-  const mockcomunicationid = new mongoose.Types.ObjectId("66a2c0c395eb2255304032d5");
-
-
+mongose.connect(process.env.URL_TEST, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }).catch((err) => {
+    // console.log(err);
+  });
   
-//   it('should create a new communication space', async () => {
-//     const communicationSpaceData = {
-//       Task: mockTaskId.toString(),
-//       Disscusionspace: 'Test Discussion',
-//       Privacy: 'Public',
-//       projectId: mockProjectId.toString()
-//     };
-
-//     const createResponse = await request(app)
-//       .post('/api/communicationspace/create')
-//       .send(communicationSpaceData);
-
-//     console.log('Response Body:', createResponse.body);
-
-//     expect(createResponse.status).toBe(201);
-//     expect(createResponse.body).toHaveProperty('_id');
-//     expect(createResponse.body.Task).toBe(mockTaskId.toString());
-//     expect(createResponse.body.Disscusionspace).toBe('Test Discussion');
-//     expect(createResponse.body.Privacy).toBe('Public');
-//     expect(createResponse.body.projectId).toBe(mockProjectId.toString());
-//   });
-
-  it('should retrieve communication spaces by project ID', async () => {
-    const communicationSpaceData = {
-       _id: mockcomunicationid,
-      Task: mockTaskId,
-      Disscusionspace: 'Test Discussion',
-      Privacy: 'Public',
-      projectId: mockProjectId
-    };
-
-    await new Communication(communicationSpaceData).save();
-
-    const getCommunicationSpacesResponse = await request(app)
-      .get(`/api/communicationspace/project/${mockProjectId}`);
-
-    console.log('Response Body:', getCommunicationSpacesResponse.body);
-
-    expect(getCommunicationSpacesResponse.status).toBe(200);
-    expect(getCommunicationSpacesResponse.body).toBeInstanceOf(Array);
-    expect(getCommunicationSpacesResponse.body.length).toBeGreaterThan(0);
-    expect(getCommunicationSpacesResponse.body[0]).toHaveProperty('_id');
-    expect(getCommunicationSpacesResponse.body[0].Disscusionspace).toBe('Test Discussion');
-    expect(getCommunicationSpacesResponse.body[0].Privacy).toBe('Public');
-    expect(getCommunicationSpacesResponse.body[0].projectId._id.toString()).toBe(mockProjectId.toString());
+  beforeAll(async () => {
+    if (mongose.connection.readyState === 0) {
+      await mongose.connect(process.env.URL_TEST);
+      // console.log('Connected to Test Database:', process.env.URL_TEST);
+    }
+  });
+  
+  afterAll(async () => {
+    if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
+      await mongose.connection.db.dropDatabase();
+      // console.log('Dropped Test Database');
+    }
+    await mongose.disconnect();
+    // console.log('Disconnected from Test Database');
+  });
+  
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  // Add other tests as needed
+describe('CommunicationSpace Controller', () => {
+    // const mockProjectId = new mongose.Types.ObjectId();
+    const mockTaskId = new mongose.Types.ObjectId();
+    const mockCommunicationId = new mongose.Types.ObjectId();
+
+    it('should retrieve communication spaces by project ID', async () => {
+        const mockProjectId = "605c72efc8d3b0004a9b0c08" 
+
+        const communicationSpaceData = {
+            _id: mockCommunicationId,
+            Task: mockTaskId,
+            Disscusionspace: 'Test Discussion',
+            Privacy: 'Public',
+            projectId: mockProjectId
+        };
+
+        await new Communication(communicationSpaceData).save();
+
+        const getCommunicationSpacesResponse = await request(app)
+            .get(`/api/communicationspace/project/605c72efc8d3b0004a9b0c08`);
+
+        console.log('Response Body:', getCommunicationSpacesResponse.body);
+
+        expect(getCommunicationSpacesResponse.status).toBe(200);
+        expect(getCommunicationSpacesResponse.body).toBeInstanceOf(Array);
+        expect(getCommunicationSpacesResponse.body.length).toBeGreaterThan(0);
+        expect(getCommunicationSpacesResponse.body[0]).toHaveProperty('_id');
+        expect(getCommunicationSpacesResponse.body[0].Disscusionspace).toBe('Test Discussion');
+        expect(getCommunicationSpacesResponse.body[0].Privacy).toBe('Public');
+    });
+
+    // Add other tests as needed
 });

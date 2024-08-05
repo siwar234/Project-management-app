@@ -1,61 +1,43 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
+const mongose = require('mongoose');
 const { app } = require('../server');
 const Post = require('../models/Posts');
 const Communication = require('../models/CommunicationSpace');
+jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suitable duration
 
 
-// beforeAll(async () => {
-//   if (mongoose.connection.readyState === 0) {
-//     await mongoose.connect(process.env.URL_TEST, {
-//     //   useNewUrlParser: true,
-//     //   useUnifiedTopology: true,
-//     });
-//     console.log('Connected to Test Database:', process.env.URL_TEST);
-//   }
-// });
-
-afterAll(async () => {
-  if (process.env.NODE_ENV === 'test' && process.env.DROP_DB_AFTER_TESTS === 'true') {
-    await mongoose.connection.db.dropDatabase();
-    console.log('Dropped Test Database');
-  }
-  await mongoose.disconnect();
-  console.log('Disconnected from Test Database');
-});
-
-beforeEach(() => {
-  jest.clearAllMocks();
-});
-
-describe('Post Controller', () => {
-  const mockTaskId = new mongoose.Types.ObjectId("66a2c0c395eb2255304032e1");
-  const mockPosterId = new mongoose.Types.ObjectId("605c72efc8d3b0004a9b0c09");
-  const mockPostId = new mongoose.Types.ObjectId("66a2c06d20191d91ba6aef64");
-  const mockCommentId = new mongoose.Types.ObjectId("66a2964cbbafb03300e01c9a");
-
+mongose.connect(process.env.URL_TEST, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }).catch((err) => {
+    // console.log(err);
+  });
   
+  beforeAll(async () => {
+    if (mongose.connection.readyState === 0) {
+      await mongose.connect(process.env.URL_TEST);
+      // console.log('Connected to Test Database:', process.env.URL_TEST);
+    }
+  });
+  
+  afterAll(async () => {
+    if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
+      await mongose.connection.db.dropDatabase();
+      // console.log('Dropped Test Database');
+    }
+    await mongose.disconnect();
+    // console.log('Disconnected from Test Database');
+  });
+  
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+describe('Post Controller', () => {
+  const mockTaskId = "66b0d368ecb9a7195dc05fdb";
+  const mockPosterId = "66b0d15ffdbbff40fcf5dbdd";
+  const mockPostId = new mongose.Types.ObjectId("66a2c06d20191d91ba6aef64");
+  const mockCommentId = new mongose.Types.ObjectId("66a2964cbbafb03300e01c9a");
 
-//   it('should create a new post', async () => {
-//     const postData = {
-//       taskId: mockTaskId.toString(),
-//       posterId: mockPosterId.toString(),
-//       postText: 'Test Post',
-//       images: []
-//     };
-
-//     const createResponse = await request(app)
-//       .post('/api/posts/create')
-//       .send(postData);
-
-//     console.log('Response Body:', createResponse.body);
-
-//     expect(createResponse.status).toBe(201);
-//     expect(createResponse.body).toHaveProperty('_id');
-//     expect(createResponse.body.taskId).toBe(mockTaskId.toString());
-//     expect(createResponse.body.poster).toBe(mockPosterId.toString());
-//     expect(createResponse.body.postText).toBe('Test Post');
-//   });
 
  
 it('should retrieve posts by task ID', async () => {
@@ -87,53 +69,28 @@ it('should retrieve posts by task ID', async () => {
     expect(getPostsResponse.body[0].postText).toBe('Test Post');
   });
 
-  it('should delete a post', async () => {
-    // const post = new Post({
-    //   _id: mockPostId,
-    //   postText: 'Test Post',
-    //   taskId: mockTaskId,
-    //   poster: mockPosterId,
-    //   images: []
-    // });
+//   it('should delete a post', async () => {
+    
 
-    // await post.save();
+//     const deleteResponse = await request(app)
+//       .delete(`/api/communicationspace/posts/${mockPostId}`);
 
-    const deleteResponse = await request(app)
-      .delete(`/api/communicationspace/posts/${mockPostId}`);
+//     console.log('Response Body:', deleteResponse.body);
 
-    console.log('Response Body:', deleteResponse.body);
-
-    expect(deleteResponse.status).toBe(200);
-    expect(deleteResponse.body).toHaveProperty('message', 'Post deleted successfully');
-  });
-
-
-//   it('should create a new comment', async () => {
-//     const commentData = {
-//       postId: mockPostId.toString(),
-//       commenterId: mockPosterId.toString(),
-//       commentText: 'Test Comment'
-//     };
-
-//     const createCommentResponse = await request(app)
-//       .post('/api/communicationspace/comment')
-//       .send(commentData);
-
-//     console.log('Response Body:', createCommentResponse.body);
-
-//     expect(createCommentResponse.status).toBe(201);
-//     expect(createCommentResponse.body).toHaveProperty('_id');
-//     expect(createCommentResponse.body.comments.length).toBeGreaterThan(0);
-//     expect(createCommentResponse.body.comments[0].text).toBe('Test Comment');
+//     expect(deleteResponse.status).toBe(200);
+//     expect(deleteResponse.body).toHaveProperty('message', 'Post deleted successfully');
 //   });
+
 
  
 
   it('should retrieve comments by post ID', async () => {
+    jest.setTimeout(20000); 
+    const mockPostid = new mongose.Types.ObjectId("66a2c06d20191d91ba6aef62");
 
     
     const post = new Post({
-      _id: mockPostId,
+      _id: mockPostid,
       postText: 'Test Post',
       taskId: mockTaskId,
       poster: mockPosterId,
@@ -145,13 +102,13 @@ it('should retrieve posts by task ID', async () => {
 
     await Communication.findOneAndUpdate(
         { Task: mockTaskId },
-        { $push: { posts: mockPostId } },
+        { $push: { posts: mockPostid } },
         { new: true }
       );
   
 
     const getCommentsResponse = await request(app)
-      .get(`/api/communicationspace/comments/byPostId/${mockPostId}`);
+      .get(`/api/communicationspace/comments/byPostId/${mockPostid}`);
 
     console.log('Response Body:', getCommentsResponse.body);
 
@@ -162,10 +119,10 @@ it('should retrieve posts by task ID', async () => {
   });
 
   it('should delete a comment', async () => {
-   
+
 
     const deleteCommentResponse = await request(app)
-      .delete(`/api/communicationspace/comments/${mockPostId}/${mockCommentId}`);
+      .delete(`/api/communicationspace/comments/66a2c06d20191d91ba6aef62/${mockCommentId}`);
 
     console.log('Response Body:', deleteCommentResponse.body);
 

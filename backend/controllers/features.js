@@ -33,6 +33,8 @@ exports.createFeature = async (req, res) => {
     try {
         const { projectId } = req.params;
 
+        
+
         const features = await Feature.find({ projectId }).populate('Tickets').populate({
           path: 'Tickets',
           populate: [
@@ -55,7 +57,9 @@ exports.updateFeature = async (req, res) => {
             req.body,
             { new: true }
         );
-
+        if (!updatedFeature) {
+          return res.status(404).json({ message: 'Feature not found' });
+        }
         res.status(200).json({ updatedFeature });
     } catch (error) {
         console.error('Error:', error); 

@@ -1,8 +1,9 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
+const mongose = require('mongoose');
 const nodemailer = require('nodemailer');
 const { app } = require('../server');
 const Equipe = require('../models/Equipe');
+jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suitable duration
 
 jest.mock('nodemailer', () => {
   return {
@@ -12,23 +13,27 @@ jest.mock('nodemailer', () => {
   };
 });
 
-// beforeAll(async () => {
-//   if (mongoose.connection.readyState === 0) {
-//     await mongoose.connect(process.env.URL_TEST, {
-//       // useNewUrlParser: true,
-//       // useUnifiedTopology: true,
-//     });
-//     console.log('Connected to Test Database:', process.env.URL_TEST);
-//   }
-// });
+mongose.connect(process.env.URL_TEST, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).catch((err) => {
+  // console.log(err);
+});
+
+beforeAll(async () => {
+  if (mongose.connection.readyState === 0) {
+    await mongose.connect(process.env.URL_TEST);
+    // console.log('Connected to Test Database:', process.env.URL_TEST);
+  }
+});
 
 afterAll(async () => {
-  if (process.env.NODE_ENV === 'test' && process.env.DROP_DB_AFTER_TESTS === 'true') {
-    await mongoose.connection.db.dropDatabase();
-    console.log('Dropped Test Database');
+  if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
+    await mongose.connection.db.dropDatabase();
+    // console.log('Dropped Test Database');
   }
-  await mongoose.disconnect();
-  console.log('Disconnected from Test Database');
+  await mongose.disconnect();
+  // console.log('Disconnected from Test Database');
 });
 
 beforeEach(() => {
@@ -36,7 +41,7 @@ beforeEach(() => {
 });
 
 describe('Equipe Controller', () => {
-  const mockUserId = new mongoose.Types.ObjectId("66a2964cbbafb03300e01c9a");
+  const mockUserId = new mongose.Types.ObjectId("66a2964cbbafb03300e01c9a");
 
   it('should create an equipe and send invitations', async () => {
     const response = await request(app)

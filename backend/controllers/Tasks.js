@@ -9,7 +9,7 @@ const axios = require('axios'); // Import Axios
 const env = require('dotenv').config();
 const fetch = require('node-fetch'); 
 global.fetch = fetch; 
-global.Headers = fetch.Headers; // Add this line to define Headers globally
+global.Headers = fetch.Headers;
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 // const cron = require('node-cron');
@@ -59,6 +59,8 @@ exports.deleteTaskbyid = async (req, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
+
+    
     const tickets = await Tickets.find({ TaskId: taskId });
     const ticketIds = tickets.map(ticket => ticket._id);
 
@@ -433,7 +435,6 @@ exports.predictAndUpdateTicketDuration = async (ticketId) => {
     console.log('Starting prediction for ticket:', ticketId);
 
     const ticket = await Tickets.findById(ticketId)
-      .populate('featureid')
       .populate('projectId')
       .populate('TaskId')
       .exec();

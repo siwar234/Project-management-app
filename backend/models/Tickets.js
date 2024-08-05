@@ -46,7 +46,7 @@ const TicketsSchema = new mongoose.Schema(
      
     },
      
-    featureid: { type: ObjectId, ref: 'Features' },
+    // featureid: { type: ObjectId, ref: 'Features' },
       
       ResponsibleTicket : { type: ObjectId, ref: 'User' },
 
@@ -102,8 +102,8 @@ const TicketsSchema = new mongoose.Schema(
 }],
 
 
-      Feature:
-        { type: ObjectId, ref: 'Features' },
+   Feature: { type: mongoose.Schema.Types.ObjectId, ref: 'Features' },
+
       
        
         Priority :{type: String,
