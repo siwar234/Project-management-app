@@ -1,36 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-
 import { Modal, Fade, TextField, Tooltip, Typography, Chip, Box, Button } from '@mui/material';
 import image from '../../../assets/images/10590.jpg';
 import { BsExclamationCircleFill } from 'react-icons/bs';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createEquipe } from 'src/JS/actions/equipe';
+import { createEquipe, GetchEquipesOwner } from 'src/JS/actions/equipe';
+import * as Yup from 'yup';
 
 const TeamsModal = ({ ouvrir, handleClosee }) => {
   const dispatch = useDispatch();
   const [equipeName, setEquipeName] = useState('');
-  const [inputValue, setInputValue] = useState('');
-  const [emails, setEmails] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState('');
+  const [emails, setEmails] = useState([]);
+  const [equipeNameError, setEquipeNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+
+  const user = useSelector((state) => state.userReducer.user);
 
   const handleInputChange = (event) => {
     setSelectedEmail(event.target.value);
+    setEmailError('');
   };
 
   const handleInputKeyDown = (event) => {
     if (event.key === 'Enter' && selectedEmail.trim() !== '') {
-      setEmails([...emails, selectedEmail.trim()]);
-      setSelectedEmail('');
+      if (Yup.string().email().isValidSync(selectedEmail.trim())) {
+        setEmails([...emails, selectedEmail.trim()]);
+        setSelectedEmail('');
+      } else {
+        setEmailError('Invalid email address');
+      }
     }
   };
 
   const handleDeleteEmail = (index) => {
     setEmails(emails.filter((_, idx) => idx !== index));
   };
-  const user = useSelector((state) => state.userReducer.user);
-  const [equipeNameError, setEquipeNameError] = useState('');
+
+  const handleEquipeNameChange = (e) => {
+    setEquipeNameError('');
+    setEquipeName(e.target.value);
+  };
 
   const handleSubmit = () => {
     if (equipeName.trim() === '') {
@@ -42,17 +52,16 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
       NameEquipe: equipeName,
       emails: emails,
     };
-    dispatch(createEquipe(formData, user._id));
+
+    dispatch(createEquipe(formData, user?._id));
+    dispatch(GetchEquipesOwner(user?._id));
+
     setEmails([]);
     setEquipeName('');
     setEquipeNameError('');
-
-};
-
-const handleEquipeNameChange = (e) => {
-  setEquipeNameError('');
-  setEquipeName(e.target.value);
-};
+    setEmailError('');
+    handleClosee(); 
+  };
 
   return (
     <Modal open={ouvrir}>
@@ -95,8 +104,7 @@ const handleEquipeNameChange = (e) => {
             </div>
             <div style={{ marginRight: '20px', flex: 'column' }}>
               <Typography variant="body1" gutterBottom mt={10} mb={4} fontWeight={'150'}>
-                Gather everyone into a single team that you can @mention, filter, and assign work
-                to.
+                Gather everyone into a single team that you can @mention, filter, and assign work to.
               </Typography>
               <Typography variant="body1" gutterBottom>
                 Team Name <span style={{ color: 'red' }}>*</span>
@@ -110,15 +118,13 @@ const handleEquipeNameChange = (e) => {
                 value={equipeName}
                 onChange={handleEquipeNameChange}
                 error={!!equipeNameError}
-              helperText={equipeNameError}
+                helperText={equipeNameError}
               />
-
               <Typography variant="body2" color={'#8D8B8B'} fontWeight={'200'}>
                 Who can see your team name?{' '}
                 <Tooltip
                   width="10px"
-                  title="Your team name is visible to
-                       all members of your organization."
+                  title="Your team name is visible to all members of your organization."
                   arrow
                   style={{ maxWidth: '50px' }} // Set the maximum width
                 >
@@ -144,9 +150,11 @@ const handleEquipeNameChange = (e) => {
                 fullWidth
                 variant="outlined"
                 placeholder="Enter email addresses"
-                value={inputValue.length > 0 ? `${inputValue}, ${selectedEmail}` : selectedEmail}
+                value={selectedEmail}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
+                error={!!emailError}
+                helperText={emailError}
               />
               <Box
                 maxWidth="100%"
@@ -154,7 +162,6 @@ const handleEquipeNameChange = (e) => {
                 style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
-
                   marginTop: '25px',
                   paddingRight: '20px',
                 }}
@@ -166,7 +173,7 @@ const handleEquipeNameChange = (e) => {
                   type="submit"
                   onClick={handleClosee}
                 >
-                  close
+                  Close
                 </Button>
                 <Button
                   color="primary"

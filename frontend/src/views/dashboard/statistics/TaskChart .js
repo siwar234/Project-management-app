@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux'; // Importing useSelector from react-redux
-import { CircularProgress, Typography } from '@mui/material'; // Importing MUI components
+import { useSelector } from 'react-redux'; 
+import { CircularProgress, Typography } from '@mui/material'; 
 
 const TaskChart = () => {
-  const tasks = useSelector((state) => state.tasksReducer.alltasks); // Retrieving tasks from Redux store
+  const tasks = useSelector((state) => state.tasksReducer.alltasks); 
   const [filteredTasks, setFilteredTasks] = useState([]);
-  const [chartInstance, setChartInstance] = useState(null); // State variable to store the chart instance
+  const [chartInstance, setChartInstance] = useState(null); 
   const chartRef = useRef(null);
 
   useEffect(() => {
     if (tasks.length > 0) {
-      const filteredTasks = tasks.filter(task => task.tickets && task.tickets.etat === 'TO DO'); // Filter tasks with state 'TO DO'
+      // Filter tasks with state 'TO DO'
+      const filteredTasks = tasks.filter(task => task.tickets && task.tickets.etat === 'TO DO'); 
       setFilteredTasks(filteredTasks);
     }
   }, [tasks]);
@@ -24,7 +25,7 @@ const TaskChart = () => {
           datasets: [{
             label: 'Number of Tasks',
             data: [filteredTasks.length],
-            backgroundColor: 'rgba(54, 162, 235, 0.5)', // Blue color
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
             borderWidth: 1
           }]
         },
@@ -33,7 +34,6 @@ const TaskChart = () => {
             y: {
               ticks: {
                 callback: (value, index, values) => {
-                  // No numbers, returning empty strings
                   return '';
                 }
               }
@@ -49,7 +49,7 @@ const TaskChart = () => {
         }
       });
 
-      setChartInstance(chartInstance); // Store the chart instance in state
+      setChartInstance(chartInstance); 
     }
   }, [filteredTasks]);
 

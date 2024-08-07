@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import PrivateRouteAD from './PrivateRouteAD';
-import PrivateRole from './AdminRole';
 import UserRole from './UserRole';
 
 import { useSelector } from 'react-redux';
@@ -52,7 +51,7 @@ const Router = () => {
         { path: '/profileuser/:token/:id', exact: true, element: !isAuth ? <Login /> : <Icons />  },
        
 
-        { path: '*', element: <Navigate to="/auth/404" /> },
+        { path: '*', element: <ErrorPage /> },
       ],
     },
 
@@ -63,7 +62,7 @@ const Router = () => {
         { path: '/redirect', exact: true, element:  <Redirect />  },
        
 
-        { path: '*', element: <Navigate to="/auth/404" /> },
+        { path: '*', element: <ErrorPage /> },
       ],
     },
 

@@ -10,17 +10,26 @@ const env = require('dotenv').config();
 const fetch = require('node-fetch'); 
 global.fetch = fetch; 
 global.Headers = fetch.Headers;
+const moment = require('moment'); 
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-// const cron = require('node-cron');
 
 exports.updateTask = async (req, res) => {
   try {
     const { TaskName, Duration, StartDate, EndDate } = req.body;
-    
+    const taskId = req.params.id;
+
+    let calculatedEndDate = EndDate;
+
+    if (!EndDate && Duration && StartDate) {
+      const durationWeeks = parseInt(Duration, 10);
+      calculatedEndDate = moment(StartDate).add(durationWeeks, 'weeks').toDate();
+    }
+
+    // Update the task
     const updatedTask = await Tasks.findOneAndUpdate(
-      { _id: req.params.id }, 
-      { TaskName, Duration, StartDate, EndDate },
+      { _id: taskId },
+      { TaskName, Duration, StartDate, EndDate: calculatedEndDate },
       { new: true }
     );
 
@@ -28,26 +37,68 @@ exports.updateTask = async (req, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
-    const originalTask = await Tasks.findById(req.params.id).populate('related').populate('tickets').populate({
-      path: 'tickets',
-      populate: [
-        { path: 'ResponsibleTicket', model: 'User' },
-        { path: 'Feature', model: 'Features' } ,
-        { path: 'votes', model: 'User' } ,
-        { 
-          path: 'comments', 
-          populate: { path: 'commenterId', model: 'User' } 
+    if (StartDate) {
+      // search forrrrr tickets related to the updated task
+      const tickets = await Tickets.find({ TaskId: taskId });
+
+      // tickets ids based on featuresss
+      const featureIds = new Set(tickets.map(ticket => ticket.Feature).filter(feature => feature));
+
+      for (const featureId of featureIds) {
+        const feature = await Feature.findById(featureId);
+
+        if (feature) {
+          // Find all tasks related to this feature
+          const relatedTasks = await Tickets.find({ Feature: featureId }).distinct('TaskId');
+
+          let earliestStartDate = null;
+          let latestEndDate = null;
+
+          for (const taskId of relatedTasks) {
+            const task = await Tasks.findById(taskId);
+            if (task) {
+              if (!earliestStartDate || new Date(task.StartDate) < new Date(earliestStartDate)) {
+                earliestStartDate = task.StartDate;
+              }
+              if (!latestEndDate || new Date(task.EndDate) > new Date(latestEndDate)) {
+                latestEndDate = task.EndDate;
+              }
+            }
+          }
+
+          //  feature with the earliest(recent ) start date and latest end date
+          await Feature.findOneAndUpdate(
+            { _id: featureId },
+            {
+              startDate: earliestStartDate,
+              endDate: latestEndDate
+            }
+          );
         }
+      }
+    }
 
+    const originalTask = await Tasks.findById(taskId)
+      .populate('related')
+      .populate('tickets')
+      .populate({
+        path: 'tickets',
+        populate: [
+          { path: 'ResponsibleTicket', model: 'User' },
+          { path: 'Feature', model: 'Features' },
+          { path: 'votes', model: 'User' },
+          { path: 'comments', populate: { path: 'commenterId', model: 'User' } }
+        ]
+      });
 
-      ]
-    });
-    res.status(200).json(originalTask); 
+    res.status(200).json(originalTask);
+
   } catch (error) {
     console.error('Error updating task:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 exports.deleteTaskbyid = async (req, res) => {
   try {
@@ -439,7 +490,7 @@ exports.predictAndUpdateTicketDuration = async (ticketId) => {
       .populate('TaskId')
       .exec();
 
-    if (!ticket) {
+    if (!ticket) {cr
       console.log('Ticket not found:', ticketId);
       throw new Error('Ticket not found');
     }
@@ -479,7 +530,7 @@ exports.predictAndUpdateTicketDuration = async (ticketId) => {
     // Extract the duration from the response text (days and weeks)
     const durationPattern = /\b(1|2)\s*(days?|weeks?)\b/g; // Matches 1 day, 2 days, 1 week, or 2 weeks
     const matches = responseText.match(durationPattern);
-    const predictedDuration = matches ? matches.join(', ') : 'Unknown duration'; // Join multiple matches if any
+    const predictedDuration = matches ? matches.join(', ') : 'Unknown duration'; 
 
     ticket.EstimatedDuration = predictedDuration;
     await ticket.save();

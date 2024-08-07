@@ -49,7 +49,6 @@ import { FcLink } from 'react-icons/fc';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:4101'); 
-// components
 
 const Dashboard = () => {
   const [openTasks, setOpenTasks] = useState([]);
@@ -378,18 +377,10 @@ const Dashboard = () => {
 
     const endDate = new Date(startDate.getTime() + durationMilliseconds);
 
-    return endDate; // Return date object
+    return endDate; 
   };
 
-  //unrelate tasks
-
-  // const handleUnrelatedTask = async (taskId) => {
-  //   try {
-  //     await dispatch(unrelatedtask(taskId));
-  //   } catch (error) {
-  //     console.error('Error unrelating tasks:', error);
-  //   }
-  // };
+  
 
   const handleUnrelatedTask = (taskId) => {
     dispatch(unrelatedtask(taskId, projectId));
@@ -399,27 +390,7 @@ const Dashboard = () => {
     <PageContainer title="Dashboard" description="This is Dashboard">
       <DashboardCard title="BackLog">
         <Box style={{ display: 'flex', flexDirection: 'row' }}>
-          {/*         
-      <Button
-        // onClick={toggleSecondGrid}
-        variant="contained"
-        sx={{
-          border: 'none',
-          fontWeight: 'bold',
-          fontFamily: 'inherit',
-          fontSize: '12px',
-          color: 'black',
-          backgroundColor: '#434a4f1f',
-          minWidth: '5px',
-          width: '150px',
-          height: '35px',
-          marginTop: '15px',
-          marginLeft: '20px',
-        }}
-      >
-        {isSecondGridOpen ? 'Close Second Grid' : 'Open Second Grid'}
-      </Button> */}
-
+      
           <FeaturesMenu
             onFeatureCheckboxChange={handleFeatureCheckboxChange}
             checkedFeatures={checkedFeatures}
@@ -823,6 +794,7 @@ const Dashboard = () => {
 
                                                 <MenuFeature
                                                   ticketid={ticket._id}
+                                                  task={task.StartDate}
                                                   feature={ticket.Feature}
                                                   isSecondGridOpen={isSecondGridOpen}
                                                 />

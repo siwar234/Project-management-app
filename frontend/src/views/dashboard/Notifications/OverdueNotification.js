@@ -1,6 +1,7 @@
 import React from 'react'
-import { IconButton, MenuItem,Typography,Box, Avatar, Tooltip, Chip } from '@mui/material';
+import {  MenuItem,Typography,Box, Chip } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
+import ReadNotification from './ReadNotification';
 
 export const OverdueNotification = ({notification,image2,image3,handleMarkAsRead,userId}) => {
 
@@ -19,17 +20,8 @@ export const OverdueNotification = ({notification,image2,image3,handleMarkAsRead
               <span 
               style={{color:"gray",marginLeft:"10px",fontWeight:"lighter",marginRight:"18px"}}>  
                {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}</span> 
-              <Tooltip title={notification.read ? "read" : "Mark as read"}>
-                  <IconButton  
-                  
-                  onClick={() => !notification.read && handleMarkAsRead(notification._id)}
-                  style={{marginBottom:"7px",position: "absolute", top: 0, right: 0,marginLeft:"10px"}} >
-                <img 
-    src={notification.read ? image3 : image2} 
-    style={{ marginLeft: "10px", width:notification.read ?  "20px" :"25px" }} 
-    alt="img" 
-  />
-   </IconButton></Tooltip>
+               <ReadNotification notification={notification}></ReadNotification>
+
          </Typography>
          <Typography variant="body2" color="textSecondary">
           <div style={{ display: 'flex', alignItems: 'center',flexDirection:"row"}}>

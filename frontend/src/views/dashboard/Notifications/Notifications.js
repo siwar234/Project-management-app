@@ -4,9 +4,7 @@ import { IconButton, Badge, Menu, MenuItem, Typography, Box, Avatar, Tooltip, Sw
 import { IconBellRinging } from '@tabler/icons';
 import { getNotifications, addNewNotification, readnotifications, markAllNotificationsAsRead } from '../../../JS/actions/notifications';
 import { formatDistanceToNow } from 'date-fns';
-import image2 from "../../../assets/images/mails-non-lus.png";
 import image5 from '../../../assets/images/icons/projection.png';
-import image3 from '../../../assets/images/lettre.png';
 import image from '../../../assets/images/checking.webp';
 import image1 from '../../../assets/images/bugging.png';
 import io from 'socket.io-client';
@@ -16,6 +14,8 @@ import { OverdueNotification } from './OverdueNotification';
 import { RelatedTasksnotification } from './RelatedTasksnotification';
 import { InacrtiveMember } from './InacrtiveMember';
 import AdminNotification from './AdminNotification';
+import FeebackNotifications from './FeebackNotifications';
+import ReadNotification from './ReadNotification';
 
 const socket = io('http://localhost:4101');
 
@@ -131,25 +131,23 @@ const Notifications = ({ userId }) => {
               <React.Fragment key={notification?._id}>
                 {notification.data && notification.type === 'projectnotification' && userId===notification.responsible_user && (
                   <MenuItem style={{ marginTop: "15px" }}>
-                    <Avatar alt={notification.data.User?.firstName} src={notification.data.User?.profilePicture} />
+                    <Avatar
+                    sx={{
+                      bgcolor: '#42a5f5',
+                      width: 40,
+                      height: 40,
+                      fontSize:'13px'
+                    }}
+                     alt={notification.data.User?.firstName} src={notification.data.User?.profilePicture} >
+                    {notification.data.User?.firstName.substring(0, 2).toUpperCase()}</Avatar>
+
                     <Box ml={2}>
                       <Typography variant="body1" style={{ fontWeight: "bold" }}>
                         {notification.data.User?.firstName} has assigned you as the responsible for this project
                         <span style={{ color: "gray", marginLeft: "10px", fontWeight: "lighter", marginRight: "20px" }}>
                           {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
                         </span>
-                        <Tooltip title={notification.read ? "Read" : "Mark as read"}>
-                          <IconButton
-                            onClick={() => !notification.read && handleMarkAsRead(notification._id)}
-                            style={{ position: "absolute", top: -3, right: 0, marginLeft: "20px" }}
-                          >
-                            <img
-                              src={notification.read ? image3 : image2}
-                              style={{ width: notification.read ? "20px" : "25px" }}
-                              alt="Read icon"
-                            />
-                          </IconButton>
-                        </Tooltip>
+                      <ReadNotification notification={notification}></ReadNotification>
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
                         <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
@@ -162,25 +160,23 @@ const Notifications = ({ userId }) => {
                 )}
                 {notification.data && notification.type === 'ticketnotification' && userId===notification.responsible_user &&(
                   <MenuItem style={{ marginTop: "15px" }}>
-                    <Avatar alt={notification.data.ticket?.User?.firstName} src={notification.data.ticket?.User?.profilePicture} />
+                    <Avatar 
+                    sx={{
+                      bgcolor: '#42a5f5',
+                      width: 40,
+                      height: 40,
+                      fontSize:'13px'
+                    }}
+                    alt={notification.data.ticket?.User?.firstName} src={notification.data.ticket?.User?.profilePicture} >
+                      {notification.data.ticket?.User?.firstName.substring(0, 2).toUpperCase()}</Avatar>
                     <Box ml={1}>
                       <Typography variant="body1" style={{ fontWeight: "bold", marginRight: "5px" }}>
                         {notification.data.ticket?.User?.firstName} has assigned you as the responsible for this ticket
                         <span style={{ color: "gray", marginLeft: "10px", fontWeight: "lighter", marginRight: "18px" }}>
                           {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
                         </span>
-                        <Tooltip title={notification.read ? "Read" : "Mark as read"}>
-                          <IconButton
-                            onClick={() => !notification.read && handleMarkAsRead(notification._id)}
-                            style={{ marginBottom: "7px", position: "absolute", top: 0, right: 0, marginLeft: "10px" }}
-                          >
-                            <img
-                              src={notification.read ? image3 : image2}
-                              style={{ marginLeft: "10px", width: notification.read ? "20px" : "25px" }}
-                              alt="Read icon"
-                            />
-                          </IconButton>
-                        </Tooltip>
+                        <ReadNotification notification={notification}></ReadNotification>
+
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
                         <div style={{ display: 'flex', alignItems: 'center', flexDirection: "row" }}>
@@ -196,11 +192,13 @@ const Notifications = ({ userId }) => {
                   </MenuItem>
                 )}
 
-                <OverdueNotification notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead} userId={userId} />
-                <ApprochingDeadlinenotification notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead}  userId={userId} />
-                <RelatedTasksnotification notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead}   userId={userId}/>
-                <InacrtiveMember notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead}  userId={userId} />
-                <AdminNotification notification={notification} image2={image2} image3={image3} handleMarkAsRead={handleMarkAsRead}  userId={userId} />
+                <OverdueNotification notification={notification}  handleMarkAsRead={handleMarkAsRead} userId={userId} />
+                <ApprochingDeadlinenotification notification={notification}  handleMarkAsRead={handleMarkAsRead}  userId={userId} />
+                <RelatedTasksnotification notification={notification}  handleMarkAsRead={handleMarkAsRead}   userId={userId}/>
+                <InacrtiveMember notification={notification}  handleMarkAsRead={handleMarkAsRead}  userId={userId} />
+                <AdminNotification notification={notification}  handleMarkAsRead={handleMarkAsRead}  userId={userId} />
+                < FeebackNotifications notification={notification}  handleMarkAsRead={handleMarkAsRead}  userId={userId} />
+
               </React.Fragment>
             ))}
             {!showUnreadOnly && notifications.length > 0 && (

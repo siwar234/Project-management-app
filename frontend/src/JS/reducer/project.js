@@ -47,7 +47,7 @@ import {
           return {
             ...state,
             loadproject: false,
-            projects: payload,
+            // projects: payload,
             errors: [], 
           };
 
@@ -68,8 +68,11 @@ import {
       };
 
     case GET_PROJECT_SUCCESS:
-      return { ...state, loadproject: false, isSuccess: true,
-        projects:payload.projects};
+      return { 
+        ...state, loadproject: false, 
+        isSuccess: true,
+        projects:payload.projects
+      };
 
         
         case GET_PROJECTBYID_SUCCESS:

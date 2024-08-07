@@ -20,6 +20,7 @@ import {
 } from '../actionTypes/tasks';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
+import { getAllFeatures } from './feature';
  const socket = io('http://localhost:4101');
 export const createTasks = (tasksData) => async (dispatch) => {
   dispatch({ type: LOAD_TASKS });
@@ -126,7 +127,7 @@ export const close = () => ({
 
 
 
-export const updatetasks = (id, taskData) => async (dispatch) => {
+export const updatetasks = (id, taskData,projectId) => async (dispatch) => {
   try {
     const response = await axios.put(`http://localhost:8000/api/tasks/Updatetasks/${id}`, taskData);
     dispatch({
@@ -134,6 +135,7 @@ export const updatetasks = (id, taskData) => async (dispatch) => {
       payload: response.data,
     });
     toast.success("Your Project settings have been saved")
+    dispatch(getAllFeatures(projectId));
 
    
   } catch (error) {

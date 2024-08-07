@@ -11,7 +11,6 @@ import {
     Legend
 } from 'chart.js';
 
-// Register necessary Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TicketsPerFeature = () => {

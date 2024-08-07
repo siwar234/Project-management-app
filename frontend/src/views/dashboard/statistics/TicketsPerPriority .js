@@ -147,7 +147,7 @@ const TicketsPerPriority = () => {
          <Select
          labelId="taskk-dd"
          id="taskk-dd"
-         defaultValue={selectedTask} // Use defaultValue instead of value
+         defaultValue={selectedTask} 
          size="small"
          onChange={handleChangeTask}
      >

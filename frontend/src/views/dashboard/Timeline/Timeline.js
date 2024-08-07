@@ -168,7 +168,7 @@ export default function Timeline() {
           t.id === taskOrFeature.id ? { ...t, start: taskOrFeature.start, end: taskOrFeature.end } : t
         );
         setInitializedTasks(updatedTasks);
-        dispatch(updatetasks(taskOrFeature.id, { StartDate: taskOrFeature.start, EndDate: taskOrFeature.end }));
+        dispatch(updatetasks(taskOrFeature.id, { StartDate: taskOrFeature.start, EndDate: taskOrFeature.end },projectId));
       } else if ('id' in taskOrFeature && 'start' in taskOrFeature && 'end' in taskOrFeature && 'progress' in taskOrFeature) {
         // It's a feature
         const updatedFeatures = initializedFeatures.map((f) =>

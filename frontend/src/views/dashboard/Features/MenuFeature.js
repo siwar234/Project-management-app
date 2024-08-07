@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import {  updateticketsFeature } from 'src/JS/actions/Tickets';
 import { useParams } from 'react-router';
 
-export default function MenuFeature({ticketid,feature,isSecondGridOpen}) {
+export default function MenuFeature({task,ticketid,feature,isSecondGridOpen}) {
     const [openmenu, setIsMenuOpen] = useState(false);
     const [anchorEl, setopeningmenu] = useState(null);
     const [selectedFeature, setSelectedFeature] = useState(null); 
@@ -43,37 +43,41 @@ export default function MenuFeature({ticketid,feature,isSecondGridOpen}) {
     return (
         <>
         {!feature && (
-           <Tooltip title="add feature">
-               <Button
-                onClick={handleMenuopen}
-                id="menu-feature-button"
-                aria-controls={openmenu ? 'menu-feature' : undefined}
-                aria-expanded={openmenu}
-                aria-haspopup="true"
-                style={{
-                    backgroundColor:  'rgb(227 226 226 / 55%)',
-                    color: '#5a6b78',
-                    fontWeight: '700',
-                    marginLeft: isSecondGridOpen ? "8px" : "150px" ,
-                    marginRight: isSecondGridOpen ? "5px" :"0px",
-                    fontSize :"12.5px",
-                    fontFamily: 'sans-serif',
-
-                    marginTop: '-2px'
-                }}
-            >
-               <AddIcon
-                    style={{
-                        marginRight: '3px',
-                        marginTop: '0px',
-                        fontWeight: 'bold',
-                        fontSize :"20px"
-
-                    }}
-                />  Feature{' '}
-               
-            </Button>
-            </Tooltip>
+           <Tooltip
+           title={task.StartDate ? 
+             "You can add a feature now that the task has a start date." : 
+             "add a feature"}
+           placement="bottom" 
+         >
+           <Button
+             onClick={handleMenuopen}
+             id="menu-feature-button"
+             aria-controls={openmenu ? 'menu-feature' : undefined}
+             aria-expanded={openmenu}
+             aria-haspopup="true"
+             style={{
+               backgroundColor: 'rgb(227 226 226 / 55%)',
+               color: '#5a6b78',
+               fontWeight: '700',
+               marginLeft: isSecondGridOpen ? "8px" : "150px" ,
+               marginRight: isSecondGridOpen ? "5px" :"0px",
+                              fontSize: "12.5px",
+               fontFamily: 'sans-serif',
+               display: 'flex',
+               alignItems: 'center' 
+             }}
+           >
+             <AddIcon
+               style={{
+                 marginRight: '3px',
+                 fontWeight: 'bold',
+                 fontSize: "20px"
+               }}
+             />  
+             Feature
+           </Button>
+         </Tooltip>
+         
 
             )}
             {features.length > 0 && (
@@ -114,14 +118,7 @@ export default function MenuFeature({ticketid,feature,isSecondGridOpen}) {
                         </ListItem>
                     ))}
               
-                {/* <Divider sx={{
-                    borderBottomWidth: '2px',
-                    marginTop: '12px',
-                   
-                }} />
-
-                <Typography sx={{ color: "#1C1B3E", fontSize: "13.5px", marginLeft: "15px",marginTop:"8px",fontWeight:"bold" }} noWrap>
-                    View all Features </Typography> */}
+                
             </Menu>
             )}
         </>

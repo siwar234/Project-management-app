@@ -12,7 +12,6 @@ import {
 } from 'chart.js';
 import image5 from '../../../assets/images/icons/projection.png';
 
-// Register necessary Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CompletionStatus = () => {

@@ -1,7 +1,8 @@
 import React from 'react'
-import { IconButton, MenuItem, Typography, Box, Avatar, Tooltip } from '@mui/material';
+import {  MenuItem, Typography, Box, Avatar } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
 import { MdFaceRetouchingOff } from "react-icons/md";
+import ReadNotification from './ReadNotification';
 
 export const InacrtiveMember = ({ notification, image2, image3, handleMarkAsRead ,userId}) => {
 
@@ -45,18 +46,8 @@ export const InacrtiveMember = ({ notification, image2, image3, handleMarkAsRead
                 </span>
               </Typography>
             </Typography>
-            <Tooltip title={notification.read ? 'Read' : 'Mark as read'}>
-              <IconButton
-                onClick={() => !notification.read && handleMarkAsRead(notification._id)}
-                style={{ position: 'absolute', top: 0, right: 0 }}
-              >
-                <img
-                  src={notification.read ? image3 : image2}
-                  style={{ marginLeft: '10px', width: notification.read ? '20px' : '25px' }}
-                  alt="img"
-                />
-              </IconButton>
-            </Tooltip>
+            <ReadNotification notification={notification}></ReadNotification>
+
             <Typography variant="body2" color="textSecondary">
               <span style={{ marginLeft: 8, fontSize: "13px", marginTop: "4px" }}>
                 deadline {formatDistanceToNow(new Date(notification.data.task.EndDate), { addSuffix: true })}

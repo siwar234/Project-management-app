@@ -17,9 +17,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {  updatetasks } from 'src/JS/actions/tasks';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers'; 
 import { format } from 'date-fns';
+import { useParams } from 'react-router';
 
 const UpdateTaskModal = ({ openUpdateModal, handleUpdateClosing,taskduration,taksname,taskId,handleTaskStart }) => {
   const dispatch = useDispatch();
+  const { projectId } = useParams();
 
 
   const [taskData, setTaskData] = useState({
@@ -41,7 +43,7 @@ const UpdateTaskModal = ({ openUpdateModal, handleUpdateClosing,taskduration,tak
 
   const handleSubmit = async () => {
     try {
-      await dispatch(updatetasks(taskId, taskData));
+      await dispatch(updatetasks(taskId, taskData,projectId));
       handleTaskStart(taskId); 
       handleUpdateClosing();
     } catch (error) {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MenuItem, ListItem, Typography, Menu ,Box, Tooltip} from '@mui/material';
 import {useSelector } from 'react-redux';
 
-export default function Featureupdate({ ticketid,  ticket,typographyStyle ,handleFeatureSelect,isSecondGridOpen }) {
+export default function Featureupdate({ ticket,typographyStyle ,handleFeatureSelect,isSecondGridOpen }) {
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {

@@ -35,7 +35,7 @@ const EquipeDetails = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   //menu
-  const options = ['team settings', 'delete a team', 'leave the team'];
+  const options = ['team settings', 'delete a team'];
   //
   const user = useSelector((state) => state.userReducer.user._id);
   const [emails, setEmails] = useState([]);

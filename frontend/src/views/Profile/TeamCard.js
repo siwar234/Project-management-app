@@ -57,10 +57,10 @@ const TeamCard = ({ teams}) => {
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     {equipe.members.map((member, memberIndex) => (
                       <Box key={memberIndex} sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-                        <Avatar src={member.memberId.profilePicture} sx={{ fontSize: '15px', bgcolor: '#42a5f5', width: '30px', height: '30px' }} style={{ margin: 'auto' }}>
-                          {member.memberId.firstName.substring(0, 2).toUpperCase()}
+                        <Avatar src={member.memberId?.profilePicture} sx={{ fontSize: '15px', bgcolor: '#42a5f5', width: '30px', height: '30px' }} style={{ margin: 'auto' }}>
+                          {member.memberId?.firstName.substring(0, 2).toUpperCase()}
                         </Avatar>
-                        <Typography sx={{ ml: 2 }}>{member.memberId.firstName}</Typography>
+                        <Typography sx={{ ml: 2 }}>{member?.memberId?.firstName}</Typography>
                         
                       </Box>
                     ))}
@@ -86,10 +86,10 @@ const TeamCard = ({ teams}) => {
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                   {equipe.members.map((member, memberIndex) => (
                     <Box key={memberIndex} sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-                      <Avatar src={member.memberId.profilePicture} sx={{ fontSize: '15px', bgcolor: '#42a5f5', width: '33px', height: '33px' }} style={{ margin: 'auto' }}>
-                        {member.memberId.firstName.substring(0, 2).toUpperCase()}
+                      <Avatar src={member.memberId?.profilePicture} sx={{ fontSize: '15px', bgcolor: '#42a5f5', width: '33px', height: '33px' }} style={{ margin: 'auto' }}>
+                        {member.memberId?.firstName.substring(0, 2).toUpperCase()}
                       </Avatar>
-                      <Typography sx={{ ml: 2 }}>{member.memberId.firstName}</Typography>
+                      <Typography sx={{ ml: 2 }}>{member.memberId?.firstName}</Typography>
                     </Box>
                   ))}
                 </Box>

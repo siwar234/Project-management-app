@@ -10,7 +10,6 @@ import {
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEquipes, fetchEquipesbyId } from '../../JS/actions/equipe';
-
 import Avatar from '@mui/material/Avatar';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,11 +22,11 @@ const Collaboraters = ({ searchQuery }) => {
   const userId = user._id;
 
   const goToNextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === user.length - 1 ? 0 : prevIndex + 1));
+    setCurrentIndex((prevIndex) => (prevIndex === equipes.length - 1 ? 0 : prevIndex + 1));
   };
 
   const goToPrevSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? user.length - 1 : prevIndex - 1));
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? equipes.length - 1 : prevIndex - 1));
   };
 
   useEffect(() => {
@@ -43,6 +42,9 @@ const Collaboraters = ({ searchQuery }) => {
   }, [dispatch, equipeuser]);
 
   const equipes = useSelector((state) => state.equipeReducer.equipes);
+
+  // Set to track seen member IDs
+  const seenMembers = new Set();
 
   return (
     <>
@@ -69,6 +71,15 @@ const Collaboraters = ({ searchQuery }) => {
           {equipes.map((equipe) =>
             equipe.members
               .filter((member) => member.memberId._id !== userId && member.memberId.firstName.toLowerCase().includes(searchQuery))
+              .filter((member) => {
+                // Check if member is already seen
+                if (seenMembers.has(member.memberId._id)) {
+                  return false;
+                }
+                // Add member to seen set
+                seenMembers.add(member.memberId._id);
+                return true;
+              })
               .map((member) => (
                 <Card
                   key={member.memberId._id}
@@ -90,12 +101,16 @@ const Collaboraters = ({ searchQuery }) => {
                 >
                   <CardActionArea onClick={() => navigate(`/equipe/${equipe._id}`)}>
                     <CardMedia>
-                      <Avatar src={member.memberId.profilePicture} sx={{ fontSize: '23px', bgcolor: '#42a5f5', width: '70px', height: '70px' }} style={{ margin: 'auto' }}>
+                      <Avatar
+                        src={member.memberId.profilePicture}
+                        sx={{ fontSize: '23px', bgcolor: '#42a5f5', width: '70px', height: '70px' }}
+                        style={{ margin: 'auto' }}
+                      >
                         {member.memberId.firstName.substring(0, 2).toUpperCase()}
                       </Avatar>
                     </CardMedia>
                     <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                      <Typography gutterBottom style={{ fontSize: '13px',fontWeight:"500",fontFamily:"sans-serif", color: '#555555', justifyContent: 'center',alignItems: 'center' }}>
+                      <Typography gutterBottom style={{ fontSize: '13px', fontWeight: "500", fontFamily: "sans-serif", color: '#555555', justifyContent: 'center', alignItems: 'center' }}>
                         {member.memberId.firstName}
                       </Typography>
                     </CardContent>

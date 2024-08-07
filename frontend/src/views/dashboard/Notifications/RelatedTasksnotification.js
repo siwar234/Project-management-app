@@ -1,7 +1,8 @@
 import React from 'react'
-import { IconButton, MenuItem,Typography,Box, Avatar, Tooltip, Chip } from '@mui/material';
+import {  MenuItem,Typography,Box } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
 import { FcLink } from 'react-icons/fc';
+import ReadNotification from './ReadNotification';
 
 export const RelatedTasksnotification = ({notification,image2,image3,handleMarkAsRead,userId}) => {
 
@@ -11,7 +12,6 @@ export const RelatedTasksnotification = ({notification,image2,image3,handleMarkA
 
     {notification.data && notification.type === 'relatedTasksNotification' &&   userId===notification.responsible_user && (
         <MenuItem style={{marginTop:"15px"}} >
-{/* <Avatar alt={notification.data.newComment?.commenterId?.firstName} src={notification.data.newComment?.commenterId?.profilePicture} /> */}
        <Box ml={2}>
       
  <Typography
@@ -33,17 +33,10 @@ export const RelatedTasksnotification = ({notification,image2,image3,handleMarkA
               style={{color:"gray",marginLeft:"10px",fontWeight:"lighter",marginRight:"18px"}}>  
                {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}</span> 
             
-         </Typography>  <Tooltip title={notification.read ? "read" : "Mark as read"}>
-                  <IconButton  
-                  
-                  onClick={() => !notification.read && handleMarkAsRead(notification._id)}
-                  style={{marginBottom:"7px",position: "absolute", top: 0, right: 0,marginLeft:"10px"}} >
-                <img 
-    src={notification.read ? image3 : image2} 
-    style={{ marginLeft: "10px", width:notification.read ?  "20px" :"25px" }} 
-    alt="img" 
-  />
-   </IconButton></Tooltip>
+         </Typography> 
+         
+         <ReadNotification notification={notification}></ReadNotification>
+
         
        </Box>
      </MenuItem>)} 

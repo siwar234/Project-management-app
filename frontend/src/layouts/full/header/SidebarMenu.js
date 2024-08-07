@@ -56,7 +56,7 @@ const SidebarMenu = ({
   const user = useSelector((state) => state.userReducer.user);
   const userRole = user?.Roles?.find((role) => role.name === 'user');
   const dispatch = useDispatch();
-  const projects = useSelector((state) => state.projectReducer.projects);
+  const projects = useSelector((state) => state.projectReducer.projects || []);
   const unactiveProjects = projects.filter(project => !project?.archiver );
 
   const [value, setValue] = React.useState('1');
@@ -509,7 +509,7 @@ const SidebarMenu = ({
             </Menu>
 
 
-            <Button
+            {/* <Button
               id="fade-button"
               className="menuitems"
               aria-controls={anchorEl ? 'fade-menu' : undefined}
@@ -519,7 +519,7 @@ const SidebarMenu = ({
             >
               filters{' '}
               <IoIosArrowDown style={{ marginLeft: '3px', marginTop: '5px', fontWeight: 'bold' }} />
-            </Button>
+            </Button> */}
           </>
         )}
       </div>
