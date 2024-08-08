@@ -488,7 +488,7 @@ const handleKeyDown = (event,ticketId) => {
               {/* <Typography variant="caption"></Typography> <Button size="small">Commenter</Button> */}
             {/* <Button size="small">Télécharger</Button> */}
             <Button style={{marginTop:"15px"}} size="small"  onClick={(event) => handleOpenMenu(event, index)}>delete</Button>
-            <Button style={{marginTop:"15px"}} size="small"  >Modifiy</Button>
+            {/* <Button style={{marginTop:"15px"}} size="small"  >Modifiy</Button> */}
 
 
             <UpdateImage setMenuAnchor={setMenuAnchor} menuAnchor={menuAnchor} handleDeleteImage={handleDeleteImage} handleCloseMenu={handleCloseMenu} ticket={ticket} />
