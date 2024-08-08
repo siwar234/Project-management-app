@@ -23,16 +23,19 @@ import {
 
 } from "../actionTypes/user"
 import { toast } from 'react-toastify';
+import { url,httpUrl } from "../../ConnectionString"
+
 
 import { jwtDecode } from 'jwt-decode';
 import io from 'socket.io-client';
- const socket = io('http://localhost:4101');
+import { GetchEquipesOwner } from './equipe';
+const socket = io(`${httpUrl}`);
 
  export const loginUser = (userData, navigate) => async (dispatch) => {
   dispatch({ type: LOAD_USER });
 
   try {
-    const response = await axios.post('http://localhost:8000/api/auth/login', userData);
+    const response = await axios.post(`${url}/auth/login`, userData);
     
     dispatch({ type: SIGN_IN_USER, payload: response.data });
     
@@ -66,9 +69,10 @@ import io from 'socket.io-client';
 
   export const signinAfterInvitation = (activationToken,email, equipeId, password,navigate) => async (dispatch) => {
     try {
-      const response = await axios.post(`http://localhost:8000/api/equipe/signin-after-invitation/${activationToken}/${equipeId}`, { password,email });
+      const response = await axios.post(`${url}/equipe/signin-after-invitation/${activationToken}/${equipeId}`, { password,email });
       dispatch({ type: SIGN_IN_USER, payload: response.data });
       navigate(`/team/equipe/${equipeId}`);
+      
       toast.success('Login successful!');
 
     } catch (error) {
@@ -86,16 +90,18 @@ import io from 'socket.io-client';
   export const signupAfterInvitation = (token,equipeId,firstName, password, email,navigate) => async (dispatch) => {
   
     try {
-      const response = await axios.post(`http://localhost:8000/api/equipe/signup-after-invitation/${token}/${equipeId}`,{
+      const response = await axios.post(`${url}/equipe/signup-after-invitation/${token}/${equipeId}`,{
         firstName,
         email,
         password,
       });
       localStorage.setItem("token", token);;
       dispatch({ type: SIGNUP_INVITATION_SUCCESS, payload: response.data });
+      await dispatch(GetchEquipesOwner(response.data.user._id));
 
       navigate(`/profileuser/${response.data.token}/${response.data.user._id}`);
       dispatch(currentUser())
+
       toast.success('signup successful!');
 
 
@@ -112,7 +118,7 @@ import io from 'socket.io-client';
     dispatch({ type: LOAD_USER });
   
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/', { email });
+      const response = await axios.post(`${url}/auth/`, { email });
       dispatch({ type: REGISTER_SUCCESS, payload: response.data });
           toast.success('Invitation sent successfully!');
 
@@ -133,7 +139,7 @@ import io from 'socket.io-client';
     dispatch({ type: LOAD_USER });
   
     try {
-        const response = await axios.post(`http://localhost:8000/api/auth/activate/${token}`, {
+        const response = await axios.post(`${url}/auth/activate/${token}`, {
         firstName,
         email,
         password,
@@ -174,7 +180,7 @@ import io from 'socket.io-client';
     try {
       
       const result = await axios.get(
-        `http://localhost:8000/api/getuser/${id}`,
+        `${url}/getuser/${id}`,
         
       );
         dispatch({ type: CURRENT_USER,  payload: { user: result.data }  });
@@ -194,7 +200,7 @@ import io from 'socket.io-client';
         headers: { authorization: localStorage.getItem("token") },
       };
       const result = await axios.get(
-        `http://localhost:8000/api/getlistuser`,
+        `${url}/getlistuser`,
         options
       );
         dispatch({ type: FETCH_USERS_SUCCESS,  payload: { users: result.data }  });
@@ -213,7 +219,7 @@ import io from 'socket.io-client';
       const options = {
         headers: { authorization: localStorage.getItem("token") },
       };
-      const response = await axios.put('http://localhost:8000/api/banuser', { userID, banDate },options);
+      const response = await axios.put(`${url}/banuser`, { userID, banDate },options);
       dispatch({ type: BAN_USER, payload: response.data });
       dispatch(fetchUsers())
 
@@ -227,7 +233,7 @@ import io from 'socket.io-client';
       const options = {
         headers: { authorization: localStorage.getItem("token") },
       };
-      const response = await axios.put('http://localhost:8000/api/unbanuser', { userID }, options);
+      const response = await axios.put(`${url}/unbanuser`, { userID }, options);
       dispatch({ type: UNBAN_USER, payload: response.data });
       dispatch(fetchUsers())
 
@@ -239,7 +245,7 @@ import io from 'socket.io-client';
 
   export const updateUser = (userId, userData) => async (dispatch) => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/updateuser/${userId}`, userData);
+      const response = await axios.put(`${url}/updateuser/${userId}`, userData);
       dispatch({
         type: UPDATE_USER_SUCCESS,
         payload: response.data,
@@ -273,7 +279,7 @@ import io from 'socket.io-client';
     dispatch({ type: LOAD_USER });
     try {
       const options = { headers: {   authorization: localStorage.getItem("token")} };
-      const response = await axios.get('http://localhost:8000/api/auth/current', options);
+      const response = await axios.get(`${url}/auth/current`, options);
       dispatch({ type: CURRENT_USER, payload: { user: response.data } });
     } catch (error) {
       console.error('Error fetching current admin:', error);

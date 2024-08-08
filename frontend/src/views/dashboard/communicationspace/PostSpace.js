@@ -13,8 +13,9 @@ import { FcEmptyTrash } from "react-icons/fc";
 import { AiFillFilePdf } from "react-icons/ai";
 import { formatDistanceToNow } from 'date-fns';
 import { FcDownload } from "react-icons/fc";
+import {url} from "../../../ConnectionString"
 
-// Styled components with @mui/system
+
 const ContainerStyled = styled(Container)(({ theme }) => ({
   padding: theme.spacing(2),
   display: 'flex',
@@ -177,7 +178,7 @@ const PostSpace = () => {
   const handleDownloadPDF = (pdfFilePath) => {
     const filename = pdfFilePath.split('\\').pop().split('/').pop();
     const link = document.createElement('a');
-    link.href = `http://localhost:8000/api/pdf/${encodeURIComponent(filename)}`;
+    link.href = `${url}/pdf/${encodeURIComponent(filename)}`;
     link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
@@ -394,18 +395,7 @@ const PostSpace = () => {
      <Typography variant="subtitle1" style={{ marginRight: '10px' }}>
        <strong>PDF:</strong>  {post.pdf.split('\\').pop().split('/').pop()}
      </Typography>
-      {/* <IconButton
-       variant="contained"
-       color="primary"
-       href={`http://localhost:8000/api/pdf/${encodeURIComponent(post.pdf)}`}
-       target="_blank"
-       rel="noopener noreferrer"
-       style={{ marginRight: '10px' ,height:"fit-content",fontSize:"12px"}}
-     >
-       <TbEyeSearch   
-         style={{ fontSize: '20px',color:"#103676" }}
-       />
-     </IconButton>  */}
+     
     <Tooltip title="download pdf">
      <IconButton 
             style={{ marginRight: '8px', height: 'fit-content', fontSize: '20px', }}

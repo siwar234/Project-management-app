@@ -16,8 +16,9 @@ import { InacrtiveMember } from './InacrtiveMember';
 import AdminNotification from './AdminNotification';
 import FeebackNotifications from './FeebackNotifications';
 import ReadNotification from './ReadNotification';
+import { httpUrl } from "../../../ConnectionString"
 
-const socket = io('http://localhost:4101');
+const socket = io(`${httpUrl}`);
 
 const Notifications = ({ userId }) => {
   const dispatch = useDispatch();

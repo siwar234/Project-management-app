@@ -10,6 +10,8 @@ const path = require('path');
 const http = require('http');
 const Notification=require('../backend/models/Notifications')
 const app = express();
+const os = require('os');
+
 const Tasks=require('../backend/models/Tasks');
 const cron = require('node-cron');
 const Equipe=require('../backend/models/Equipe')
@@ -37,6 +39,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+console.log('Memory Usage:', process.memoryUsage());
+console.log('CPU Usage:', os.cpus());
 
 
 // Middleware

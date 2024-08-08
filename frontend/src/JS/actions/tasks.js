@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {  useSelector_ } from 'react-redux';
 import {
   CREATE_TASKS_SUCCESS,
   LOAD_TASKS,
@@ -21,12 +20,14 @@ import {
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 import { getAllFeatures } from './feature';
- const socket = io('http://localhost:4101');
+import { url,httpUrl } from "../../ConnectionString"
+
+const socket = io(`${httpUrl}`);
 export const createTasks = (tasksData) => async (dispatch) => {
   dispatch({ type: LOAD_TASKS });
 
   try {
-    const response = await axios.post('http://localhost:8000/api/tasks/createtasks', tasksData);
+    const response = await axios.post(`${url}/tasks/createtasks`, tasksData);
     dispatch({ type: CREATE_TASKS_SUCCESS, payload: response.data });
     const { projectId } = tasksData;
     dispatch(getTasks(projectId))
@@ -43,7 +44,7 @@ export const relatedtask = (taskId,relatedTaskId,projectId) => async (dispatch) 
   dispatch({ type: LOAD_TASKS });
 
   try {
-    const response = await axios.put(`http://localhost:8000/api/tasks/relatedtask/${taskId}/${relatedTaskId}`, );
+    const response = await axios.put(`${url}/tasks/relatedtask/${taskId}/${relatedTaskId}`, );
     dispatch({ type: RELATE_TASKS_SUCCESS, payload: response.data });
     socket.emit('relatedTasksNotification', response.data);
 
@@ -60,7 +61,7 @@ export const unrelatedtask = (taskId,projectId) => async (dispatch) => {
   dispatch({ type: LOAD_TASKS });
 
   try {
-    const response = await axios.put(`http://localhost:8000/api/tasks/unrelatedtask/${taskId}`, );
+    const response = await axios.put(`${url}/tasks/unrelatedtask/${taskId}`, );
     dispatch({ type: RELATE_TASKS_SUCCESS, payload: response.data });
     dispatch(getTasks(projectId))
 
@@ -77,7 +78,7 @@ export const getallTasks = (userId) => async (dispatch) => {
   dispatch({ type: LOAD_TASKS });
 
   try {
-    const response = await axios.get(`http://localhost:8000/api/tasks/getalltasks/${userId}`);
+    const response = await axios.get(`${url}/tasks/getalltasks/${userId}`);
     dispatch({ type: GET_ALL_TASKS_SUCCESS, payload: response.data });
     
    
@@ -92,7 +93,7 @@ export const getTasks = (projectId) => async (dispatch) => {
   dispatch({ type: LOAD_TASKS });
 
   try {
-    const response = await axios.get(`http://localhost:8000/api/tasks/getlisttask/${projectId}`);
+    const response = await axios.get(`${url}/tasks/getlisttask/${projectId}`);
     dispatch({ type: GET_TASKS_SUCCESS, payload: response.data });
     socket.on('updateTickets')
    
@@ -129,7 +130,7 @@ export const close = () => ({
 
 export const updatetasks = (id, taskData,projectId) => async (dispatch) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tasks/Updatetasks/${id}`, taskData);
+    const response = await axios.put(`${url}/tasks/Updatetasks/${id}`, taskData);
     dispatch({
       type: UPDATE_TASKS_SUCCESS,
       payload: response.data,
@@ -150,7 +151,7 @@ export const updatetasks = (id, taskData,projectId) => async (dispatch) => {
 export const deletetasks = (taskId) => async (dispatch) => {
   dispatch({ type: LOAD_TASKS });
 try {
-    await axios.delete(`http://localhost:8000/api/tasks/deletetasks/${taskId}`);
+    await axios.delete(`${url}/tasks/deletetasks/${taskId}`);
     dispatch({ type: DELETE_TASKS_SUCCESS, payload: taskId });
     // dispatch(getprojectbyid(taskId));
   } catch (error) {
@@ -163,7 +164,7 @@ export const moveTicket = (ticketIds, sourceTaskId, destinationTaskId) => async 
   dispatch({ type: LOAD_TASKS });
 
   try {
-    const response = await axios.put('http://localhost:8000/api/tasks/move-ticket', {
+    const response = await axios.put(`${url}/tasks/move-ticket`, {
       ticketIds,
       sourceTaskId,
       destinationTaskId,

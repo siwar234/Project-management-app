@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import {url} from "../../../ConnectionString"
 
 const ResetPassword = ({ title, subtext, subtitle }) => {
   const formik = useFormik({
@@ -24,7 +25,7 @@ const ResetPassword = ({ title, subtext, subtitle }) => {
       const token = window.location.pathname.split('/').pop();
 
       axios
-        .post(`http://localhost:8000/api/auth/reset-password/${token}`, { newPassword })
+        .post(`${url}/auth/reset-password/${token}`, { newPassword })
         .then((response) => {
           toast.success(response.data.message);
           setTimeout(() => {

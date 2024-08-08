@@ -10,6 +10,19 @@ import { baselightTheme } from "./theme/DefaultColors";
 
 function App() {
   
+
+//   useEffect(() => {
+//     const logMemoryUsage = () => {
+//         if (performance.memory) {
+//             console.log('Memory Usage:', performance.memory);
+//         } else {
+//             console.log('Memory API not supported');
+//         }
+//     };
+
+//     logMemoryUsage();
+// }, []);
+
   const dispatch = useDispatch();
 
   useEffect(() => {

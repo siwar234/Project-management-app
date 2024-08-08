@@ -43,8 +43,6 @@ function JoinTeam() {
 
     return (
         <div>
-            {/* You can display a loading spinner or a message while the join operation is in progress */}
-            <p>Joining team...</p>
             <p>Joining team...</p>
 
         </div>

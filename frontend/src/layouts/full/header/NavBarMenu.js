@@ -23,7 +23,7 @@ import {  getallticket } from 'src/JS/actions/Tickets';
 import { getFavorites, removeFavorites } from 'src/JS/actions/Favorites';
 import { StarOutline, Star } from '@mui/icons-material';
 
-const SidebarMenu = ({
+const NavBarMenu = ({
   isMobileSidebarOpened,
   onSidebarClosed,
   handleOpenDescription,
@@ -553,4 +553,4 @@ const SidebarMenu = ({
   );
 };
 
-export default SidebarMenu;
+export default NavBarMenu;

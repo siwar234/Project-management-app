@@ -10,13 +10,13 @@ import {
 } from '../actionTypes/favourites';
 
 import { toast } from 'react-toastify';
-import { updateSecondGrid } from './tasks';
+import { url } from "../../ConnectionString"
 
 export const addFavorites = (ticketId, userId) => async (dispatch) => {
     dispatch({ type: LOAD_FAVOURITES });
 
   try {
-    const res = await axios.post(`http://localhost:8000/api/favrouites/addfavroutie`, { ticketId, userId });
+    const res = await axios.post(`${url}/favrouites/addfavroutie`, { ticketId, userId });
     dispatch({
       type: ADD_FAVOURITES,
       payload: res.data
@@ -40,7 +40,7 @@ export const getFavorites = (userId) => async (dispatch) => {
     dispatch({ type: LOAD_FAVOURITES });
   
     try {
-      const res = await axios.get(`http://localhost:8000/api/favrouites/getfavorites/${userId}`);
+      const res = await axios.get(`${url}/favrouites/getfavorites/${userId}`);
       dispatch({
         type: GET_FAVOURITES,
         payload: res.data 
@@ -56,7 +56,7 @@ export const getFavorites = (userId) => async (dispatch) => {
 
 export const removeFavorites = (ticketId, userId) => async (dispatch) => {
   try {
-    const res = await axios.post(`http://localhost:8000/api/favrouites/removefavroutie`, { ticketId, userId });
+    const res = await axios.post(`${url}/favrouites/removefavroutie`, { ticketId, userId });
     dispatch({
       type: REMOVE_FAVOURITES,
       payload: res.data 

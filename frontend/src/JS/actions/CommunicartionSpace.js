@@ -14,13 +14,14 @@ import {
 
 } from '../actionTypes/communicationSpace'
 import { toast } from 'react-toastify';
+import { url } from "../../ConnectionString"
 
 export const createCommunicationSpace = (task, disscusionspace, privacy,projectId) => async (dispatch) => {
   dispatch({ type: CREATE_COMMUNICATION_SPACE });
   try {
     
     const body = { Task: task, Disscusionspace: disscusionspace, Privacy: privacy,projectId:projectId };
-    const res = await axios.post(`http://localhost:8000/api/communicationspace/create`, body);
+    const res = await axios.post(`${url}/communicationspace/create`, body);
 
     dispatch({ type: CREATE_COMMUNICATION_SPACE_SUCCESS, payload: res.data });
 
@@ -39,7 +40,7 @@ export const createCommunicationSpace = (task, disscusionspace, privacy,projectI
 
 export const getCommunicationSpacesByProjectId = (projectId) => async (dispatch) => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/communicationspace/project/${projectId}`);
+      const res = await axios.get(`${url}/communicationspace/project/${projectId}`);
       dispatch({
         type: GET_COMMUNICATION_SPACES_BY_PROJECT_ID,
         payload: res.data,
@@ -70,7 +71,7 @@ export const getCommunicationSpacesByProjectId = (projectId) => async (dispatch)
         });
       }
   
-      const res = await axios.post('http://localhost:8000/api/communicationspace/posts/create', formData, {
+      const res = await axios.post(`${url}/communicationspace/posts/create`,formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -92,7 +93,7 @@ export const getCommunicationSpacesByProjectId = (projectId) => async (dispatch)
   export const deletePost = (postId, taskId) => async (dispatch) => {
   
     try {
-      await axios.delete(`http://localhost:8000/api/communicationspace/posts/${postId}`);
+      await axios.delete(`${url}/communicationspace/posts/${postId}`);
   
       dispatch({ type: DELETE_POST_SUCCESS, payload: postId });
       dispatch(getPostsByTaskId(taskId));
@@ -109,7 +110,7 @@ export const getCommunicationSpacesByProjectId = (projectId) => async (dispatch)
     dispatch({ type: CREATE_COMMUNICATION_SPACE });
 
     try {
-      const res = await axios.get(`http://localhost:8000/api/communicationspace/posts/byTaskId/${taskId}`);
+      const res = await axios.get(`${url}/communicationspace/posts/byTaskId/${taskId}`);
       dispatch({ type: GET_POSTS_BY_TASKID_SUCCESS, payload: res.data });
     } catch (error) {
       dispatch({ type: GET_POSTS_BY_TASKID_FAIL, payload: error.response.data });
@@ -119,7 +120,7 @@ export const getCommunicationSpacesByProjectId = (projectId) => async (dispatch)
 
   export const createComment = (postId, commenterId, commentText) => async (dispatch) => {
     try {
-      const res = await axios.post('http://localhost:8000/api/communicationspace/comments/create', { postId, commenterId, commentText });
+      const res = await axios.post(`${url}/communicationspace/comments/create`, { postId, commenterId, commentText });
       dispatch({ type: CREATE_COMMENT, payload: res.data });
       toast.success("comment  is created ")
 
@@ -134,7 +135,7 @@ export const getCommunicationSpacesByProjectId = (projectId) => async (dispatch)
 
   export const deleteComment = (postId, commentId) => async (dispatch) => {
     try {
-      const res = await axios.delete(`http://localhost:8000/api/communicationspace/comments/${postId}/${commentId}`);
+      const res = await axios.delete(`${url}/communicationspace/comments/${postId}/${commentId}`);
       toast.success("comment  is deleted ")
 
       dispatch(getPostsByTaskId(res.data.taskId))

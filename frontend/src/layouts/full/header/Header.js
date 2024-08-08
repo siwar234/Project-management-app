@@ -12,7 +12,7 @@ import { IconBellRinging, IconMenu } from '@tabler/icons';
 import PropTypes from 'prop-types';
 import menu from '../../../assets/images/menu.png';
 import { CgSearch } from 'react-icons/cg';
-import SidebarMenu from './SidebarMenu';
+import SidebarMenu from './NavBarMenu';
 import ProjectsModal from './ProjectsModal';
 import ProjectDescription from './ProjectDescription';
 import { useSelector } from 'react-redux';

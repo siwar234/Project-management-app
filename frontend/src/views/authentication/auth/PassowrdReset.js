@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import { Navigate } from 'react-router';
+import {url} from "../../../ConnectionString"
 
 
 
@@ -23,7 +24,7 @@ import { Navigate } from 'react-router';
           }),
           onSubmit: (values) => {
             axios
-              .post("http://localhost:8000/api/auth/forgetPassword", values)
+              .post(`${url}/auth/forgetPassword`, values)
               .then((response) => {
                 toast.success("Email sent successfully");
                 Navigate('/authentificate/login')

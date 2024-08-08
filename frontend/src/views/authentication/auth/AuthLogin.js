@@ -18,6 +18,7 @@ import CustomTextField from '../../../components/forms/theme-elements/CustomText
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { GoAlertFill } from 'react-icons/go';
+import {url} from "../../../ConnectionString"
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const [invitationEmail, setInvitationEmail] = useState('');
@@ -42,7 +43,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   useEffect(() => {
     if (token) {
       axios
-        .post(`http://localhost:8000/api/auth/get-email-from-token/${token}`)
+        .post(`${url}/auth/get-email-from-token/${token}`)
         .then((response) => {
           setInvitationEmail(response.data.email);
         })

@@ -44,7 +44,7 @@ export default function MenuFeature({task,ticketid,feature,isSecondGridOpen}) {
         <>
         {!feature && (
            <Tooltip
-           title={task.StartDate ? 
+           title={task?.StartDate ? 
              "You can add a feature now that the task has a start date." : 
              "add a feature"}
            placement="bottom" 

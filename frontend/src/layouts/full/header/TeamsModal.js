@@ -16,6 +16,7 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
   const [emailError, setEmailError] = useState('');
 
   const user = useSelector((state) => state.userReducer.user);
+  const equipes = useSelector((state) => state.equipeReducer.equipes); 
 
   const handleInputChange = (event) => {
     setSelectedEmail(event.target.value);
@@ -25,8 +26,17 @@ const TeamsModal = ({ ouvrir, handleClosee }) => {
   const handleInputKeyDown = (event) => {
     if (event.key === 'Enter' && selectedEmail.trim() !== '') {
       if (Yup.string().email().isValidSync(selectedEmail.trim())) {
-        setEmails([...emails, selectedEmail.trim()]);
-        setSelectedEmail('');
+        // Check if the email already exists in the team
+        const teamExists = equipes.some((equipe) =>
+          equipe.emails.includes(selectedEmail.trim()) || equipe.owner === selectedEmail.trim()
+        );
+
+        if (teamExists) {
+          setEmailError('Member already exists in the team');
+        } else {
+          setEmails([...emails, selectedEmail.trim()]);
+          setSelectedEmail('');
+        }
       } else {
         setEmailError('Invalid email address');
       }

@@ -12,6 +12,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useLocation } from 'react-router-dom';
+import {url} from "../../../ConnectionString"
 
 const AccountActivation = ({ title,subtitle, subtext }) => {
   const location = useLocation();
@@ -34,7 +35,7 @@ const AccountActivation = ({ title,subtitle, subtext }) => {
 
   useEffect(() => {
     axios
-      .post(`http://localhost:8000/api/auth/get-email-from-token/${token}`)
+      .post(`${url}/auth/get-email-from-token/${token}`)
       .then((response) => {
         setEmail(response.data.email);
       })

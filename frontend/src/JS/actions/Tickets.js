@@ -7,7 +7,6 @@ import {
   UPDATE_TIKCET_SUCCESS,
   DELETE_TICKETS_SUCCESS,
   GET_ALLTICKETS_SUCCESS,
-  DELETE_IMAGE,
   UPDATE_POSITION_SUCCESS
   
 } from '../actionTypes/tickets';
@@ -32,14 +31,16 @@ import { toast } from 'react-toastify';
 import { getTasks, updateSecondGrid } from './tasks';
 import { getAllFeatures } from './feature';
 import io from 'socket.io-client';
- const socket = io('http://localhost:4101');
+import { url,httpUrl } from "../../ConnectionString"
+
+const socket = io(`${httpUrl}`);
 
 
 export const getListTicketsByproject = (projectId) => async (dispatch, getState) => {
   dispatch({ type: LOAD_TICKETS });
 
   try {
-    const response = await axios.get(`http://localhost:8000/api/tickets/getlisticketsbyproject/${projectId}`);
+    const response = await axios.get(`${url}/tickets/getlisticketsbyproject/${projectId}`);
     dispatch({ type: GET_TICKETS_SUCCESS, payload: { tickets: response.data } });
 
    
@@ -53,7 +54,7 @@ export const getallticket = (id) => async (dispatch, getState) => {
   dispatch({ type: LOAD_TICKETS });
 
   try {
-    const response = await axios.get(`http://localhost:8000/api/tickets/getalltickets/${id}`);
+    const response = await axios.get(`${url}/tickets/getalltickets/${id}`);
     dispatch({ type: GET_ALLTICKETS_SUCCESS, payload: { alltickets: response.data } });
 
    
@@ -65,7 +66,7 @@ export const getallticket = (id) => async (dispatch, getState) => {
 export const createTickets = (ticketsData,projectId) => async (dispatch, getState) => {
 
   try {
-    const response = await axios.post('http://localhost:8000/api/tickets/createtickets', ticketsData);
+    const response = await axios.post(`${url}/tickets/createtickets`, ticketsData);
     dispatch({ type: CREATE_TICKETS_SUCCESS, payload: response.data });
     
     // const { TaskId } = ticketsData;
@@ -80,7 +81,7 @@ export const createTickets = (ticketsData,projectId) => async (dispatch, getStat
 
 export const updatetickets = (projectId, userId,id, ticketsData) => async (dispatch, getState) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tickets/Updatetickets/${id}`, {
+    const response = await axios.put(`${url}/tickets/Updatetickets/${id}`, {
       ...ticketsData,
       User:userId
     });
@@ -115,7 +116,7 @@ export const updatetickets = (projectId, userId,id, ticketsData) => async (dispa
 
 export const updateTicketPosition = (ticketId, updatedData,projectid) => async (dispatch) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tickets/updatepositon/${ticketId}`, updatedData);
+    const response = await axios.put(`${url}/tickets/updatepositon/${ticketId}`, updatedData);
     dispatch({ type: UPDATE_POSITION_SUCCESS, payload: response.data });
     // toast.success("postion update");
     dispatch(getListTicketsByproject(projectid))
@@ -127,7 +128,7 @@ export const updateTicketPosition = (ticketId, updatedData,projectid) => async (
 
 export const updatingtickets = (projectid,id, ticketsData) => async (dispatch) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tickets/updateticket/${id}`, ticketsData);
+    const response = await axios.put(`${url}/tickets/updateticket/${id}`, ticketsData);
     dispatch({
       type: UPDATE_TIKCET_SUCCESS,
       payload: response.data,
@@ -146,7 +147,7 @@ export const updatingtickets = (projectid,id, ticketsData) => async (dispatch) =
 
 export const addCommentToTicket = (projectId,ticketid, commenterId,commentText) => async (dispatch) => {
   try {
-    const response = await axios.post(`http://localhost:8000/api/tickets/addcomment/${ticketid}`,{ commenterId,commentText });
+    const response = await axios.post(`${url}/tickets/addcomment/${ticketid}`,{ commenterId,commentText });
     const {ticketId, taskid, ticketcomment} = response.data;
 
     dispatch({
@@ -170,7 +171,7 @@ export const addCommentToTicket = (projectId,ticketid, commenterId,commentText) 
 
 export const updateticketsFeature = (projectId, id, ticketsData) => async (dispatch, getState) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tickets/Updateticketsfeature/${id}`, ticketsData);
+    const response = await axios.put(`${url}/tickets/Updateticketsfeature/${id}`, ticketsData);
     const { ticketId, taskid, ticketfeature } = response.data;
     
     dispatch({
@@ -198,7 +199,7 @@ export const updateticketsFeature = (projectId, id, ticketsData) => async (dispa
 
 export const deleteCommentFromTicket = (ticketid, commentId, commenterId) => async (dispatch) => {
   try {
-    const response = await axios.delete(`http://localhost:8000/api/tickets/deleteComment/${ticketid}/${commentId}/${commenterId}`);
+    const response = await axios.delete(`${url}/tickets/deleteComment/${ticketid}/${commentId}/${commenterId}`);
 
     const {ticketId, taskId, ticket } = response.data;
 
@@ -221,7 +222,7 @@ export const deleteCommentFromTicket = (ticketid, commentId, commenterId) => asy
 
 export const updateComment = (ticketid, commentId, commenterId, updatedCommentText) => async (dispatch) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tickets/updateComment/${ticketid}/${commentId}`, {
+    const response = await axios.put(`${url}/tickets/updateComment/${ticketid}/${commentId}`, {
       commenterId,
       updatedCommentText,
     });
@@ -247,7 +248,7 @@ export const updateComment = (ticketid, commentId, commenterId, updatedCommentTe
 
 export const deleteVoteFromTicket = (ticketid,voterId) => async (dispatch) => {
   try {
-    const response = await axios.delete(`http://localhost:8000/api/tickets/deleteVote/${ticketid}/${voterId}`);
+    const response = await axios.delete(`${url}/tickets/deleteVote/${ticketid}/${voterId}`);
 
    
     const { ticketId,taskId, ticket } = response.data;
@@ -272,7 +273,7 @@ export const deleteVoteFromTicket = (ticketid,voterId) => async (dispatch) => {
 
 export const addVoteToTicket = (ticketid, voterId) => async (dispatch) => {
   try {
-    const response = await axios.post(`http://localhost:8000/api/tickets/${ticketid}/vote`, { voterId });
+    const response = await axios.post(`${url}/tickets/${ticketid}/vote`, { voterId });
    
     const {taskId,ticketId, ticket} = response.data;
     
@@ -295,7 +296,7 @@ export const addVoteToTicket = (ticketid, voterId) => async (dispatch) => {
 
 export const updateticketsimages = (id, ticketsdata) => async (dispatch) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tickets/updateticketsimages/${id}`, ticketsdata);
+    const response = await axios.put(`${url}/tickets/updateticketsimages/${id}`, ticketsdata);
     
     const { ticketId, taskId, ticket } = response.data;
 
@@ -317,7 +318,7 @@ export const updateticketsimages = (id, ticketsdata) => async (dispatch) => {
 
 export const updateticketsflag = (projectId,ticketid) => async (dispatch) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/tickets/updateTicketFlag/${ticketid}`);
+    const response = await axios.put(`${url}/tickets/updateTicketFlag/${ticketid}`);
     
     const { ticketId, taskId, ticket } = response.data;
 
@@ -342,7 +343,7 @@ export const deleteticketsflag = (projectId,ticketid) => async (dispatch) => {
   dispatch({ type: LOAD_TICKETS });
 
 try {
-  const response =await axios.delete(`http://localhost:8000/api/tickets/deleteTicketFlag/${ticketid}`);
+  const response =await axios.delete(`${url}/tickets/deleteTicketFlag/${ticketid}`);
     const { ticketId, taskId, ticket } = response.data;
 
     dispatch({ type: DELETE_TICKETS_FLAG_SUCCESS, payload: ticketid });
@@ -361,7 +362,7 @@ try {
 export const deletetickets = (ticketId) => async (dispatch) => {
   dispatch({ type: LOAD_TICKETS });
 try {
-    await axios.delete(`http://localhost:8000/api/tickets/deleteticket/${ticketId}`);
+    await axios.delete(`${url}/tickets/deleteticket/${ticketId}`);
     dispatch({ type: DELETE_TICKETS_SUCCESS, payload: ticketId });
     // dispatch(getprojectbyid(taskId));
   } catch (error) {
@@ -373,7 +374,7 @@ try {
 export const deleteImage = (ticketId, imageIndex,projectId) => async (dispatch) => {
 
   try {
-    const response = await fetch(`http://localhost:8000/api/tickets/${ticketId}/images/${imageIndex}`, {
+    const response = await fetch(`${url}/tickets/${ticketId}/images/${imageIndex}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

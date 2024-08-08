@@ -15,13 +15,15 @@ import {
 } from '../actionTypes/project';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
- const socket = io('http://localhost:4101');
+import { url ,httpUrl} from "../../ConnectionString"
+
+const socket = io(`${httpUrl}`);
 
 export const createProject = (projectData) => async (dispatch, getState) => {
   dispatch({ type: LOAD_PROJECT });
 
   try {
-    const response = await axios.post('http://localhost:8000/api/project/createproject', projectData);
+    const response = await axios.post(`${url}/project/createproject`, projectData);
 
     dispatch({ type: CREATE_PROJECT_SUCCESS, payload: response.data });
      socket.emit('projectnotification',response.data)
@@ -39,7 +41,7 @@ export const archiveProject = (projectId) => async (dispatch, getState) => {
   dispatch({ type: LOAD_PROJECT });
 
   try {
-    const response = await axios.put(`http://localhost:8000/api/project/archiverproject/${projectId}`,);
+    const response = await axios.put(`${url}/project/archiverproject/${projectId}`,);
 
     dispatch({ type: ARCHIVE_PROJECT_SUCCESS, payload: response.data });
     // socket.emit('projectnotification', response.data);
@@ -60,7 +62,7 @@ export const unarchiveProject = (projectId) => async (dispatch, getState) => {
   dispatch({ type: LOAD_PROJECT });
 
   try {
-    const response = await axios.put(`http://localhost:8000/api/project/unarchiverproject/${projectId}`,);
+    const response = await axios.put(`${url}/project/unarchiverproject/${projectId}`,);
 
     dispatch({ type: ARCHIVE_PROJECT_SUCCESS, payload: response.data });
     // socket.emit('projectnotification', response.data);
@@ -80,7 +82,7 @@ export const getprojectbyid = (id) => async (dispatch) => {
   dispatch({ type: LOAD_PROJECT });
 
   try {
-    const response = await axios.get(`http://localhost:8000/api/project/getprojectbyid/${id}`, );
+    const response = await axios.get(`${url}/project/getprojectbyid/${id}`, );
     dispatch({ type: GET_PROJECTBYID_SUCCESS, payload: { project: response.data }  });
 
     // dispatch({ type: SELECT_PROJECT, payload:response.data });
@@ -92,7 +94,7 @@ export const getprojectbyid = (id) => async (dispatch) => {
 
 export const updateProject = (id, projectData,userid) => async (dispatch) => {
   try {
-    const response = await axios.put(`http://localhost:8000/api/project/updateproject/${id}`, projectData);
+    const response = await axios.put(`${url}/project/updateproject/${id}`, projectData);
     dispatch({
       type: UPDATE_PROJECT_SUCCESS,
       payload: response.data,
@@ -109,24 +111,11 @@ export const updateProject = (id, projectData,userid) => async (dispatch) => {
 
 
 
-// export const getAllProject = () => async (dispatch) => {
-//   dispatch({ type: LOAD_PROJECT });
-
-//   try {
-//     const response = await axios.get(`http://localhost:8000/api/project//getAllproject`, );
-//     dispatch({ type: GET_PROJECT_SUCCESS, payload: { allprojects: response.data }  });
-
-
-//   } catch (error) {
-//     dispatch({ type: FAIL_PROJECT, payload: error.message });
-//   }
-// };
-
 
 export const deleteproject = (projectId) => async (dispatch) => {
   dispatch({ type: LOAD_PROJECT });
 try {
-    await axios.delete(`http://localhost:8000/api/project/deleteproject/${projectId}`);
+    await axios.delete(`${url}/project/deleteproject/${projectId}`);
     dispatch({ type: DELETE_PROJECT_SUCCESS, payload: projectId });
     dispatch(getprojectbyid(projectId));
   } catch (error) {
@@ -140,7 +129,7 @@ export const getprojectbyuser = (userId) => async (dispatch) => {
   dispatch({ type: LOAD_PROJECT });
 
   try {
-    const response = await axios.get(`http://localhost:8000/api/project/getprojectbyuser/${userId}`, );
+    const response = await axios.get(`${url}/project/getprojectbyuser/${userId}`, );
     dispatch({ type: GET_PROJECT_SUCCESS, payload: { projects: response.data }  });
 
   

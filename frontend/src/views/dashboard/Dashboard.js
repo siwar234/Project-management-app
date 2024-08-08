@@ -47,8 +47,9 @@ import Featureupdate from './Features/Featureupdate';
 import TicketDetail from './Tickets/TicketDetail';
 import { FcLink } from 'react-icons/fc';
 import io from 'socket.io-client';
+import { httpUrl } from "../../ConnectionString"
 
-const socket = io('http://localhost:4101'); 
+const socket = io(`${httpUrl}`);
 
 const Dashboard = () => {
   const [openTasks, setOpenTasks] = useState([]);
