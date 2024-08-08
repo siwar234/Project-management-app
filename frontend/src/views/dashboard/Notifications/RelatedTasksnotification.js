@@ -35,8 +35,9 @@ export const RelatedTasksnotification = ({notification,image2,image3,handleMarkA
             
          </Typography> 
          
-         <ReadNotification notification={notification}></ReadNotification>
-
+         <ReadNotification notification={notification} handleMarkAsRead={handleMarkAsRead}>
+      
+      </ReadNotification>
         
        </Box>
      </MenuItem>)} 

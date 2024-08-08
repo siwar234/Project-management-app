@@ -46,8 +46,9 @@ export const InacrtiveMember = ({ notification, image2, image3, handleMarkAsRead
                 </span>
               </Typography>
             </Typography>
-            <ReadNotification notification={notification}></ReadNotification>
-
+            <ReadNotification notification={notification} handleMarkAsRead={handleMarkAsRead}>
+      
+      </ReadNotification>
             <Typography variant="body2" color="textSecondary">
               <span style={{ marginLeft: 8, fontSize: "13px", marginTop: "4px" }}>
                 deadline {formatDistanceToNow(new Date(notification.data.task.EndDate), { addSuffix: true })}

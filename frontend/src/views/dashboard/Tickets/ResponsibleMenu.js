@@ -24,7 +24,7 @@ export default function ResponsibleMenu({ MenuResponsible, handleclosedResponsib
   const dispatch = useDispatch();
 
   
-  const filteredMembers = equipes?.members.filter(member => member.memberId?._id !== Responsibleid);
+  const filteredMembers = equipes?.members?.filter(member => member.memberId?._id !== Responsibleid) || [];
 
   return (
     <Menu

@@ -35,8 +35,9 @@ const ApprochingDeadlinenotification = ({notification,image2,image3,handleMarkAs
        
       </span>
     </Typography>
-    <ReadNotification notification={notification}></ReadNotification>
-
+    <ReadNotification notification={notification} handleMarkAsRead={handleMarkAsRead}>
+      
+    </ReadNotification>
      <Typography variant="body2" color="textSecondary">
       <div style={{ display: 'flex', alignItems: 'center',flexDirection:"row"}}>
         

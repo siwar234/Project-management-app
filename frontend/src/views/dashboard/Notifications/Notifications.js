@@ -148,8 +148,9 @@ const Notifications = ({ userId }) => {
                         <span style={{ color: "gray", marginLeft: "10px", fontWeight: "lighter", marginRight: "20px" }}>
                           {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
                         </span>
-                      <ReadNotification notification={notification}></ReadNotification>
-                      </Typography>
+                        <ReadNotification notification={notification} handleMarkAsRead={handleMarkAsRead}>
+      
+      </ReadNotification>                      </Typography>
                       <Typography variant="body2" color="textSecondary">
                         <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
                           <img src={notification.data?._id?.Icon || image5} style={{ width: "18px", height: "18px" }} alt='Project icon' />
@@ -176,8 +177,9 @@ const Notifications = ({ userId }) => {
                         <span style={{ color: "gray", marginLeft: "10px", fontWeight: "lighter", marginRight: "18px" }}>
                           {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
                         </span>
-                        <ReadNotification notification={notification}></ReadNotification>
-
+                        <ReadNotification notification={notification} handleMarkAsRead={handleMarkAsRead}>
+      
+      </ReadNotification>
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
                         <div style={{ display: 'flex', alignItems: 'center', flexDirection: "row" }}>

@@ -2,7 +2,7 @@ import React from 'react'
 import {  MenuItem,Typography,Box } from '@mui/material';
 import ReadNotification from './ReadNotification';
 
-const AdminNotification = ({notification,image2,image3,handleMarkAsRead,userId}) => {
+const AdminNotification = ({notification,userId}) => {
   return (
 <>
 
