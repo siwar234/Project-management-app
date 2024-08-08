@@ -511,7 +511,10 @@ const handleKeyDown = (event,ticketId) => {
             
             <Box style={{ position: 'sticky', bottom:0, width: '90%', alignItems: 'flex-end' }}>
   <Box display="flex" alignItems="center" mb={1}>
-    <Avatar src={user.profilePicture} alt="Current User" sx={{ width: 32, height: 32, mr: 1 }} />
+    <Avatar
+     
+     src={user.profilePicture} alt="Current User" sx={{ width: 32, height: 32, mr: 1,        fontSize:'13px'
+     }} >   {user?.firstName && user.firstName.substring(0, 2).toUpperCase()}</Avatar>
     <TextField
       fullWidth
       variant="outlined"
