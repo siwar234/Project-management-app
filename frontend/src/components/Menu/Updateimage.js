@@ -34,7 +34,7 @@ const UpdateImage = ({ ticket,setMenuAnchor,menuAnchor,handleDeleteImage ,handle
      Operation is irreversible.
     </Typography>
     <Box display="flex" justifyContent="flex-end">
-      <Button variant="contained"  fullWidth color='primary' justifyContent='center' onClick={() => handleDeleteImage(ticket?._id)} >
+      <Button variant="contained"  fullWidth color='primary' justifyContent='center'  onClick={() => handleDeleteImage(ticket?._id)} >
 Delete       </Button>
     </Box>
   </Box>

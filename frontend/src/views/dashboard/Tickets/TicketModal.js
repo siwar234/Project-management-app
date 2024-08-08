@@ -140,8 +140,8 @@ const handleCloseMenu = () => {
 };
 
 
-const handleDeleteImage = (ticketid) => {
-  dispatch(deleteImage(ticketid, selectedIndex, projectId));
+const handleDeleteImage = (ticketId) => {
+  dispatch(deleteImage(ticketId, selectedIndex, projectId));
   handleCloseMenu();
 };
 
@@ -455,11 +455,7 @@ const handleKeyDown = (event,ticketId) => {
 
                       </div>
 
-            {/* <Box display="flex" alignItems="center" mt={1} mb={2}>
-              <Avatar variant="square"  alt="attachment" sx={{ width: 56, height: 56, mr: 2 }} />
-              <Button startIcon={<AttachFileIcon />}>Ajouter un fichier</Button>
-            </Box> */}
-
+        
             {ticket?.descriptionticket?.imageD?.length > 0 && (
                 
                         <>
@@ -495,7 +491,7 @@ const handleKeyDown = (event,ticketId) => {
             <Button style={{marginTop:"15px"}} size="small"  >Modifiy</Button>
 
 
-      <UpdateImage setMenuAnchor={setMenuAnchor} menuAnchor={menuAnchor} handleDeleteImage={handleAddImage} handleCloseMenu={handleCloseMenu} />
+            <UpdateImage setMenuAnchor={setMenuAnchor} menuAnchor={menuAnchor} handleDeleteImage={handleDeleteImage} handleCloseMenu={handleCloseMenu} ticket={ticket} />
 
 
 
