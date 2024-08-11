@@ -18,7 +18,7 @@ import CustomTextField from '../../../components/forms/theme-elements/CustomText
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { GoAlertFill } from 'react-icons/go';
-import {url} from "../../../ConnectionString"
+import {url,googlepUrl} from "../../../ConnectionString"
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const [invitationEmail, setInvitationEmail] = useState('');
@@ -32,7 +32,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   const equipeId = params.get('equipeId');
 
   const signInGoogle = () => {
-    window.location.replace('http://localhost:8000/auth/google');
+    window.location.replace(`${googlepUrl}/auth/google`);
   };
 
   const isInvitationUrl = () => {

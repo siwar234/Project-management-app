@@ -5,6 +5,7 @@ import {  registerUser } from 'src/JS/actions/user';
 import CustomTextField from '../../../components/forms/theme-elements/CustomTextField';
 import { Stack } from '@mui/system';
 import { FcHighPriority } from 'react-icons/fc';
+import {googlepUrl } from "../../../ConnectionString"
 
 const InvitationRegister = ({ title, subtitle, subtext }) => {
   const [emailError, setEmailError] = React.useState('');
@@ -32,7 +33,7 @@ const InvitationRegister = ({ title, subtitle, subtext }) => {
   
   const signInGoogle=()=>{
         
-    window.location.replace("http://localhost:8000/auth/google");
+    window.location.replace(`${googlepUrl}/auth/google`);
 
 }
 

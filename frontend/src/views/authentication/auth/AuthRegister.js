@@ -5,7 +5,7 @@ import {  registerUser } from 'src/JS/actions/user';
 import CustomTextField from '../../../components/forms/theme-elements/CustomTextField';
 import { Stack } from '@mui/system';
 import { FcHighPriority } from 'react-icons/fc';
-
+import {googlepUrl } from "../../../ConnectionString"
 const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const isValidEmail = (email) => {
 
 const signInGoogle=()=>{
         
-  window.location.replace("http://localhost:8000/auth/google");
+  window.location.replace(`${googlepUrl}/auth/google`);
 
 }
 
