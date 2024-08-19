@@ -15,17 +15,21 @@ jest.mock('nodemailer', () => {
 
 
 beforeAll(async () => {
-  await mongose.connect(process.env.URL_TEST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-  });
+  if (mongose.connection.readyState === 0) {
+    await mongose.connect(process.env.URL_TEST, {
+      // Removed deprecated options
+    });
+    console.log('Connected to Test Database:', process.env.URL_TEST);
+  }
 });
 
 afterAll(async () => {
-  if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
+  if (process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
+    console.log('Dropped Test Database');
   }
-  await mongose.connection.close();
+  await mongose.disconnect();
+  console.log('Disconnected from Test Database');
 });
 
 beforeEach(() => {

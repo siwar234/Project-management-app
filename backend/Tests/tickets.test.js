@@ -8,17 +8,18 @@ const Feature = require('../models/Features');
 jest.setTimeout(100000); // Set the timeout to 100000ms (100 seconds) or any suitable duration
 
 beforeAll(async () => {
-  await mongose.connect(process.env.URL_TEST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-  });
+  if (mongose.connection.readyState === 0) {
+    await mongose.connect(process.env.URL_TEST, {
+      // Removed deprecated options
+    });
+  }
 });
 
 afterAll(async () => {
-  if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
+  if (process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
   }
-  await mongose.connection.close();
+  await mongose.disconnect();
 });
 
 
@@ -67,24 +68,24 @@ afterEach(async () => {
   await Feature.deleteMany({});
 });
 
-describe('Ticket Controller', () => {
-  it('should retrieve tickets by task ID', async () => {
-    const { mockTaskId } = global.testData;
 
-    const getTicketsResponse = await request(app)
-      .get(`/api/tickets/getlistickets/${mockTaskId}`);
-
-
-
-    expect(getTicketsResponse.status).toBe(200);
-    expect(getTicketsResponse.body).toBeInstanceOf(Array);
-    expect(getTicketsResponse.body.length).toBeGreaterThan(0);
-    expect(getTicketsResponse.body[0]).toHaveProperty('_id');
-    expect(getTicketsResponse.body[0].Description).toBe('Test Ticket');
-    expect(getTicketsResponse.body[0].Priority).toBe('High');
-  });
-
- 
+  describe('Ticket Controller', () => {
+    it('should retrieve tickets by task ID', async () => {
+      const { mockTaskId } = global.testData;
+  
+      const getTicketsResponse = await request(app)
+        .get(`/api/tickets/getlistickets/${mockTaskId}`);
+  
+     
+  
+      expect(getTicketsResponse.status).toBe(200);
+      expect(getTicketsResponse.body).toBeInstanceOf(Array);
+      expect(getTicketsResponse.body.length).toBeGreaterThan(0);
+      expect(getTicketsResponse.body[0]).toHaveProperty('_id');
+      expect(getTicketsResponse.body[0].Description).toBe('Test Ticket');
+      expect(getTicketsResponse.body[0].Priority).toBe('High');
+    });
+  
     describe('Ticket Controller', () => {
       it('should retrieve tickets by task ID', async () => {
         const { mockTaskId } = global.testData;
@@ -141,6 +142,6 @@ describe('Ticket Controller', () => {
       });
     });
     
-  ;
+  });
   
-});
+
