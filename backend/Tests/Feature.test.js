@@ -21,7 +21,7 @@ afterAll(async () => {
     console.log('Dropped Test Database');
   }
   await mongose.disconnect();
-  process.exit();
+  console.log('Disconnected from Test Database');
 });
 
 beforeEach(async () => {
