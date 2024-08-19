@@ -5,12 +5,12 @@ const Task = require('../models/Tasks');
 const Ticket = require('../models/Tickets');
 const Feature = require('../models/Features');
 
-// mongoose.connect(process.env.URL_TEST, {
-// //   useNewUrlParser: true,
-// //   useUnifiedTopology: true,
-// }).catch((err) => {
-//   console.log(err);
-// });
+mongose.connect(process.env.URL_TEST, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+}).catch((err) => {
+  console.log(err);
+});
 
 beforeAll(async () => {
   if (mongose.connection.readyState === 0) {

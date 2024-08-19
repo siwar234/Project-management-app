@@ -1,5 +1,5 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
+const mongose = require('mongoose');
 const { app } = require('../server');
 const Task = require('../models/Tasks');
 const Ticket = require('../models/Tickets');
@@ -7,23 +7,23 @@ const Feature = require('../models/Features');
 
 jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suitable duration
 
-mongoose.connect(process.env.URL_TEST).catch((err) => {
+mongose.connect(process.env.URL_TEST).catch((err) => {
   console.log(err);
 });
 
 beforeAll(async () => {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(process.env.URL_TEST);
+  if (mongose.connection.readyState === 0) {
+    await mongose.connect(process.env.URL_TEST);
     console.log('Connected to Test Database:', process.env.URL_TEST);
   }
 });
 
 afterAll(async () => {
   if (process.env.DROP_DB_AFTER_TESTS === 'true') {
-    await mongoose.connection.db.dropDatabase();
+    await mongose.connection.db.dropDatabase();
     console.log('Dropped Test Database');
   }
-  await mongoose.disconnect();
+  await mongose.disconnect();
   console.log('Disconnected from Test Database');
 });
 
@@ -39,9 +39,9 @@ describe('Ticket Controller', () => {
 
   beforeAll(async () => {
     mockTaskId = "66b0b337e9db004702642e8b";
-    mockTicketId = new mongoose.Types.ObjectId("66b0b02e6183b8b305ac6402");
+    mockTicketId = new mongose.Types.ObjectId("66b0b02e6183b8b305ac6402");
     mockProjectId = "66b0b02e6183b8b305ac6405";
-    mockFeatureId = new mongoose.Types.ObjectId("66b0b02e6183b8b305ac6456");
+    mockFeatureId = new mongose.Types.ObjectId("66b0b02e6183b8b305ac6456");
 
     // Create a ticket
     const ticketData = {
@@ -85,7 +85,7 @@ describe('Ticket Controller', () => {
   });
 
   it('should update a ticket by ID', async () => {
-    const mockFeature = new mongoose.Types.ObjectId();
+    const mockFeature = new mongose.Types.ObjectId();
 
     // Create and save feature
     const mockFeatured = new Feature({

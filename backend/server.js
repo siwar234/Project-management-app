@@ -39,8 +39,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-console.log('Memory Usage:', process.memoryUsage());
-console.log('CPU Usage:', os.cpus());
+// console.log('Memory Usage:', process.memoryUsage());
+// console.log('CPU Usage:', os.cpus());
 
 
 // Middleware
