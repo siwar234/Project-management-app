@@ -8,18 +8,17 @@ jest.setTimeout(100000); // Adjust timeout if needed
 
 
 beforeAll(async () => {
-  if (mongose.connection.readyState === 0) {
-    await mongose.connect(process.env.URL_TEST, {
-      // Removed deprecated options
-    });
-  }
+  await mongose.connect(process.env.URL_TEST, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+  });
 });
 
 afterAll(async () => {
-  if (process.env.DROP_DB_AFTER_TESTS === 'true') {
+  if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
   }
-  await mongose.disconnect();
+  await mongose.connection.close();
 });
 
 beforeEach(() => {

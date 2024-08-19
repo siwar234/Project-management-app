@@ -6,20 +6,18 @@ const Feature = require('../models/Features');
 jest.setTimeout(100000); // Set the timeout to 100000ms (100 seconds) or any suitable duration
 
 beforeAll(async () => {
-  if (mongose.connection.readyState === 0) {
-    await mongose.connect(process.env.URL_TEST, {
-      // Removed deprecated options
-    });
-  }
+  await mongose.connect(process.env.URL_TEST, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+  });
 });
 
 afterAll(async () => {
-  if (process.env.DROP_DB_AFTER_TESTS === 'true') {
+  if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
   }
-  await mongose.disconnect();
+  await mongose.connection.close();
 });
-
 
 
 beforeEach(async () => {
