@@ -116,16 +116,5 @@ describe('Project Controller', () => {
     mockFindOneAndUpdate.mockRestore();
   });
 
-  // it('should delete a project by ID', async () => {
-  //   const response = await request(app)
-  //     .delete(`/api/project/deleteproject/${mockProjectId}`);
-
-  //   console.log('Response Body:', response.body);
-
-  //   expect(response.status).toBe(200);
-  //   expect(response.body).toHaveProperty('message', 'project deleted');
-
-  //   const project = await Project.findById(mockProjectId);
-  //   expect(project).toBeNull(); // Ensure the project is deleted
-  // });
+ 
 });

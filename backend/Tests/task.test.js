@@ -4,7 +4,7 @@ const { app } = require('../server');
 const Task = require('../models/Tasks');
 const Ticket = require('../models/Tickets');
 const Feature = require('../models/Features');
-jest.setTimeout(100000); // Set the timeout to 100000ms (100 seconds) or any suitable duration
+jest.setTimeout(100000); // Adjust timeout if needed
 
 
 beforeAll(async () => {
@@ -31,25 +31,10 @@ beforeEach(() => {
 describe('Task Controller', () => {
 
   it('should retrieve tasks by project ID', async () => {
-    // const projectIdd = new mongose.Types.ObjectId();
 
     const mockTaskId = new mongose.Types.ObjectId();
 
-    // const equipeId = new mongose.Types.ObjectId();
-    // const senderId = new mongose.Types.ObjectId();
-
-
-    // const mockProject = new Project({
-    //   _id: projectIdd,
-    //   projectName: ' Project1',
-    //   type: 'Test Type',
-    //   User: senderId,
-    //   Equipe: equipeId,
-    //   Responsable: senderId,
-    //   archiver: false,
-    // });
-    // await mockProject.save();
-
+    
 
     const mockTask = new Task({
       _id: mockTaskId,
@@ -103,64 +88,5 @@ describe('Task Controller', () => {
     expect(response.body.EndDate).toBe('2024-07-15T00:00:00.000Z');
   });
 
-  // it('should delete a task by ID and related data', async () => {
-  //   const mockProjectId = new mongose.Types.ObjectId();
-
-  //   const mockTicketId = new mongose.Types.ObjectId("605c72efc8d3b0004a9b0f59");
-  //   const mockFeatureId = new mongose.Types.ObjectId("605c72efc8d3b0004a9b0f62");
-    
-  //   const mockTask = new Task({
-  //     _id: mockTaskId,
-  //     TaskName: ' Task2',
-  //     Duration: '1 week',
-  //     projectId: mockProjectId,
-  //     tickets: [mockTicketId]
-  //   });
-  //   await mockTask.save();
-
-  //   const mockTicket = new Ticket({
-  //     _id: mockTicketId,
-  //     Description: 'Test Ticket',
-  //     TaskId: mockTaskId,
-  //     projectId: mockProjectId,
-  //     Feature: mockFeatureId
-  //   });
-  //   await mockTicket.save();
-
-  //   const mockFeature = new Feature({
-  //     _id: mockFeatureId,
-  //     titleF: ' Feature2',
-  //     projectId: mockProjectId,
-  //     Tickets: [mockTicketId]
-  //   });
-  //   await mockFeature.save();
-
-  //   const response = await request(app)
-  //     .delete(`/api/tasks/deletetasks/${mockTaskId}`);
-
-  //   console.log('Response Body:', response.body);
-
-  //   expect(response.status).toBe(200);
-  //   expect(response.body).toHaveProperty('message', 'Task and related tickets deleted successfully');
-
-  //   // Check if the task was deleted
-  //   const task = await Task.findById(mockTaskId);
-  //   expect(task).toBeNull();
-
-  //   // Check if the related ticket was deleted
-  //   const ticket = await Ticket.findById(mockTicketId);
-  //   expect(ticket).toBeNull();
-
-  //   // Check if the feature's tickets were updated
-  //   const feature = await Feature.findById(mockFeatureId);
-  //   if (feature) {
-  //     expect(feature.Tickets).not.toContain(mockTicketId);
-  //     if (feature.Tickets.length === 0) {
-  //       expect(feature.startDate).toBeNull();
-  //       expect(feature.endDate).toBeNull();
-  //     }
-  //   } else {
-  //     console.log('Feature document not found, as expected if it was deleted or not created properly.');
-  //   }
-  // });
+  
 });

@@ -67,23 +67,12 @@ it('should retrieve posts by task ID', async () => {
     expect(getPostsResponse.body[0].postText).toBe('Test Post');
   });
 
-//   it('should delete a post', async () => {
-    
 
-//     const deleteResponse = await request(app)
-//       .delete(`/api/communicationspace/posts/${mockPostId}`);
-
-//     console.log('Response Body:', deleteResponse.body);
-
-//     expect(deleteResponse.status).toBe(200);
-//     expect(deleteResponse.body).toHaveProperty('message', 'Post deleted successfully');
-//   });
 
 
  
 
   it('should retrieve comments by post ID', async () => {
-    jest.setTimeout(20000); 
     const mockPostid = new mongose.Types.ObjectId();
 
     

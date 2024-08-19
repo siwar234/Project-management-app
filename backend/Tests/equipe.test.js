@@ -98,33 +98,6 @@ describe('Equipe Controller', () => {
     });
   });
 
-  // Test for getting equipes by user ID
-  // describe('getEquipesByUserId', () => {
-  //   beforeEach(async () => {
-  //     // Create only the relevant equipes for this test
-  //     await Equipe.create({
-  //       NameEquipe: 'Owner Equipe',
-  //       owner: mockUserId,
-  //       emails: [],
-  //       members: [],
-  //     });
-  //     await Equipe.create({
-  //       NameEquipe: 'Another Owner Equipe',
-  //       owner: mockUserId,
-  //       emails: [],
-  //       members: [],
-  //     });
-  //   });
-  
-  //   it('should get equipes by user ID', async () => {
-  //     const response = await request(app)
-  //       .get(`/api/equipe/equipes/${mockUserId}`);
-  
-  //     expect(response.status).toBe(200);
-  //     expect(response.body).toHaveLength(2); 
-  //     expect(response.body[0].NameEquipe).toBe('Owner Equipe');
-  //     expect(response.body[1].NameEquipe).toBe('Another Owner Equipe');
-  //   });
-  // });
+
   
 });
