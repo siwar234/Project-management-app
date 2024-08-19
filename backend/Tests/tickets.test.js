@@ -10,8 +10,7 @@ jest.setTimeout(100000); // Set the timeout to 100000ms (100 seconds) or any sui
 beforeAll(async () => {
   if (mongose.connection.readyState === 0) {
     await mongose.connect(process.env.URL_TEST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      // Removed deprecated options
     });
     console.log('Connected to Test Database:', process.env.URL_TEST);
   }
@@ -25,6 +24,8 @@ afterAll(async () => {
   await mongose.disconnect();
   console.log('Disconnected from Test Database');
 });
+
+
 
 beforeEach(async () => {
   jest.clearAllMocks();
