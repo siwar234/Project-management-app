@@ -12,17 +12,14 @@ beforeAll(async () => {
     await mongose.connect(process.env.URL_TEST, {
       // Removed deprecated options
     });
-    console.log('Connected to Test Database:', process.env.URL_TEST);
   }
 });
 
 afterAll(async () => {
   if (process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
-    console.log('Dropped Test Database');
   }
   await mongose.disconnect();
-  console.log('Disconnected from Test Database');
 });
 
 beforeEach(() => {
@@ -61,7 +58,6 @@ describe('Project Controller', () => {
     const response = await request(app)
       .get(`/api/project/getprojectbyid/${mockProjectId}`);
 
-    console.log('Response Body:', response.body);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('_id');
@@ -82,7 +78,6 @@ describe('Project Controller', () => {
       .put(`/api/project/updateproject/${mockProjectId}`)
       .send(updatedData);
 
-    console.log('Response Body:', response.body);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('_id');

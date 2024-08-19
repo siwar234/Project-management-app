@@ -12,17 +12,14 @@ beforeAll(async () => {
     await mongose.connect(process.env.URL_TEST, {
       // Removed deprecated options
     });
-    console.log('Connected to Test Database:', process.env.URL_TEST);
   }
 });
 
 afterAll(async () => {
   if (process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
-    console.log('Dropped Test Database');
   }
   await mongose.disconnect();
-  console.log('Disconnected from Test Database');
 });
 
 beforeEach(() => {
@@ -58,7 +55,6 @@ it('should retrieve posts by task ID', async () => {
     const getPostsResponse = await request(app)
       .get(`/api/communicationspace/posts/byTaskId/${mockTaskId}`);
 
-    console.log('Response Body:', getPostsResponse.body);
 
     expect(getPostsResponse.status).toBe(200);
     expect(getPostsResponse.body).toBeInstanceOf(Array);
@@ -97,7 +93,6 @@ it('should retrieve posts by task ID', async () => {
     const getCommentsResponse = await request(app)
       .get(`/api/communicationspace/comments/byPostId/${mockPostid}`);
 
-    console.log('Response Body:', getCommentsResponse.body);
 
     expect(getCommentsResponse.status).toBe(200);
     expect(getCommentsResponse.body).toHaveProperty('_id');

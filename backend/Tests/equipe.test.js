@@ -19,17 +19,14 @@ beforeAll(async () => {
     await mongose.connect(process.env.URL_TEST, {
       // Removed deprecated options
     });
-    console.log('Connected to Test Database:', process.env.URL_TEST);
   }
 });
 
 afterAll(async () => {
   if (process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
-    console.log('Dropped Test Database');
   }
   await mongose.disconnect();
-  console.log('Disconnected from Test Database');
 });
 
 beforeEach(() => {

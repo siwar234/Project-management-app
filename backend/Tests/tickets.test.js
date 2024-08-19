@@ -12,17 +12,14 @@ beforeAll(async () => {
     await mongose.connect(process.env.URL_TEST, {
       // Removed deprecated options
     });
-    console.log('Connected to Test Database:', process.env.URL_TEST);
   }
 });
 
 afterAll(async () => {
   if (process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
-    console.log('Dropped Test Database');
   }
   await mongose.disconnect();
-  console.log('Disconnected from Test Database');
 });
 
 
@@ -78,8 +75,7 @@ describe('Ticket Controller', () => {
     const getTicketsResponse = await request(app)
       .get(`/api/tickets/getlistickets/${mockTaskId}`);
 
-    console.log('Get Tickets Response Status:', getTicketsResponse.status);
-    console.log('Get Tickets Response Body:', getTicketsResponse.body);
+
 
     expect(getTicketsResponse.status).toBe(200);
     expect(getTicketsResponse.body).toBeInstanceOf(Array);
@@ -96,8 +92,7 @@ describe('Ticket Controller', () => {
       const getTicketsResponse = await request(app)
         .get(`/api/tickets/getlistickets/${mockTaskId}`);
   
-      console.log('Get Tickets Response Status:', getTicketsResponse.status);
-      console.log('Get Tickets Response Body:', getTicketsResponse.body);
+     
   
       expect(getTicketsResponse.status).toBe(200);
       expect(getTicketsResponse.body).toBeInstanceOf(Array);
@@ -114,8 +109,7 @@ describe('Ticket Controller', () => {
         const getTicketsResponse = await request(app)
           .get(`/api/tickets/getlistickets/${mockTaskId}`);
     
-        console.log('Get Tickets Response Status:', getTicketsResponse.status);
-        console.log('Get Tickets Response Body:', getTicketsResponse.body);
+  
     
         expect(getTicketsResponse.status).toBe(200);
         expect(getTicketsResponse.body).toBeInstanceOf(Array);
@@ -143,8 +137,7 @@ describe('Ticket Controller', () => {
           .put(`/api/tickets/updateticket/${mockTicketId}`)
           .send(updatedTicketData);
     
-        console.log('Update Response Status:', updateResponse.status);
-        console.log('Update Response Body:', updateResponse.body);
+        
     
         expect(updateResponse.status).toBe(200);
         expect(updateResponse.body).toHaveProperty('_id');

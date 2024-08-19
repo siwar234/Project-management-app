@@ -15,10 +15,8 @@ jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suita
   afterAll(async () => {
     if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
       await mongose.connection.db.dropDatabase();
-      // console.log('Dropped Test Database');
     }
     await mongose.disconnect();
-    // console.log('Disconnected from Test Database');
   });
   
   beforeEach(() => {
@@ -46,8 +44,8 @@ describe('CommunicationSpace Controller', () => {
         const getCommunicationSpacesResponse = await request(app)
             .get(`/api/communicationspace/project/605c72efc8d3b0004a9b0c08`);
 
-        console.log('Response Body:', getCommunicationSpacesResponse.body);
 
+            
         expect(getCommunicationSpacesResponse.status).toBe(200);
         expect(getCommunicationSpacesResponse.body).toBeInstanceOf(Array);
         // expect(getCommunicationSpacesResponse.body.length).toBeGreaterThan(0);

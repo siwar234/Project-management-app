@@ -10,17 +10,14 @@ beforeAll(async () => {
     await mongose.connect(process.env.URL_TEST, {
       // Removed deprecated options
     });
-    console.log('Connected to Test Database:', process.env.URL_TEST);
   }
 });
 
 afterAll(async () => {
   if (process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
-    console.log('Dropped Test Database');
   }
   await mongose.disconnect();
-  console.log('Disconnected from Test Database');
 });
 
 
@@ -53,7 +50,6 @@ describe('Feature Controller', () => {
     const getFeaturesResponse = await request(app)
       .get(`/api/feature/getlistfeatures/${global.testData.mockProjectId}`);
 
-    console.log('Response Body:', getFeaturesResponse.body);
 
     expect(getFeaturesResponse.status).toBe(200);
     expect(getFeaturesResponse.body).toBeInstanceOf(Array);
@@ -73,8 +69,7 @@ describe('Feature Controller', () => {
       .put(`/api/feature/updatefeature/${global.testData.mockFeatureId}`)
       .send(updatedFeatureData);
 
-    console.log('Update Response Status:', updateResponse.status);
-    console.log('Update Response Body:', updateResponse.body);
+ 
 
     expect(updateResponse.status).toBe(200);
     expect(updateResponse.body.updatedFeature).toHaveProperty('_id');
