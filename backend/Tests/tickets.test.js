@@ -23,7 +23,7 @@ afterAll(async () => {
     console.log('Dropped Test Database');
   }
   await mongose.disconnect();
-  console.log('Disconnected from Test Database');
+  process.exit();
 });
 
 beforeEach(async () => {
