@@ -84,23 +84,7 @@ describe('Ticket Controller', () => {
     expect(getTicketsResponse.body[0].Priority).toBe('High');
   });
 
-  describe('Ticket Controller', () => {
-    it('should retrieve tickets by task ID', async () => {
-      const { mockTaskId } = global.testData;
-  
-      const getTicketsResponse = await request(app)
-        .get(`/api/tickets/getlistickets/${mockTaskId}`);
-  
-     
-  
-      expect(getTicketsResponse.status).toBe(200);
-      expect(getTicketsResponse.body).toBeInstanceOf(Array);
-      expect(getTicketsResponse.body.length).toBeGreaterThan(0);
-      expect(getTicketsResponse.body[0]).toHaveProperty('_id');
-      expect(getTicketsResponse.body[0].Description).toBe('Test Ticket');
-      expect(getTicketsResponse.body[0].Priority).toBe('High');
-    });
-  
+ 
     describe('Ticket Controller', () => {
       it('should retrieve tickets by task ID', async () => {
         const { mockTaskId } = global.testData;
@@ -157,6 +141,6 @@ describe('Ticket Controller', () => {
       });
     });
     
-  });
+  ;
   
 });
