@@ -36,7 +36,7 @@ describe('Task Controller', () => {
   it('should retrieve tasks by project ID', async () => {
     // const projectIdd = new mongose.Types.ObjectId();
 
-    const mockTaskId = new mongose.Types.ObjectId("66b0b337e9db004702642e8b");
+    const mockTaskId = new mongose.Types.ObjectId();
 
     // const equipeId = new mongose.Types.ObjectId();
     // const senderId = new mongose.Types.ObjectId();

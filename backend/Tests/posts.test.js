@@ -35,7 +35,7 @@ mongose.connect(process.env.URL_TEST, {
 describe('Post Controller', () => {
   const mockTaskId = "66b0d368ecb9a7195dc05fdb";
   const mockPosterId = "66b0d15ffdbbff40fcf5dbdd";
-  const mockPostId = new mongose.Types.ObjectId("66a2c06d20191d91ba6aef64");
+  const mockPostId = new mongose.Types.ObjectId();
   const mockCommentId = new mongose.Types.ObjectId("66a2964cbbafb03300e01c9a");
 
 
