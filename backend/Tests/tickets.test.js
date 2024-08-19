@@ -39,7 +39,7 @@ describe('Ticket Controller', () => {
 
   beforeAll(async () => {
     mockTaskId = "66b0b337e9db004702642e8b";
-    mockTicketId = new mongose.Types.ObjectId("66b0b02e6183b8b305ac6402");
+    mockTicketId = new mongose.Types.ObjectId();
     mockProjectId = "66b0b02e6183b8b305ac6405";
     mockFeatureId = new mongose.Types.ObjectId("66b0b02e6183b8b305ac6456");
 

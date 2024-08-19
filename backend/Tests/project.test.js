@@ -34,7 +34,7 @@ beforeEach(() => {
 });
 
 describe('Project Controller', () => {
-  const mockProjectId = '605c72efc8d3b0004a9b0c08'; 
+  const mockProjectId = new mongose.Types.ObjectId(); 
 
   it('should retrieve a project by ID', async () => {
     const equipeId = new mongose.Types.ObjectId();

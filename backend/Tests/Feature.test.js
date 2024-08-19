@@ -34,7 +34,7 @@ beforeEach(() => {
 describe('Feature Controller', () => {
 
 
-  const mockFeatureId = new mongose.Types.ObjectId("605c72efc8d3b0004a9b0f64");
+  const mockFeatureId = new mongose.Types.ObjectId();
   // const mockTaskId = "66b0b337e9db004702642e8b";
 
   const mockProjectId = "605c72efc8d3b0004a9b0c08";
@@ -83,7 +83,7 @@ describe('Feature Controller', () => {
     };
 
     const updateResponse = await request(app)
-      .put(`/api/feature/updatefeature/605c72efc8d3b0004a9b0f64`)
+      .put(`/api/feature/updatefeature/${mockFeatureId}`)
       .send(updatedFeatureData);
 
     console.log('Response Body:', updateResponse.body);
