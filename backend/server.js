@@ -146,6 +146,7 @@ const parseDuration = (durationStr) => {
 };
 
 
+if (process.env.NODE_ENV !== 'test') {
 
 cron.schedule('0 0 * * *', async () => {
   console.log('Checking ticket statuses...');
@@ -153,7 +154,7 @@ cron.schedule('0 0 * * *', async () => {
   await updateAllTicketsEtat(io); 
 });
 
-
+}
 
 ////notification approching deadline for tasks
 const approachingDeadline = async () => {
