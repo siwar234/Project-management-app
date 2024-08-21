@@ -11,7 +11,6 @@ COPY package*.json ./
 RUN npm install
 
 # Install nodemon globally
-RUN npm install -g nodemon
 
 # Copy the rest of the application code
 COPY . .
@@ -20,4 +19,4 @@ COPY . .
 EXPOSE 8000
 
 # Command to run the app
-CMD ["nodemon", "server.js"]
+CMD ["npm", "start"]
