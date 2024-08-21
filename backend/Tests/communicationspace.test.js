@@ -23,7 +23,7 @@ jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suita
     }
   
     // Disconnect from the test database
-    await mongoose.connection.close();
+    await mongose.connection.close();
     console.log('Disconnected from Test Database');
   
  
