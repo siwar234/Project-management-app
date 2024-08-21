@@ -142,12 +142,12 @@ server.listen(PORTT, () => {
 
 const parseDuration = (durationStr) => {
   const weeks = parseInt(durationStr.split(' ')[0]);
-  return weeks * 7 * 24 * 60 * 60 * 1000; // Convert weeks to milliseconds
+  return weeks * 7 * 24 * 60 * 60 * 1000; 
 };
 
 
 if (process.env.NODE_ENV !== 'test') {
-
+  
 cron.schedule('0 0 * * *', async () => {
   console.log('Checking ticket statuses...');
   
