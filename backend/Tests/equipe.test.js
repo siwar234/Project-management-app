@@ -14,6 +14,7 @@ jest.mock('nodemailer', () => {
 });
 
 
+
 beforeAll(async () => {
   if (mongose.connection.readyState === 0) {
     await mongose.connect(process.env.URL_TEST, {
@@ -24,13 +25,20 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  // Drop the test database if configured to do so
   if (process.env.DROP_DB_AFTER_TESTS === 'true') {
     await mongose.connection.db.dropDatabase();
     console.log('Dropped Test Database');
   }
+
+  // Disconnect from the test database
   await mongose.disconnect();
   console.log('Disconnected from Test Database');
+
+  // Check for open handles
+  setImmediate(() => process.exit(0));
 });
+
 
 beforeEach(() => {
   jest.clearAllMocks();

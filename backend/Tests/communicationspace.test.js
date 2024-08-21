@@ -16,11 +16,20 @@ jest.setTimeout(100000); // Set the timeout to 10000ms (10 seconds) or any suita
   });
   
   afterAll(async () => {
-    if ( process.env.DROP_DB_AFTER_TESTS === 'true') {
+    // Drop the test database if configured to do so
+    if (process.env.DROP_DB_AFTER_TESTS === 'true') {
       await mongose.connection.db.dropDatabase();
+      console.log('Dropped Test Database');
     }
+  
+    // Disconnect from the test database
     await mongose.disconnect();
+    console.log('Disconnected from Test Database');
+  
+    // Check for open handles
+    setImmediate(() => process.exit(0));
   });
+  
   
   beforeEach(() => {
     jest.clearAllMocks();
