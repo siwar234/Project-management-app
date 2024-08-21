@@ -36,7 +36,7 @@ afterAll(async () => {
   console.log('Disconnected from Test Database');
 
   // Check for open handles
-  setImmediate(() => process.exit(0));
+  // setImmediate(() => process.exit(0));
 });
 
 
