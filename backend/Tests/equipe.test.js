@@ -32,7 +32,7 @@ afterAll(async () => {
   }
 
   // Disconnect from the test database
-  await mongose.disconnect();
+  await mongose.close();
   console.log('Disconnected from Test Database');
 
   // Check for open handles
