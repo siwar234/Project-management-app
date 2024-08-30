@@ -1,7 +1,7 @@
 import React, { useEffect,useState} from 'react';
-import { Avatar, Box, IconButton, TextField, Tooltip, Typography ,MenuItem, ListItem, Checkbox,Menu,Divider} from '@mui/material';
+import { Avatar, Box, IconButton, TextField, Tooltip, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { getListTicketsByproject, updateTicketPosition, updatetickets, updatingtickets } from 'src/JS/actions/Tickets';
+import { getListTicketsByproject, updateTicketPosition, updatingtickets } from 'src/JS/actions/Tickets';
 import { useParams } from 'react-router';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -10,6 +10,7 @@ import PageContainer from 'src/components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
 import image from '../../assets/images/checking.webp';
 import image1 from '../../assets/images/bugging.png';
+import image2 from "../../assets/images/storie.png"
 import { FcApproval } from "react-icons/fc";
 import Featureupdate from './Features/Featureupdate';
 import { getprojectbyid } from 'src/JS/actions/project';
@@ -18,7 +19,6 @@ import PriorityMenu from './Tickets/PriorityMenu';
 import EditIcon from '@mui/icons-material/Edit';
 import { GrClose, GrCheckmark } from 'react-icons/gr';
 import LongMenu from 'src/components/Menu/menu';
-import DeleteTicketModal from './Tickets/DeleteTicketModal';
 import FeatureMenu  from 'src/components/Menu/FeatureMenu';
 import TasksMenu from 'src/components/Menu/TasksMenu';
 import { set } from 'lodash';
@@ -150,9 +150,7 @@ export default function Table() {
 
     const [openDeleting, setDeletemodall] = useState(false);
 
-    const handleCloseDeleting = () => {
-      set(setDeletemodall(false));
-    };
+    
 
 
 
@@ -219,6 +217,7 @@ const renderTicketBlock = ( ticket ) => {
   const hasSmallCoverImage = ticket.CoverImage && ticket.CoverImage.length > 0 && ticket.CoverImage[0].size === "small";
   const backgroundColored = hasFullCoverImage ? ticket.CoverImage[0].colorimage : "white";
   const backgroundColorr = hasSmallCoverImage && ticket.CoverImage[0].colorimage;
+  const tooltipTitle = ticket.Type ? ticket.Type : 'Story';
 
   return (
     // <Draggable key={ticket._id} draggableId={ticket._id} index={ticket.position}>
@@ -245,19 +244,49 @@ const renderTicketBlock = ( ticket ) => {
 
             <TicketModal open={open[ticket._id]} handleClose={handleClose} ticket={ticket} user={user} />
 
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              {ticket.Priority === 'Low' && <KeyboardDoubleArrowDownIcon style={{ width: "15px", marginRight: "5px", marginLeft: "10px", marginTop: "10px", color: "#5b356fcc" }} />}
-              {ticket.Priority === 'High' && <KeyboardDoubleArrowUpIcon style={{ width: "15px", marginRight: "5px", marginLeft: "10px", marginTop: "10px", color: "rgb(35 145 115)" }} />}
-              {ticket.Priority !== 'Low' && ticket.Priority !== 'High' && <DensityMediumIcon style={{ width: "15px", marginRight: "5px", marginLeft: "10px", marginTop: "10px", color: "#c1535c" }} />}
-              <Typography
-                sx={{ fontSize: '13px', color: ticket.Priority === 'Low' ? '#5b356fcc' : ticket.Priority === 'High' ? 'rgb(35 145 115)' : '#c1535c', fontFamily: 'revert', fontWeight: 'bold', marginRight: '8px', marginTop: "10px" }}
-                onClick={(event) => handlePriority(event, ticket._id)}
-              >
-                {ticket.Priority} Priority
-              </Typography>
+            <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+  <div style={{ display: 'flex', alignItems: 'center',marginLeft:"15px" }}>
+    {ticket.Priority === 'Low' && (
+      <KeyboardDoubleArrowDownIcon
+        style={{ width: "15px", marginRight: "5px", color: "#5b356fcc" }}
+      />
+    )}
+    {ticket.Priority === 'High' && (
+      <KeyboardDoubleArrowUpIcon
+        style={{ width: "15px", marginRight: "5px", color: "rgb(35 145 115)" }}
+      />
+    )}
+    {ticket.Priority !== 'Low' && ticket.Priority !== 'High' && (
+      <DensityMediumIcon
+        style={{ width: "15px", marginRight: "5px", color: "#c1535c" }}
+      />
+    )}
+    <Typography
+      sx={{
+        fontSize: '13px',
+        color: ticket.Priority === 'Low'
+          ? '#5b356fcc'
+          : ticket.Priority === 'High'
+          ? 'rgb(35 145 115)'
+          : '#c1535c',
+        fontFamily: 'revert',
+        fontWeight: 'bold',
+        marginRight: '8px',
+      }}
+      onClick={(event) => handlePriority(event, ticket._id)}
+    >
+      {ticket.Priority}
+    </Typography>
+  </div>
 
-              <LongMenu options={options} MoreVertIconstyle={{ marginLeft: "125px", marginTop: "10px" }} setDeletemodall={setDeletemodall} ticketId={ticket._id} />
-            </span>
+  <LongMenu
+    options={options}
+    MoreVertIconstyle={{ alignItems: "flex-end", marginTop: "10px" }}
+    setDeletemodall={setDeletemodall}
+    ticketId={ticket._id}
+  />
+</span>
+
 
             <PriorityMenu
               isopened={isopening[ticket._id]}
@@ -348,9 +377,10 @@ const renderTicketBlock = ( ticket ) => {
 
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: "20px", marginLeft: '15px' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <img src={ticket.Type === 'Bug' ? image1 : image} alt="icon" style={{ width: '15px', height: '15px', marginRight: '10px' }} />
-                <Typography>{ticket.Type}</Typography>
-                <IoEyeOutline onClick={() => handleOpen(ticket._id)} style={{ fontSize: "20px" }} />
+              <Tooltip title={tooltipTitle} arrow>
+              <img src={ticket?.Type === 'Bug' ? image1 :  ticket?.Type === 'Task' ? image : image2} alt="icon" style={{ width: '15px', height: '15px', marginRight: '10px' }} />
+                </Tooltip>
+                <IoEyeOutline onClick={() => handleOpen(ticket._id)} style={{ fontSize: "20px" ,marginLeft:"10px"}} />
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -362,11 +392,12 @@ const renderTicketBlock = ( ticket ) => {
                 {ticket.flag && (
                   <IoFlagSharp style={{ color: "#c04747", marginRight: '10px' }} />
                 )}
-                <Tooltip title={`Responsible for this ticket`}>
+
+               <Tooltip title={`Responsible for this ticket`}>
                   <Typography style={{ fontSize: '12px', marginRight: '10px' }}>
                     {ticket.Responsible}
                   </Typography>
-                </Tooltip>
+                </Tooltip> 
               </div>
             </div>
           </Box>

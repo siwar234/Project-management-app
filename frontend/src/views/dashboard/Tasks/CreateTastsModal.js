@@ -91,13 +91,13 @@ const CreateTastsModal = ({ openModal, handleClosing, setTaskData,taskData,initi
                 mt={2}
                 mb={5}
               >
-                Add a new Task
+                Add a new sprint
               </Typography>
          <Box display="flex" flexDirection="row" justifyContent="space-between" width="100%">
   {/* First column */}
   <Box display="flex" flexDirection="column" flex="1" marginRight="20px">
     <Typography mt={2} variant="body1" gutterBottom>
-      Task Name <span style={{ color: 'red' }}>*</span>
+      Sprint Name <span style={{ color: 'red' }}>*</span>
     </Typography>
     <TextField
       fullWidth
@@ -126,7 +126,6 @@ const CreateTastsModal = ({ openModal, handleClosing, setTaskData,taskData,initi
       <MenuItem value="2 weeks">2 weeks</MenuItem>
       <MenuItem value="3 weeks">3 weeks</MenuItem>
       <MenuItem value="4 weeks">4 weeks</MenuItem>
-      <MenuItem value="Custom">Custom</MenuItem>
     </Select>
   </Box>
 </Box>

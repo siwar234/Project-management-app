@@ -10,7 +10,6 @@ import {
   Avatar,
   InputAdornment,
   IconButton,
-  Divider,
 } from '@mui/material';
 import { IoFlagSharp } from 'react-icons/io5';
 
@@ -18,7 +17,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import PageContainer from 'src/components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
-import { Button, TextField, MenuItem, Menu, Typography } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import CreateTastsModal from './Tasks/CreateTastsModal';
 import Tooltip from '@mui/material/Tooltip';
@@ -27,12 +26,19 @@ import { getprojectbyid, updateProjects } from 'src/JS/actions/project';
 import { useParams } from 'react-router';
 import LongMenu from 'src/components/Menu/menu';
 import { createTickets, updatetickets, updateticketsFeature } from 'src/JS/actions/Tickets';
-import { close, getTasks, unrelatedtask, updateSecondGrid, updateTicketInTask } from 'src/JS/actions/tasks';
+import {
+  close,
+  getTasks,
+  unrelatedtask,
+  updateSecondGrid,
+  updateTicketInTask,
+} from 'src/JS/actions/tasks';
 
 import AddIcon from '@mui/icons-material/Add';
 import WorkflowMenu from './Tickets/WorkflowMenu';
 import image from '../../assets/images/checking.webp';
 import image1 from '../../assets/images/bugging.png';
+import image2 from '../../assets/images/storie.png';
 import PriorityMenu from './Tickets/PriorityMenu';
 import { GrClose, GrCheckmark } from 'react-icons/gr';
 import UpdateTaskModal from './Tasks/UpdateTaskModal';
@@ -47,7 +53,9 @@ import Featureupdate from './Features/Featureupdate';
 import TicketDetail from './Tickets/TicketDetail';
 import { FcLink } from 'react-icons/fc';
 import io from 'socket.io-client';
-import { httpUrl } from "../../ConnectionString"
+import { httpUrl } from '../../ConnectionString';
+import TicketTypeMenu from 'src/components/Menu/TicketTypeMenu';
+import StoryPoints from './Tickets/StroyPoints';
 
 const socket = io(`${httpUrl}`);
 
@@ -69,22 +77,21 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getprojectbyid(projectId));
-      dispatch(getTasks(projectId)); 
-    
-      socket.on('ticketUpdated', (updatedTicket) => {
-        // console.log('Updated Ticket Received:', updatedTicket);
-        dispatch(updateTicketInTask(updatedTicket));
-      });
+    dispatch(getTasks(projectId));
+
+    socket.on('ticketUpdated', (updatedTicket) => {
+      // console.log('Updated Ticket Received:', updatedTicket);
+      dispatch(updateTicketInTask(updatedTicket));
+    });
     socket.on('updateProjects', (updatedProjects) => {
       dispatch(updateProjects(updatedProjects));
     });
-
 
     return () => {
       socket.off('updateProjects');
     };
   }, [dispatch, projectId]);
-  const options = ['edit task', 'delete task','Add To a discussion space' ,'relate task'];
+  const options = ['edit sprint', 'delete sprint', 'Add To a discussion space', 'relate sprints'];
 
   const handleClicked = (event, ticketId) => {
     setAnchorEls({ ...anchorEls, [ticketId]: event.currentTarget });
@@ -206,8 +213,6 @@ const Dashboard = () => {
     const dataWithProjectId = { ...ticketData, projectId: projectId };
 
     await dispatch(createTickets(dataWithProjectId, projectId));
-
-    // dispatch(getTasks(projectId));
 
     setTicketText({ ...ticketText, [taskId]: '' });
   };
@@ -378,10 +383,8 @@ const Dashboard = () => {
 
     const endDate = new Date(startDate.getTime() + durationMilliseconds);
 
-    return endDate; 
+    return endDate;
   };
-
-  
 
   const handleUnrelatedTask = (taskId) => {
     dispatch(unrelatedtask(taskId, projectId));
@@ -391,7 +394,6 @@ const Dashboard = () => {
     <PageContainer title="Dashboard" description="This is Dashboard">
       <DashboardCard title="BackLog">
         <Box style={{ display: 'flex', flexDirection: 'row' }}>
-      
           <FeaturesMenu
             onFeatureCheckboxChange={handleFeatureCheckboxChange}
             checkedFeatures={checkedFeatures}
@@ -454,7 +456,13 @@ const Dashboard = () => {
                           transform: isTaskOpen(task._id) ? 'rotateX(180deg)' : 'none',
                         }}
                       />
-                      <span style={{ marginRight: '8px', fontSize: isSecondGridOpen ? '12px' :'15px', marginLeft: '6px' }}>
+                      <span
+                        style={{
+                          marginRight: '8px',
+                          fontSize: isSecondGridOpen ? '12px' : '15px',
+                          marginLeft: '6px',
+                        }}
+                      >
                         {task.TaskName}{' '}
                         {task.StartDate && task.EndDate && (
                           <span style={{ fontSize: '12px', marginLeft: '12px', color: '#55576c' }}>
@@ -583,7 +591,7 @@ const Dashboard = () => {
                         border: 'none',
                         fontWeight: 'bold',
                         fontFamily: 'inherit',
-                        fontSize: isSecondGridOpen ? '12px' : '12px',
+                        fontSize: isSecondGridOpen ? '10px' : '12px',
                         color: 'black',
                         backgroundColor: '#434a4f1f',
                         minWidth: '5px',
@@ -597,7 +605,7 @@ const Dashboard = () => {
                         marginLeft: '20px',
                       }}
                     >
-                      {task.StartDate ? 'Terminate Task' : 'Start Task'}
+                      {task.StartDate ? 'Terminate Sprint' : 'Start Sprint'}
                     </Button>
                     <LongMenu
                       setDeletemodal={setDeletemodal}
@@ -605,7 +613,7 @@ const Dashboard = () => {
                       options={options}
                       projectId={projectId}
                       task={task}
-                      
+                      handleopenUpdate={handleopenUpdate}
                     />
                   </Box>
 
@@ -644,6 +652,7 @@ const Dashboard = () => {
                                         ? '#ebebebc7'
                                         : ticket.flag
                                         ? '#dde0f0d9'
+                        
                                         : 'transparent',
                                   }}
                                   onMouseEnter={() => handleMouseEnter(task._id, index)}
@@ -667,11 +676,17 @@ const Dashboard = () => {
                                           }}
                                         >
                                           <img
-                                            src={ticket.Type === 'Bug' ? image1 : image}
+                                            src={
+                                              ticketType === 'Bug'
+                                                ? image1
+                                                : ticketType === 'Task'
+                                                ? image
+                                                : image2
+                                            }
                                             alt="icon"
                                             style={{
-                                              width: '18px',
-                                              height: '18px',
+                                              width: ticketType === 'story' ? '21px' : '18px',
+                                              height: ticketType === 'story' ? '21px' : '18px',
                                               marginRight: '15px',
                                             }}
                                           />
@@ -704,24 +719,32 @@ const Dashboard = () => {
                                                   style={{
                                                     width: '28px',
                                                     height: '28px',
-                                                    backgroundColor: '#e1e1e1',
-                                                    borderRadius: '0',
-                                                    opacity: 25,
                                                     marginRight: '8px',
+                                                    backgroundColor: "white",
+  marginTop: "10px",
+  opacity: 0.9, 
+  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", 
+  borderRadius: "4px", 
+  padding: "4px",
+  boxSizing: "border-box"
                                                   }}
                                                   onClick={() => handleCancel(task._id, index)}
                                                 >
                                                   <GrClose
-                                                    style={{ color: 'black', fontSize: '20px' }}
+                                                    style={{color:"black",  fontSize: '12px' }}
                                                   />
                                                 </IconButton>
                                                 <IconButton
                                                   style={{
                                                     width: '28px',
                                                     height: '28px',
-                                                    backgroundColor: '#e1e1e1',
-                                                    borderRadius: '0',
-                                                    opacity: 50,
+                                                    backgroundColor: "white",
+  marginTop: "10px",
+  opacity: 0.9, 
+  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", 
+  borderRadius: "4px", 
+  padding: "4px",
+  boxSizing: "border-box"
                                                   }}
                                                   onClick={() => {
                                                     handleUpdateDescription(
@@ -732,7 +755,7 @@ const Dashboard = () => {
                                                   }}
                                                 >
                                                   <GrCheckmark
-                                                    style={{ color: 'black', fontSize: '20px' }}
+                                                    style={{ color:"black", fontSize: '12px' }}
                                                   />
                                                 </IconButton>
                                               </Box>
@@ -755,15 +778,23 @@ const Dashboard = () => {
                                             alignItems: 'center',
                                           }}
                                         >
-                                          <img
-                                            src={ticket.Type === 'Bug' ? image1 : image}
-                                            alt="icon"
-                                            style={{
-                                              width: '18px',
-                                              height: '18px',
-                                              marginRight: '15px',
-                                            }}
-                                          />
+                                          <Tooltip title={ticket?.Type ? ticket.Type : 'story'}>
+                                            <img
+                                              src={
+                                                ticket?.Type === 'Bug'
+                                                  ? image1
+                                                  : ticket?.Type === 'Task'
+                                                  ? image
+                                                  : image2
+                                              }
+                                              alt="icon"
+                                              style={{
+                                                width: ticket?.Type === 'story' ? '21px' : '18px',
+                                                height: ticket?.Type === 'story' ? '21px' : '18px',
+                                                marginRight: '15px',
+                                              }}
+                                            />
+                                          </Tooltip>
                                           <Tooltip title={ticket.Description}>
                                             {ticket.Description.length > 26
                                               ? `${ticket.Description.substring(0, 26)}...`
@@ -775,7 +806,7 @@ const Dashboard = () => {
                                               <>
                                                 <IconButton>
                                                   <>
-                                                    <Tooltip title={'edit icon'}>
+                                                    <Tooltip title={'edit Ticket'}>
                                                       <EditIcon
                                                         onClick={() =>
                                                           handleEditClick(task._id, index)
@@ -913,7 +944,7 @@ const Dashboard = () => {
                                                 ? '#cdf7d4'
                                                 : '#ffc0ca',
 
-                                            marginRight: '70px',
+                                            marginRight: '60px',
 
                                             color:
                                               ticket.Priority === 'Low'
@@ -944,6 +975,7 @@ const Dashboard = () => {
                                             handleupdatePriority(ticket._id, PrioritytValue)
                                           }
                                         />
+                                        <StoryPoints userId={userid} projectId={projectId}  ticket={ticket}/>
                                         <Tooltip
                                           title={`Responsible: ${
                                             ticket.ResponsibleTicket
@@ -1032,11 +1064,23 @@ const Dashboard = () => {
                                                 borderRadius: '0',
                                               }}
                                             >
-                                              <img
-                                                src={ticketType === 'Bug' ? image1 : image}
-                                                alt="icon"
-                                                style={{ width: '18px', height: '18px' }}
-                                              />
+                                              <Tooltip title={ticketType} arrow>
+                                                <img
+                                                  src={
+                                                    ticketType === 'Bug'
+                                                      ? image1
+                                                      : ticketType === 'Task'
+                                                      ? image
+                                                      : image2
+                                                  }
+                                                  alt="icon"
+                                                  style={{
+                                                    width: ticketType === 'story' ? '21px' : '18px',
+                                                    height:
+                                                      ticketType === 'story' ? '21px' : '18px',
+                                                  }}
+                                                />
+                                              </Tooltip>
                                               {menuAnchor ? (
                                                 <IoIosArrowUp
                                                   style={{
@@ -1061,67 +1105,16 @@ const Dashboard = () => {
                                                 />
                                               )}
                                             </IconButton>
-                                            <Menu
-                                              anchorEl={menuAnchor}
-                                              open={Boolean(menuAnchor)}
-                                              onClose={handleMenuClose}
-                                            >
-                                              <MenuItem
-                                                style={{ width: '150px' }}
-                                                onClick={() => setTicketType('Task')}
-                                              >
-                                                <img
-                                                  src={image}
-                                                  alt="icon"
-                                                  style={{
-                                                    width: '18px',
-                                                    height: '18px',
-                                                    marginRight: '10px',
-                                                  }}
-                                                />
-                                                <span
-                                                  style={{
-                                                    color: '#29292b',
-                                                    fontFamily: 'sans-serif',
-                                                  }}
-                                                >
-                                                  {' '}
-                                                  Task
-                                                </span>
-                                              </MenuItem>
-                                              <MenuItem
-                                                style={{ width: '150px' }}
-                                                onClick={() => setTicketType('Bug')}
-                                              >
-                                                <img
-                                                  src={image1}
-                                                  alt="icon"
-                                                  style={{
-                                                    width: '18px',
-                                                    height: '18px',
-                                                    marginRight: '10px',
-                                                  }}
-                                                />
-                                                <span
-                                                  style={{
-                                                    color: '#29292b',
-                                                    fontFamily: 'sans-serif',
-                                                  }}
-                                                >
-                                                  {' '}
-                                                  Bug
-                                                </span>
-                                              </MenuItem>
+                                            <TicketTypeMenu
+                                              menuAnchor={menuAnchor}
+                                              handleMenuClose={handleMenuClose}
+                                              image={image}
+                                              image1={image1}
+                                              image2={image2}
+                                              setTicketType={setTicketType}
+                                              ticketType={ticketType} 
 
-                                              <Divider />
-                                              <MenuItem
-                                                onClick={handleMenuClose}
-                                                style={{ fontFamily: 'sans-serif' }}
-                                              >
-                                                {' '}
-                                                Manage ticket types
-                                              </MenuItem>
-                                            </Menu>
+                                            />
                                           </InputAdornment>
                                         ),
                                       }}
@@ -1239,7 +1232,7 @@ const Dashboard = () => {
                   }}
                 />
                 <span style={{ marginRight: '8px', fontSize: '15px', marginLeft: '6px' }}>
-                  Tasks <span style={{ fontSize: '12px', marginLeft: '10px' }}>0 (tickets)</span>
+                  Sprints <span style={{ fontSize: '12px', marginLeft: '10px' }}>0 (tickets)</span>
                 </span>
               </Button>
 
@@ -1327,7 +1320,7 @@ const Dashboard = () => {
                   marginLeft: '28px',
                 }}
               >
-                create Task
+                create sprint
               </Button>
             </Box>
             {!showBacklog && (
@@ -1378,7 +1371,7 @@ const Dashboard = () => {
                       color: '#4a4343',
                     }}
                   >
-                    Start creating Your Tasks and Tickets
+                    Start creating Your sprints and Tickets
                   </span>
                 </div>
               </div>

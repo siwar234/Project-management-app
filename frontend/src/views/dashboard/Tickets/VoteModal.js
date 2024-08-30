@@ -14,11 +14,11 @@ const VoteModal = ({ anchorEl, handleMenuClose, ticketId ,taskId,isSecondGridOpe
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.user);
   const userId = user._id;
-   console.log("userid",userId)
+  //  console.log("userid",userId)
 
    const hasVoted = isSecondGridOpen[taskId][ticketId].votes.some(voter => voter._id === userId);
-   console.log("hasvoted",hasVoted);
-   console.log("voted",isSecondGridOpen[taskId][ticketId].votes);
+  //  console.log("hasvoted",hasVoted);
+  //  console.log("voted",isSecondGridOpen[taskId][ticketId].votes);
    const { projectId } = useParams();
 
   const handleVote = () => {

@@ -50,7 +50,7 @@ export default function TicketdetailsMenu({handleflagclick,ticketid,isSecondGrid
 
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 
-    console.log("Worksheet before styling:", worksheet);
+    // console.log("Worksheet before styling:", worksheet);
 
     // Define merge ranges for A1:B1, A2:B2, A9:B9
     const mergeRanges = [
@@ -65,7 +65,7 @@ export default function TicketdetailsMenu({handleflagclick,ticketid,isSecondGrid
 
   
 
-    console.log("Worksheet after styling:", worksheet);
+    // console.log("Worksheet after styling:", worksheet);
 
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Tickets');

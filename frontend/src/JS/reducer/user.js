@@ -121,7 +121,7 @@ const userReducer = (state = initialState, { type, payload }) => {
         errors: payload,
       };
     case CURRENT_USER:
-      console.log(payload);
+      // console.log(payload);
 
       return {
         ...state,
@@ -147,7 +147,7 @@ const userReducer = (state = initialState, { type, payload }) => {
         error: payload,
       };
     case BAN_USER:
-      console.log("Banning user. Payload:", payload);
+      // console.log("Banning user. Payload:", payload);
 
       return {
         ...state,
@@ -160,7 +160,7 @@ const userReducer = (state = initialState, { type, payload }) => {
       
 
     case UNBAN_USER:
-      console.log("Banning user. Payload:", payload);
+      // console.log("Banning user. Payload:", payload);
 
       return {
         ...state,

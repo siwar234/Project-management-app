@@ -87,6 +87,16 @@ exports.updateTask = async (req, res) => {
           { path: 'ResponsibleTicket', model: 'User' },
           { path: 'Feature', model: 'Features' },
           { path: 'votes', model: 'User' },
+          {
+            path: 'associatedTickets',
+            populate: [
+              { 
+                path: 'ticketId', 
+                model: 'Tickets',
+                populate: { path: 'ResponsibleTicket', model: 'User' } 
+              }
+            ]
+          },
           { path: 'comments', populate: { path: 'commenterId', model: 'User' } }
         ]
       });
@@ -224,6 +234,16 @@ exports.moveTicket = async (req, res) => {
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' } ,
         { path: 'votes', model: 'User' } ,
+        {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
         { 
           path: 'comments', 
           populate: { path: 'commenterId', model: 'User' } 
@@ -284,6 +304,16 @@ exports.createTasks = async (req, res) => {
               path: 'comments', 
               populate: { path: 'commenterId', model: 'User' } 
             },
+            {
+              path: 'associatedTickets',
+              populate: [
+                { 
+                  path: 'ticketId', 
+                  model: 'Tickets',
+                  populate: { path: 'ResponsibleTicket', model: 'User' } 
+                }
+              ]
+            },
             { path: 'projectId', model: 'Project' },
 
 
@@ -310,7 +340,17 @@ exports.relatedTasks = async (req, res) => {
           { 
             path: 'comments', 
             populate: { path: 'commenterId', model: 'User' } 
-          }
+          },
+          {
+            path: 'associatedTickets',
+            populate: [
+              { 
+                path: 'ticketId', 
+                model: 'Tickets',
+                populate: { path: 'ResponsibleTicket', model: 'User' } 
+              }
+            ]
+          },
 
         ]
     }).populate('projectId').populate('related')
@@ -349,6 +389,16 @@ exports.unrelatedTasks = async (req, res) => {
           { path: 'ResponsibleTicket', model: 'User' },
           { path: 'Feature', model: 'Features' },
           { path: 'votes', model: 'User' },
+          {
+            path: 'associatedTickets',
+            populate: [
+              { 
+                path: 'ticketId', 
+                model: 'Tickets',
+                populate: { path: 'ResponsibleTicket', model: 'User' } 
+              }
+            ]
+          },
           {
             path: 'comments',
             populate: { path: 'commenterId', model: 'User' },
@@ -399,6 +449,16 @@ exports.getAlltasks = async (req, res) => {
           { path: 'ResponsibleTicket', model: 'User' },
           { path: 'Feature', model: 'Features' } ,
           { path: 'votes', model: 'User' } ,
+          {
+            path: 'associatedTickets',
+            populate: [
+              { 
+                path: 'ticketId', 
+                model: 'Tickets',
+                populate: { path: 'ResponsibleTicket', model: 'User' } 
+              }
+            ]
+          },
           { 
             path: 'comments', 
             populate: { path: 'commenterId', model: 'User' } 
@@ -481,62 +541,62 @@ const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 // };
 
 
-exports.predictAndUpdateTicketDuration = async (ticketId) => {
-  try {
-    console.log('Starting prediction for ticket:', ticketId);
+// exports.predictAndUpdateTicketDuration = async (ticketId) => {
+//   try {
+//     console.log('Starting prediction for ticket:', ticketId);
 
-    const ticket = await Tickets.findById(ticketId)
-      .populate('projectId')
-      .populate('TaskId')
-      .exec();
+//     const ticket = await Tickets.findById(ticketId)
+//       .populate('projectId')
+//       .populate('TaskId')
+//       .exec();
 
-    if (!ticket) {cr
-      console.log('Ticket not found:', ticketId);
-      throw new Error('Ticket not found');
-    }
-    console.log('Ticket retrieved:', ticket);
+//     if (!ticket) {cr
+//       console.log('Ticket not found:', ticketId);
+//       throw new Error('Ticket not found');
+//     }
+//     console.log('Ticket retrieved:', ticket);
 
-    const ticketData = {
-      Description: ticket.Description,
-      TaskName: ticket.TaskId.TaskName,
-      Priority: ticket.Priority,
-      ProjectName: ticket.projectId.projectName,
-    };
+//     const ticketData = {
+//       Description: ticket.Description,
+//       TaskName: ticket.TaskId.TaskName,
+//       Priority: ticket.Priority,
+//       ProjectName: ticket.projectId.projectName,
+//     };
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+//     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `
-      Ticket Description: ${ticketData.Description}
-      Task Name: ${ticketData.TaskName}
-      Priority: ${ticketData.Priority}
-      Project Name: ${ticketData.ProjectName}
+//     const prompt = `
+//       Ticket Description: ${ticketData.Description}
+//       Task Name: ${ticketData.TaskName}
+//       Priority: ${ticketData.Priority}
+//       Project Name: ${ticketData.ProjectName}
 
-      Question: Please provide an estimated duration for completing this ticket based on its details. Just return 1 day, 2 days, 1 week, 2 weeks, 3 weeks, or 4 weeks.
-    `;
+//       Question: Please provide an estimated duration for completing this ticket based on its details. Just return 1 day, 2 days, 1 week, 2 weeks, 3 weeks, or 4 weeks.
+//     `;
 
-    console.log('Requesting prediction from Gemini API with prompt:', prompt);
+//     console.log('Requesting prediction from Gemini API with prompt:', prompt);
 
-    const result = await model.generateContent(prompt);
-    const response = result?.response;
+//     const result = await model.generateContent(prompt);
+//     const response = result?.response;
 
-    if (!response || typeof response.text !== 'function') {
-      console.error('Invalid response from Gemini API');
-      throw new Error('Invalid response from Gemini API');
-    }
+//     if (!response || typeof response.text !== 'function') {
+//       console.error('Invalid response from Gemini API');
+//       throw new Error('Invalid response from Gemini API');
+//     }
 
-    const responseText = await response.text();
-    console.log('Received response from Gemini API:', responseText);
+//     const responseText = await response.text();
+//     console.log('Received response from Gemini API:', responseText);
 
-    // Extract the duration from the response text (days and weeks)
-    const durationPattern = /\b(1|2)\s*(days?|weeks?)\b/g; // Matches 1 day, 2 days, 1 week, or 2 weeks
-    const matches = responseText.match(durationPattern);
-    const predictedDuration = matches ? matches.join(', ') : 'Unknown duration'; 
+//     // Extract the duration from the response text (days and weeks)
+//     const durationPattern = /\b(1|2)\s*(days?|weeks?)\b/g; // Matches 1 day, 2 days, 1 week, or 2 weeks
+//     const matches = responseText.match(durationPattern);
+//     const predictedDuration = matches ? matches.join(', ') : 'Unknown duration'; 
 
-    ticket.EstimatedDuration = predictedDuration;
-    await ticket.save();
+//     ticket.EstimatedDuration = predictedDuration;
+//     await ticket.save();
 
-    console.log('Ticket duration updated successfully:', predictedDuration);
-  } catch (error) {
-    console.error('Error in predicting and updating ticket duration:', error);
-  }
-};
+//     console.log('Ticket duration updated successfully:', predictedDuration);
+//   } catch (error) {
+//     console.error('Error in predicting and updating ticket duration:', error);
+//   }
+// };

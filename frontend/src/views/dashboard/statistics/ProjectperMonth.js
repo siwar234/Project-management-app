@@ -45,7 +45,7 @@ const ProjectperMonth = () => {
     const handleChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedMonth(selectedValue);
-        console.log("Selected Month:", selectedValue);
+        // console.log("Selected Month:", selectedValue);
     };
     
     const uniqueProjectMonths = [...new Set(projects.map(project => {
@@ -82,8 +82,8 @@ const ProjectperMonth = () => {
         colors: ['#55bff0'], 
     };
     
-    console.log('Selected Month:', selectedMonth);
-    console.log('Chart Data Keys:', Object.keys(chartData));
+    // console.log('Selected Month:', selectedMonth);
+    // console.log('Chart Data Keys:', Object.keys(chartData));
     
     const chartSeries = [{
         name: 'Number of Projects',
@@ -105,7 +105,7 @@ const ProjectperMonth = () => {
     }];
     
 
-    console.log('Chart Data:', chartData);
+    // console.log('Chart Data:', chartData);
 
     return (
         <Box  style={{width:"460px",marginRight:'50px'}}>

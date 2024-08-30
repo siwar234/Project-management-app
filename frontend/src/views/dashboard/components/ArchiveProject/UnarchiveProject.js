@@ -20,7 +20,7 @@ const UnarchiveProject = ({ openModal, handleCloseModal, handleUnarchive }) => {
           Restore project?
         </Typography>
         <Typography sx={{ mt: 2 }}>
-          The project along with its tasks, tickets, and attachments will be restored. Users can edit tasks and tickets. This project will appear in the workspace and project list, along with its tasks and tickets.
+          The project along with its sprints, tickets, and attachments will be restored. Users can edit sprints and tickets. This project will appear in the workspace and project list, along with its tasks and tickets.
         </Typography>
         <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
           <Button onClick={handleCloseModal} sx={{ mr: 1 }}>

@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { createFeature, getAllFeatures, updatefeatures } from 'src/JS/actions/feature';
 import {  useSelector } from 'react-redux';
-import image from '../../../assets/images/checking.webp';
+import image from '../../../assets/images/storie.png';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
 import image1 from "../../../assets/images/feature.png"
@@ -23,7 +23,7 @@ const EpicModal = ({openEpic,handleCloseEpic,setTextFieldVisible,isTextFieldVisi
      const [featureTitle, setFeatureTitle] = useState('');
      const [isArrowclicked, setArrwoclicked] = useState(false);
      const { projectId } = useParams();
-     console.log("projectId" ,projectId)
+    //  console.log("projectId" ,projectId)
 
    
     
@@ -53,7 +53,7 @@ const EpicModal = ({openEpic,handleCloseEpic,setTextFieldVisible,isTextFieldVisi
       };
 
       const features = useSelector((state) => state.featureReducer.features)  || [] ;
-      console.log("Feature:", features);
+      // console.log("Feature:", features);
 
       const calculateProgress = (feature, etat) => {
         if (!feature.Tickets || feature.Tickets.length === 0) {

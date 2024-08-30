@@ -14,7 +14,7 @@ export default function MenuFeature({task,ticketid,feature,isSecondGridOpen}) {
     
 
     const handleCloseMenu = () => {
-        console.log("Closing menu");
+        // console.log("Closing menu");
         setopeningmenu(false);
     };
 

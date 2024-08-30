@@ -17,7 +17,7 @@ router.put('/move-ticket', moveTicket);
 router.put('/relatedtask/:taskId/:relatedTaskId', relatedTasks);
 router.put('/unrelatedtask/:taskId', unrelatedTasks);
 
-router.post('/tasks/:ticketId/predict-duration', predictAndUpdateTicketDuration);
+// router.post('/tasks/:ticketId/predict-duration', predictAndUpdateTicketDuration);
 
 module.exports = router;
 

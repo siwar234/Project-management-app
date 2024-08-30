@@ -11,7 +11,7 @@ const { io } = require("../server")
 
 exports.createTickets = async (req, res) => {
   try {
-      const { Description, Priority, flag, Etat, TaskId, ResponsibleTicket, projectId, Type } = req.body;
+      const { Description, Priority, flag, Etat, TaskId, ResponsibleTicket, projectId, Type ,storyPoints} = req.body;
 
       if (!Description) {
           return res.status(400).json({ error: 'Description is required' });
@@ -26,6 +26,7 @@ exports.createTickets = async (req, res) => {
           projectId: projectId,
           ResponsibleTicket: ResponsibleTicket,
           Type: Type || '',
+          storyPoints:storyPoints|| '',
       });
 
 
@@ -36,8 +37,8 @@ exports.createTickets = async (req, res) => {
       await Task.findByIdAndUpdate(TaskId, { $push: { tickets: savedTicket._id } });
 
  // Predict and update the estimated duration for the newly created ticket
- console.log('Calling predictAndUpdateTicketDuration for ticket:', savedTicket._id);
- await predictAndUpdateTicketDuration(savedTicket._id);
+//  console.log('Calling predictAndUpdateTicketDuration for ticket:', savedTicket._id);
+//  await predictAndUpdateTicketDuration(savedTicket._id);
      
       res.status(201).json(savedTicket);
   } catch (error) {
@@ -84,18 +85,279 @@ exports.createTickets = async (req, res) => {
 };
 
 
+//tickets association 
+
+
+
+exports.associateTicket = async (req, res) => {
+  const { ticketId, associatedTicketIds, relation } = req.body;
+  try {
+    // Validate input
+    if (!ticketId || !Array.isArray(associatedTicketIds) || !relation) {
+      return res.status(400).json({ message: 'Invalid request data' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(ticketId)) {
+      return res.status(400).json({ message: 'Invalid main ticket ID' });
+    }
+
+    for (const id of associatedTicketIds) {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid associated ticket ID' });
+      }
+    }
+
+    // Find and update the main ticket
+    let ticket = await Tickets.findById(ticketId)
+      .populate('ResponsibleTicket')
+      .populate('Feature')
+      .populate('User')
+      .populate('votes')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'commenterId',
+          model: 'User'
+        }
+      })
+      .populate({
+        path: 'associatedTickets',
+        populate: [
+          {
+            path: 'ticketId',
+            model: 'Tickets',
+            populate: {
+              path: 'ResponsibleTicket',
+              model: 'User'
+            }
+          }
+        ]
+      });
+
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+
+    // Create associated ticket objects
+    const associatedTicketObjects = associatedTicketIds.map(id => ({
+      ticketId: id,
+      relation
+    }));
+
+    // Add associated tickets to the main ticket
+    ticket.associatedTickets.push(...associatedTicketObjects);
+    await ticket.save();
+
+    // Populate and find the updated task
+    const task = await Task.findById(ticket.TaskId)
+      .populate('tickets')
+      .populate('related')
+      .populate({
+        path: 'tickets',
+        populate: [
+          { path: 'ResponsibleTicket', model: 'User' },
+          { path: 'Feature', model: 'Features' },
+          {
+            path: 'associatedTickets',
+            populate: [
+              {
+                path: 'ticketId',
+                model: 'Tickets',
+                populate: { path: 'ResponsibleTicket', model: 'User' }
+              }
+            ]
+          },
+          { path: 'votes', model: 'User' }
+        ]
+      });
+
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    // Optionally update associated tickets to reference the main ticket
+    await Tickets.updateMany(
+      { _id: { $in: associatedTicketIds } },
+      { $addToSet: { associatedTickets: { ticketId: ticketId, relation: relation } } }
+    );
+
+    // Re-fetch the ticket to ensure it has the latest data
+    ticket = await Tickets.findById(ticketId)
+      .populate('ResponsibleTicket')
+      .populate('Feature')
+      .populate('User')
+      .populate('votes')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'commenterId',
+          model: 'User'
+        }
+      })
+      .populate({
+        path: 'associatedTickets',
+        populate: [
+          {
+            path: 'ticketId',
+            model: 'Tickets',
+            populate: {
+              path: 'ResponsibleTicket',
+              model: 'User'
+            }
+          }
+        ]
+      });
+
+      const taskId=task._id
+    // Send the response with fully populated ticket and task
+    res.status(200).json({ task, taskId, ticket });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
+
+// exports.dissociateTicket = async (req, res) => {
+//   const { ticketId, associatedTicketId } = req.body;
+
+//   try {
+//     if (!ticketId || !associatedTicketId) {
+//       return res.status(400).json({ message: 'Invalid request data' });
+//     }
+
+//     if (!mongoose.Types.ObjectId.isValid(ticketId) || !mongoose.Types.ObjectId.isValid(associatedTicketId)) {
+//       return res.status(400).json({ message: 'Invalid ticket ID(s)' });
+//     }
+
+//     // Find the main ticket
+//     let ticket = await Tickets.findById(ticketId);
+//     if (!ticket) {
+//       return res.status(404).json({ message: 'Main ticket not found' });
+//     }
+
+//     console.log('Main ticket found:', ticketId);
+
+//     // Remove the associated ticket reference from the main ticket's associatedTickets array
+//     ticket.associatedTickets = ticket.associatedTickets.filter(
+//       (assocTicket) => assocTicket.ticketId.toString() !== associatedTicketId
+//     );
+
+//     await ticket.save();
+//     console.log('Associated ticket reference removed from main ticket:', associatedTicketId);
+
+//     // Permanently delete the associated ticket from the database
+//     const deleteResult = await Tickets.findByIdAndDelete(associatedTicketId);
+
+//     if (deleteResult) {
+//       console.log('Associated ticket deleted from the database:', associatedTicketId);
+//     } else {
+//       console.error('Failed to delete associated ticket:', associatedTicketId);
+//     }
+
+//     // Remove the reference of the main ticket from other tickets' associatedTickets arrays
+//     const updateResult = await Tickets.updateMany(
+//       { 'associatedTickets.ticketId': ticketId },
+//       { $pull: { associatedTickets: { ticketId: ticketId } } }
+//     );
+
+//     console.log('Update result for other tickets:', updateResult);
+
+//     // Re-fetch the updated main ticket to return in the response
+//     ticket = await Tickets.findById(ticketId)
+//       .populate('ResponsibleTicket')
+//       .populate('Feature')
+//       .populate('User')
+//       .populate('votes')
+//       .populate({
+//         path: 'comments',
+//         populate: {
+//           path: 'commenterId',
+//           model: 'User',
+//         },
+//       })
+//       .populate({
+//         path: 'associatedTickets',
+//         populate: [
+//           {
+//             path: 'ticketId',
+//             model: 'Tickets',
+//             populate: {
+//               path: 'ResponsibleTicket',
+//               model: 'User',
+//             },
+//           },
+//         ],
+//       });
+
+//     const task = await Task.findById(ticket.TaskId)
+//       .populate('tickets')
+//       .populate('related')
+//       .populate({
+//         path: 'tickets',
+//         populate: [
+//           { path: 'ResponsibleTicket', model: 'User' },
+//           { path: 'Feature', model: 'Features' },
+//           {
+//             path: 'associatedTickets',
+//             populate: [
+//               {
+//                 path: 'ticketId',
+//                 model: 'Tickets',
+//                 populate: { path: 'ResponsibleTicket', model: 'User' },
+//               },
+//             ],
+//           },
+//           { path: 'votes', model: 'User' },
+//         ],
+//       });
+
+//     if (!task) {
+//       return res.status(404).json({ error: 'Task not found' });
+//     }
+
+//     res.status(200).json({ task, taskId: task._id, ticket });
+//   } catch (error) {
+//     console.error('Error during dissociation:', error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+
+
+
+
+
+
+
 
   exports.getListTicketsByproject = async (req, res) => {
     try {
       const projectId = req.params.projectId;
       
       const tickets = await Tickets.find({ projectId }).populate('TaskId').populate('ResponsibleTicket').populate('Feature').populate('votes').populate("comments")  
+     
       .populate({
         path: "comments",
         populate: {
           path: "commenterId",
           model: "User"
         }
+      })
+      .populate({
+        path: 'associatedTickets',
+        populate: [
+          {
+            path: 'ticketId',
+            model: 'Tickets',
+            populate: {
+              path: 'ResponsibleTicket',
+              model: 'User'
+            }
+          }
+        ]
       })
       res.status(200).json(tickets);
     } catch (error) {
@@ -106,18 +368,22 @@ exports.createTickets = async (req, res) => {
 
   exports.updatedtickets = async (req, res) => {
     try {
-        const { Description, ResponsibleTicket, Etat, Type, Priority, Feature } = req.body;
+        console.log('Request Body:', req.body); // Log the request body
 
-        const updatedFields = { Description, ResponsibleTicket, Etat, Type, Priority, Feature };
+        // Destructure with correct field names
+        const { Description, ResponsibleTicket, Etat, Type, Priority, Feature, storyPoints } = req.body;
+
+        console.log('Updating Fields:', { Description, ResponsibleTicket, Etat, Type, Priority, Feature, storyPoints });
+
+        const updatedFields = { Description, ResponsibleTicket, Etat, Type, Priority, Feature, storyPoints };
 
         const updatedtickets = await Tickets.findOneAndUpdate(
             { _id: req.params.id },
-            updatedFields,
+            { $set: updatedFields },
             { new: true }
         );
 
-      
-      
+        console.log('Updated Ticket:', updatedtickets);
 
         if (!updatedtickets) {
             return res.status(404).json({ error: 'Ticket not found' });
@@ -135,13 +401,25 @@ exports.createTickets = async (req, res) => {
             );
         }
 
-        const originaltickets = await Tickets.findById(req.params.id).populate('ResponsibleTicket').populate('Feature').populate('votes')  .populate({
+        const originaltickets = await Tickets.findById(req.params.id).populate('ResponsibleTicket').populate('Feature').populate('votes').populate({
           path: "comments",
           populate: {
             path: "commenterId",
             model: "User"
           }
-        })
+        }).populate({
+          path: 'associatedTickets',
+          populate: [
+            {
+              path: 'ticketId',
+              model: 'Tickets',
+              populate: {
+                path: 'ResponsibleTicket',
+                model: 'User'
+              }
+            }
+          ]
+        });
 
         res.status(200).json(originaltickets);
     } catch (error) {
@@ -149,6 +427,10 @@ exports.createTickets = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
+
+
 
     
 exports.updateTicketPosition = async (req, res) => {
@@ -178,11 +460,11 @@ exports.updateTicketPosition = async (req, res) => {
   
 exports.updateTicket = async (req, res) => {
   try {
-    const { Description, ResponsibleTicket, Etat, Type, Priority,User ,CoverImage,position } = req.body;
+    const { Description, ResponsibleTicket, Etat, Type, Priority, User, CoverImage, position, storyPoints } = req.body;
     
     const updatedTicket = await Tickets.findOneAndUpdate(
       { _id: req.params.id }, 
-      { Description, ResponsibleTicket, Etat, Type, Priority ,User,CoverImage,position  },
+      { Description, ResponsibleTicket, Etat, Type, Priority, User, CoverImage, position, storyPoints }, 
       { new: true }
     );
 
@@ -190,25 +472,36 @@ exports.updateTicket = async (req, res) => {
       return res.status(404).json({ error: 'Ticket not found' });
     }
 
-   
-    
-    const task = await Task.findById(updatedTicket.TaskId).populate('tickets').populate('related').populate({
-      path: 'tickets',
-      populate: [
-        { path: 'ResponsibleTicket', model: 'User' },
-        { path: 'Feature', model: 'Features' } ,
-        { path: 'votes', model: 'User' } ,
-        { 
-          path: 'comments', 
-          populate: { path: 'commenterId', model: 'User' } 
-        }
-
-      ]
-    });
+    const task = await Task.findById(updatedTicket.TaskId)
+      .populate('tickets')
+      .populate('related')
+      .populate({
+        path: 'tickets',
+        populate: [
+          { path: 'ResponsibleTicket', model: 'User' },
+          { path: 'Feature', model: 'Features' },
+          { path: 'votes', model: 'User' },
+          {
+            path: 'associatedTickets',
+            populate: [
+              { 
+                path: 'ticketId', 
+                model: 'Tickets',
+                populate: { path: 'ResponsibleTicket', model: 'User' } 
+              }
+            ]
+          },
+          { 
+            path: 'comments', 
+            populate: { path: 'commenterId', model: 'User' } 
+          }
+        ]
+      });
 
     if (!task) {
       return res.status(404).json({ error: 'Task not found' });
     }
+
     const taskid = updatedTicket.TaskId;
     const ticketId = updatedTicket._id;
 
@@ -216,23 +509,36 @@ exports.updateTicket = async (req, res) => {
     .populate('ResponsibleTicket')
     .populate('Feature')
     .populate('User')
-    .populate('votes').populate({
-      path: "comments",
+    .populate('votes')
+    .populate({
+      path: 'comments',
       populate: {
-        path: "commenterId",
-        model: "User"
+        path: 'commenterId',
+        model: 'User'
       }
-    });   
+    })
+    .populate({
+      path: 'associatedTickets',
+      populate: [
+        {
+          path: 'ticketId',
+          model: 'Tickets',
+          populate: {
+            path: 'ResponsibleTicket',
+            model: 'User'
+          }
+        }
+      ]
+    });
 
- 
-
-    res.status(200).json({task,taskid,ticketId,ticket});
+    res.status(200).json({ task, taskid, ticketId, ticket });
 
   } catch (error) {
     console.error('Error updating ticket:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 //delete ticket images
 exports.deleteimage = async (req, res) => {
@@ -416,6 +722,16 @@ exports.updateTicketfeature = async (req, res) => {
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' },
         { path: 'votes', model: 'User' } ,
+        {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
         { 
           path: 'comments', 
           populate: { path: 'commenterId', model: 'User' } 
@@ -440,6 +756,18 @@ exports.updateTicketfeature = async (req, res) => {
         path: "commenterId",
         model: "User"
       }
+    }).populate({
+      path: 'associatedTickets',
+      populate: [
+        {
+          path: 'ticketId',
+          model: 'Tickets',
+          populate: {
+            path: 'ResponsibleTicket',
+            model: 'User'
+          }
+        }
+      ]
     });   
     res.status(200).json({updatedTask,taskid,ticketId,ticketfeature });
   } catch (error) {
@@ -478,6 +806,18 @@ exports.addComment = async (req, res) => {
         path: "commenterId",
         model: "User"
       }
+    }).populate({
+      path: 'associatedTickets',
+      populate: [
+        {
+          path: 'ticketId',
+          model: 'Tickets',
+          populate: {
+            path: 'ResponsibleTicket',
+            model: 'User'
+          }
+        }
+      ]
     });   
 
     const task = await Task.findById(commenticket.TaskId).populate('related')
@@ -488,6 +828,16 @@ exports.addComment = async (req, res) => {
           { path: 'ResponsibleTicket', model: 'User' },
           { path: 'Feature', model: 'Features' },
           { path: 'votes', model: 'User' },
+          {
+            path: 'associatedTickets',
+            populate: [
+              { 
+                path: 'ticketId', 
+                model: 'Tickets',
+                populate: { path: 'ResponsibleTicket', model: 'User' } 
+              }
+            ]
+          },
           { 
             path: 'comments', 
             populate: { path: 'commenterId', model: 'User' } 
@@ -531,6 +881,16 @@ exports.deleteComment = async (req, res) => {
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' } ,
          { path: 'votes', model: 'User' },
+         {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
          { 
           path: 'comments', 
           populate: { path: 'commenterId', model: 'User' } 
@@ -554,6 +914,18 @@ exports.deleteComment = async (req, res) => {
         path: "commenterId",
         model: "User"
       }
+    }).populate({
+      path: 'associatedTickets',
+      populate: [
+        {
+          path: 'ticketId',
+          model: 'Tickets',
+          populate: {
+            path: 'ResponsibleTicket',
+            model: 'User'
+          }
+        }
+      ]
     });   
 
     res.status(200).json({ task,ticketId,taskId,ticket});
@@ -602,6 +974,18 @@ exports.updateComment = async (req, res) => {
           path: 'commenterId',
           model: 'User'
         }
+      }).populate({
+        path: 'associatedTickets',
+        populate: [
+          {
+            path: 'ticketId',
+            model: 'Tickets',
+            populate: {
+              path: 'ResponsibleTicket',
+              model: 'User'
+            }
+          }
+        ]
       });
 
     if (!ticket) {
@@ -616,6 +1000,16 @@ exports.updateComment = async (req, res) => {
       populate: [
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' } ,
+        {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
         { path: 'votes', model: 'User' },
         { 
           path: 'comments', 
@@ -659,6 +1053,16 @@ exports.addVote = async (req, res) => {
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' } ,
          { path: 'votes', model: 'User' },
+         {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
          { 
           path: 'comments', 
           populate: { path: 'commenterId', model: 'User' } 
@@ -681,6 +1085,18 @@ exports.addVote = async (req, res) => {
         path: "commenterId",
         model: "User"
       }
+    }).populate({
+      path: 'associatedTickets',
+      populate: [
+        {
+          path: 'ticketId',
+          model: 'Tickets',
+          populate: {
+            path: 'ResponsibleTicket',
+            model: 'User'
+          }
+        }
+      ]
     });
 
     res.status(200).json({task, ticketId, taskId, ticket });
@@ -716,6 +1132,16 @@ exports.deleteVote = async (req, res) => {
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' } ,
          { path: 'votes', model: 'User' },
+         {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
          { 
           path: 'comments', 
           populate: { path: 'commenterId', model: 'User' } 
@@ -739,6 +1165,18 @@ exports.deleteVote = async (req, res) => {
         path: "commenterId",
         model: "User"
       }
+    }).populate({
+      path: 'associatedTickets',
+      populate: [
+        {
+          path: 'ticketId',
+          model: 'Tickets',
+          populate: {
+            path: 'ResponsibleTicket',
+            model: 'User'
+          }
+        }
+      ]
     });   
 
     res.status(200).json({ task,ticketId,taskId,ticket});
@@ -790,6 +1228,16 @@ exports.updateTicketimages = async (req, res) => {
       populate: [
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' },
+        {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
         { path: 'votes', model: 'User' }
       ]
     });
@@ -811,6 +1259,18 @@ exports.updateTicketimages = async (req, res) => {
           path: "commenterId",
           model: "User"
         }
+      }).populate({
+        path: 'associatedTickets',
+        populate: [
+          {
+            path: 'ticketId',
+            model: 'Tickets',
+            populate: {
+              path: 'ResponsibleTicket',
+              model: 'User'
+            }
+          }
+        ]
       });
 
     res.status(200).json({ task, ticketId, taskId, ticket });
@@ -872,6 +1332,16 @@ exports.updateTicketFlag = async (req, res) => {
       populate: [
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' },
+        {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
         { path: 'votes', model: 'User' }
       ]
     });
@@ -886,7 +1356,21 @@ exports.updateTicketFlag = async (req, res) => {
     // Populate the ticket object
     const ticket = await Tickets.findById(ticketId)
       .populate('ResponsibleTicket')
+      
       .populate('Feature')
+      .populate({
+        path: 'associatedTickets',
+        populate: [
+          {
+            path: 'ticketId',
+            model: 'Tickets',
+            populate: {
+              path: 'ResponsibleTicket',
+              model: 'User'
+            }
+          }
+        ]
+      })
       .populate('votes').populate({
         path: "comments",
         populate: {
@@ -928,6 +1412,16 @@ exports.deleteticketflag = async (req, res) => {
       populate: [
         { path: 'ResponsibleTicket', model: 'User' },
         { path: 'Feature', model: 'Features' },
+        {
+          path: 'associatedTickets',
+          populate: [
+            { 
+              path: 'ticketId', 
+              model: 'Tickets',
+              populate: { path: 'ResponsibleTicket', model: 'User' } 
+            }
+          ]
+        },
         { path: 'votes', model: 'User' }
       ]
     });
@@ -943,6 +1437,19 @@ exports.deleteticketflag = async (req, res) => {
     const ticket = await Tickets.findById(ticketId)
       .populate('ResponsibleTicket')
       .populate('Feature')
+      .populate({
+        path: 'associatedTickets',
+        populate: [
+          {
+            path: 'ticketId',
+            model: 'Tickets',
+            populate: {
+              path: 'ResponsibleTicket',
+              model: 'User'
+            }
+          }
+        ]
+      })
       .populate('votes').populate({
         path: "comments",
         populate: {

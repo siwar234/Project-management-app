@@ -11,9 +11,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { IoIosArrowDown,IoIosArrowUp } from 'react-icons/io';
 import { useDispatch,useSelector } from 'react-redux';
-import {  addCommentToTicket, deleteCommentFromTicket, deleteticketsflag, updateComment, updateticketsflag, updateticketsimages } from 'src/JS/actions/Tickets';
-import CropOriginalIcon from '@mui/icons-material/CropOriginal';
-import CircularProgress from '@mui/material/CircularProgress';
+import {  addCommentToTicket, deleteticketsflag, updateticketsflag, updateticketsimages } from 'src/JS/actions/Tickets';
+
 import { StarOutline, Star } from '@mui/icons-material';
 import {Editorr} from "../components/Editorr"
 import { AtomicBlockUtils } from 'draft-js';
@@ -25,6 +24,8 @@ import { addFavorites, getFavorites, removeFavorites } from 'src/JS/actions/Favo
 import { IoFlagSharp  } from "react-icons/io5";
 import TicketdetailsMenu from './TicketdetailsMenu';
 import  CommentTicket from './CommentTicket'
+import AssociateTicket from './AssociateTicket';
+import AssoicatedList from './AssoicatedList';
 export default function TicketDetail({  isSecondGridOpen }) {
   const [ticketsdata, setTicketsData] = useState({
     descriptionticket: {},
@@ -63,10 +64,10 @@ useEffect(() => {
 
 
 const  favorites  = useSelector((state) => state.favouritesReducer.favourites);
-console.log('Favorites:', favorites);
+// console.log('Favorites:', favorites);
 
 const handleToggleFavorite = (ticketid) => {
-  console.log('Favorites:', favorites);
+  // console.log('Favorites:', favorites);
 
   if (Array.isArray(favorites) && favorites.find(favorite => favorite.ticketId?._id === ticketid)) {
     dispatch(removeFavorites(ticketid, userId));
@@ -237,7 +238,13 @@ const insertImages = (editorState, imageUrls) => {
   }
 };
 
-      
+      //association button
+
+const [showAssociateTicket, setShowAssociateTicket] = useState(false);
+
+const handleButtonClick = () => {
+  setShowAssociateTicket((prev) => !prev);
+};
       
       
       
@@ -403,24 +410,21 @@ const insertImages = (editorState, imageUrls) => {
                           <ChildTicketIcon />
                         </IconButton>
                         {/* Association Icon */}
+                        <Tooltip title="associate tickets">
                         <IconButton
-                          style={{
-                            color: '#42526E',
-                            backgroundColor: '#efefef',
-                            borderRadius: '0',
-                          }}
-                        >
-                          <AssociationIcon />
-                        </IconButton>
+        style={{
+          color: '#42526E',
+          backgroundColor: '#efefef',
+          borderRadius: '0',
+        }}
+        onClick={handleButtonClick}
+      >
+        <AssociationIcon />
+      </IconButton></Tooltip>
                       </div>
 <div style={{display:'flex', flexDirection:"row"}}>
                       <Button
-                        // aria-controls={
-                        //   anchorEls[ticket._id] ? 'long-menu' : undefined
-                        // }
-                        // aria-expanded={Boolean(anchorEls[ticket._id])}
-                        // aria-haspopup="true"
-                        // onClick={(event) => handleClicked(event, ticket._id)}
+                        
                         style={{
                           fontSize: '10px',
                           width: '120px',
@@ -492,51 +496,7 @@ const insertImages = (editorState, imageUrls) => {
    />
 
 <Editorr  editorState={editorState} setEditorState={setEditorState} handleAddImage={handleAddImage} isuplading={isuplading}/>
-   {/* <Editor
-     editorState={editorState}
-     onEditorStateChange={setEditorState}
-     toolbar={{
-       options: [
-         'inline',
-         'blockType',
-         'fontSize',
-         'fontFamily',
-         'list',
-         'textAlign',
-         'colorPicker',
-         'link',
-         'embedded',
-         'emoji',
-       ],
-       inline: {
-         options: ['bold', 'italic', 'underline', 'strikethrough'],
-       },
-       list: { options: ['unordered', 'ordered'] },
-       textAlign: { options: ['left', 'center', 'right', 'justify'] },
-       embedded: { options: ['embedded'] },
-     }}
-     toolbarCustomButtons={[
-       <Tooltip title="Add an image" key="image-tooltip">
-         <CropOriginalIcon
-           onClick={handleAddImage}
-           style={{
-             cursor: 'pointer',
-             width: '25px',
-             marginTop: '5px',
-             overflow: 'clip',
-           }}
-         />
-         {isuplading && (
-           <CircularProgress
-             key="spinner"
-             style={{ marginLeft: '10px', width: '25px' }}
-           />
-         )}
-       </Tooltip>,
-     ]}
-     wrapperClassName="editor-wrapper"
-     editorClassName="editor-content"
-   /> */}
+  
 
    <Button
      style={{
@@ -669,6 +629,17 @@ const insertImages = (editorState, imageUrls) => {
                     </div>
 
                   )}
+
+
+
+{showAssociateTicket && (
+
+<AssociateTicket projectId={projectId}  setShowAssociateTicket={setShowAssociateTicket}   ticketId={ticketId}
+ />
+)}
+
+
+<AssoicatedList isSecondGridOpen={isSecondGridOpen} taskId={taskId} ticketId={ticketId}  />
 
 
                   {/* details box  */}

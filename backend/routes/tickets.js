@@ -1,5 +1,5 @@
 const express = require('express');
-const { createTickets, getListTicketsBytasks, updateTicketPosition,updatedtickets,getListTicketsByproject, updateTicket, updateTicketfeature, deleteTicket, getalltickets, updateTicketimages, addVote, deleteVote, addComment, deleteComment, updateComment, updateTicketFlag, deleteticketflag, deleteimage } = require('../controllers/Tickets');
+const { createTickets, getListTicketsBytasks, updateTicketPosition,updatedtickets,getListTicketsByproject, updateTicket, updateTicketfeature, deleteTicket, getalltickets, updateTicketimages, addVote, deleteVote, addComment, deleteComment, updateComment, updateTicketFlag, deleteticketflag, deleteimage, associateTicket, dissociateTicket } = require('../controllers/Tickets');
 const router = express.Router()
 
 
@@ -12,12 +12,17 @@ const Task = require('../models/Tasks');
 // router.post("/createTickets/:id" , createTickets)
 router.post("/createTickets" , createTickets)
 
+
+router.post('/associateticket', associateTicket); 
+
 router.get("/getlistickets/:TaskId",getListTicketsBytasks)
 
 router.get("/getlisticketsbyproject/:projectId",getListTicketsByproject)
 
 router.put('/Updatetickets/:id', updateTicket);
 router.put('/updateticket/:id', updatedtickets);
+
+// router.post('/dissociateticket', dissociateTicket);
 
 router.get("/getalltickets/:id",getalltickets)
 

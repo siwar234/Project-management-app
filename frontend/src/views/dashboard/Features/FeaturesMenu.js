@@ -23,7 +23,7 @@ export default function FeaturesMenu({checkedFeatures,selectedFeatures,setSelect
     };
 
     const handleMenuClose = () => {
-        console.log("Closing menu");
+        // console.log("Closing menu");
         setAnchorEl(false);
     };
 

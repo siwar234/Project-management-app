@@ -92,11 +92,11 @@ const UpdateTaskModal = ({ openUpdateModal, handleUpdateClosing,taskduration,tak
               mt={2}
               mb={5}
             >
-              Edit  Task
+              Edit  Sprint
             </Typography>
 
             <Typography mt={2} variant="body1" gutterBottom>
-              Task Name <span style={{ color: 'red' }}>*</span>
+            Sprint Name <span style={{ color: 'red' }}>*</span>
             </Typography>
 
             <TextField
@@ -208,7 +208,7 @@ const UpdateTaskModal = ({ openUpdateModal, handleUpdateClosing,taskduration,tak
                   marginTop: ' 15px',
                 }}
               >
-                Start Task
+                Start Sprint
               </Button>
             </Box>
           </Box>

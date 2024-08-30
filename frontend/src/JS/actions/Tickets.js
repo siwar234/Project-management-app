@@ -7,7 +7,7 @@ import {
   UPDATE_TIKCET_SUCCESS,
   DELETE_TICKETS_SUCCESS,
   GET_ALLTICKETS_SUCCESS,
-  UPDATE_POSITION_SUCCESS
+  UPDATE_POSITION_SUCCESS,
   
 } from '../actionTypes/tickets';
 import {
@@ -23,12 +23,17 @@ import {
   DELETE_COMMENT,
   UPDATE_COMMENT,
   DELETE_TICKETS_FLAG_SUCCESS,
-  UPDATE_TIKCETS_FLAG_SUCCESS
+  UPDATE_TIKCETS_FLAG_SUCCESS,
+  ASSOCIATE_TICKETS_SUCCESS,
+  ASSOCIATE_TICKETS_FAILURE,
+  // DISSOCIATE_TICKET_SUCCESS,
+  // DISSOCIATE_TICKET_FAILURE
+  
   
   
 } from '../actionTypes/tasks';
 import { toast } from 'react-toastify';
-import { getTasks, updateSecondGrid } from './tasks';
+import { getallTasks, getTasks, updateSecondGrid } from './tasks';
 import { getAllFeatures } from './feature';
 import io from 'socket.io-client';
 import { url,httpUrl } from "../../ConnectionString"
@@ -69,7 +74,6 @@ export const createTickets = (ticketsData,projectId) => async (dispatch, getStat
     const response = await axios.post(`${url}/tickets/createtickets`, ticketsData);
     dispatch({ type: CREATE_TICKETS_SUCCESS, payload: response.data });
     
-    // const { TaskId } = ticketsData;
     
     dispatch(getTasks(projectId))
     
@@ -126,6 +130,81 @@ export const updateTicketPosition = (ticketId, updatedData,projectid) => async (
   }
 };
 
+
+export const updateticketsimages = (id, ticketsdata) => async (dispatch) => {
+  try {
+    const response = await axios.put(`${url}/tickets/updateticketsimages/${id}`, ticketsdata);
+    
+    const { ticketId, taskId, ticket } = response.data;
+
+    dispatch({
+      type: UPDATE_TIKCETSIMAGES_SUCCESS,
+      payload: response.data,
+    });
+
+    dispatch(updateSecondGrid(ticketId, taskId, ticket)); 
+    toast.success("Your Ticket feature is updated");
+  } catch (error) {
+    dispatch({
+      type: FAIL_TASKS,
+      payload: error.response.data.message, 
+    });
+  }
+}
+
+export const associateTickets = (ticketId, associatedTicketIds, relation, projectId) => async (dispatch) => {
+  try {
+    const response = await axios.post(`${url}/tickets/associateticket`, {
+      ticketId,
+      associatedTicketIds,
+      relation
+    });
+
+
+    const {  taskId, ticket } = response.data;
+
+    dispatch({
+      type: ASSOCIATE_TICKETS_SUCCESS,
+      payload: response.data.task
+    });
+
+    dispatch(updateSecondGrid(ticketId, taskId, ticket));
+    dispatch(getTasks(projectId));
+    toast.success("Your Ticket feature is associated");
+
+  } catch (error) {
+    dispatch({
+      type: ASSOCIATE_TICKETS_FAILURE,
+      payload: error.response ? error.response.data : error.message
+    });
+  }
+};
+
+
+
+// export const dissociateTicket = (ticketId, associatedTicketId) => async (dispatch) => {
+//   try {
+
+//     const response  = await axios.post(`${url}/tickets/dissociateticket`, { ticketId, associatedTicketId });
+//     const { taskId, ticket } = response.data;
+
+//     // dispatch({
+//     //   type: DISSOCIATE_TICKET_SUCCESS,
+//     //   payload: response.data
+//     // });
+
+//     dispatch(updateSecondGrid(ticketId, taskId, ticket)); 
+//     toast.success("Your Ticket feature is dissociated");
+
+//   } catch (error) {
+//     dispatch({
+//       type: DISSOCIATE_TICKET_FAILURE,
+//       payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+//     });
+//   }
+// };
+
+
 export const updatingtickets = (projectid,id, ticketsData) => async (dispatch) => {
   try {
     const response = await axios.put(`${url}/tickets/updateticket/${id}`, ticketsData);
@@ -134,7 +213,7 @@ export const updatingtickets = (projectid,id, ticketsData) => async (dispatch) =
       payload: response.data,
     });
     dispatch(getListTicketsByproject(projectid))
-    toast.success("Your Ticket is created");
+    toast.success("Your Ticket is updated");
 
    
   } catch (error) {
@@ -294,26 +373,7 @@ export const addVoteToTicket = (ticketid, voterId) => async (dispatch) => {
 };
 
 
-export const updateticketsimages = (id, ticketsdata) => async (dispatch) => {
-  try {
-    const response = await axios.put(`${url}/tickets/updateticketsimages/${id}`, ticketsdata);
-    
-    const { ticketId, taskId, ticket } = response.data;
 
-    dispatch({
-      type: UPDATE_TIKCETSIMAGES_SUCCESS,
-      payload: response.data,
-    });
-
-    dispatch(updateSecondGrid(ticketId, taskId, ticket)); 
-    toast.success("Your Ticket feature is updated");
-  } catch (error) {
-    dispatch({
-      type: FAIL_TASKS,
-      payload: error.response.data.message, 
-    });
-  }
-}
 
 
 export const updateticketsflag = (projectId,ticketid) => async (dispatch) => {

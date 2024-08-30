@@ -18,10 +18,11 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import image from '../../../assets/images/checking.webp';
+import image4 from  "../../../assets/images/storie.png"
 import img from '../../../assets/images/bugging.png';
 import {  getallticket } from 'src/JS/actions/Tickets';
 import { getFavorites, removeFavorites } from 'src/JS/actions/Favorites';
-import { StarOutline, Star } from '@mui/icons-material';
+import {  Star } from '@mui/icons-material';
 
 const NavBarMenu = ({
   isMobileSidebarOpened,
@@ -169,7 +170,9 @@ const NavBarMenu = ({
         <div key={ticket?._id}>
             <div style={{ display: 'flex', alignItems: 'center',marginBottom:"15px"}}>
                 <img
-                    src={ticket?.Type === 'Bug' ? img : image}
+                    src=
+                   { ticket?.Type === 'Bug' ? image1 :
+                    ticket?.Type === 'story' ? image4 : image}
                     alt="icon"
                     style={{
                         width: '18px',

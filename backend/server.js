@@ -8,15 +8,15 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const path = require('path');
 const http = require('http');
-const Notification=require('../backend/models/Notifications')
+const Notification=require('./models/Notifications')
 const app = express();
 const os = require('os');
 
-const Tasks=require('../backend/models/Tasks');
+const Tasks=require('./models/Tasks');
 const cron = require('node-cron');
-const Equipe=require('../backend/models/Equipe')
-const Project = require('../backend/models/Project');
-const Ticket=require('../backend/models/Tickets')
+const Equipe=require('./models/Equipe')
+const Project = require('./models/Project');
+const Ticket=require('./models/Tickets')
 const oneDay = 86400000;
 
 // Session setup

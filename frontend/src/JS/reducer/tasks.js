@@ -22,7 +22,11 @@ ADD_COMMENT,
 UPDATE_COMMENT,
 GET_ALL_TASKS_SUCCESS,
 DELETE_TICKETS_FLAG_SUCCESS,
-RELATE_TASKS_SUCCESS
+RELATE_TASKS_SUCCESS,
+ASSOCIATE_TICKETS_SUCCESS,
+ASSOCIATE_TICKETS_FAILURE,
+// DISSOCIATE_TICKET_SUCCESS,
+// DISSOCIATE_TICKET_FAILURE
 } from '../actionTypes/tasks';
 import {
   STOP_LOADING
@@ -213,6 +217,8 @@ case UPDATE_TIKCETSFEATURE_SUCCESS:
           task._id === payload._id ? payload : task
         );
   
+
+        
         
       
         return {
@@ -221,8 +227,69 @@ case UPDATE_TIKCETSFEATURE_SUCCESS:
           tasks: uptadetflag,
           errors: [], 
         };
-  
+        case ASSOCIATE_TICKETS_SUCCESS:
+          const tasksassociated = state.tasks.map(task => {
+            if (task._id === payload.taskId) {
+              return {
+                ...task,
+                tickets: task.tickets.map(ticket => {
+                  if (ticket._id === payload.ticket._id) {
+                    return {
+                      ...ticket,
+                      associatedTickets: [
+                        ...ticket.associatedTickets,
+                        ...payload.ticket.associatedTickets.filter(
+                          at => !ticket.associatedTickets.some(t => t._id === at._id)
+                        ),
+                      ],
+                    };
+                  }
+                  return ticket;
+                }),
+              };
+            }
+            return task;
+          });
+        
+          return {
+            ...state,
+            tasks: tasksassociated,
+          };
 
+
+
+
+
+          // case DISSOCIATE_TICKET_SUCCESS:
+          //   return {
+            
+          // ...state,
+          // loadtasks: false,
+         
+          // tasks: state.tasks.filter(task => task._id !== payload),
+          //   };
+       
+               
+
+
+          case ASSOCIATE_TICKETS_FAILURE:
+            return {
+              ...state,
+              loading: false,
+              error: payload
+            };
+
+            // case DISSOCIATE_TICKET_FAILURE:
+            //   return {
+            //     ...state,
+            //     loading: false,
+            //     error: payload
+            //   };
+         
+         
+       
+       
+      
       
     case VOTE_TICKET:
       const updtetask = state.tasks.map(task => 

@@ -7,7 +7,7 @@ import { updateEquipe } from 'src/JS/actions/equipe';
 export const EquipeUpdate = ({ equipeId }) => {
   const dispatch = useDispatch();
   const equipeDescription = useSelector((state) => state.equipeReducer.equipe?.description);
-  console.log('equipeDescription')
+  // console.log('equipeDescription')
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [textValue, setTextValue] = useState(equipeDescription || 'Heyyy what does your team do again ?');

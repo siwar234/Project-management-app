@@ -14,7 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import image from "../../../assets/images/blob.jpg"
-import { deletetasks, getTasks, moveTicket } from 'src/JS/actions/tasks';
+import { deletetasks,  moveTicket } from 'src/JS/actions/tasks';
 import { useParams } from 'react-router';
 
 const TerminateTask = ({
@@ -40,7 +40,7 @@ const TerminateTask = ({
   
   const handleTerminateTask = async () => {
     const openTicketIds = openTickets.map((ticket) => ticket._id);
-    console.log("Open Ticket IDs:", openTicketIds);
+    // console.log("Open Ticket IDs:", openTicketIds);
   
     try {
       if (selectedTask) {

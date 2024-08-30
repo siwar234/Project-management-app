@@ -7,6 +7,8 @@ import { formatDistanceToNow } from 'date-fns';
 import image5 from '../../../assets/images/icons/projection.png';
 import image from '../../../assets/images/checking.webp';
 import image1 from '../../../assets/images/bugging.png';
+import image2 from '../../../assets/images/storie.png';
+
 import io from 'socket.io-client';
 import { FcAdvertising } from "react-icons/fc";
 import ApprochingDeadlinenotification from './ApprochingDeadlinenotification';
@@ -31,7 +33,7 @@ const Notifications = ({ userId }) => {
     dispatch(getNotifications(userId));
 
     socket.on('messages', (notificationData) => {
-      console.log('New message received:', notificationData);
+      // console.log('New message received:', notificationData);
       dispatch(addNewNotification(notificationData));
     });
 
@@ -184,7 +186,7 @@ const Notifications = ({ userId }) => {
                       <Typography variant="body2" color="textSecondary">
                         <div style={{ display: 'flex', alignItems: 'center', flexDirection: "row" }}>
                           <img
-                            src={notification.data.ticket.Type === 'Bug' ? image1 : image}
+                            src={notification.data.ticket.Type === 'Bug' ? image1 : notification.data.ticket.Type=== 'story' ? image2 : image}
                             alt="Ticket icon"
                             style={{ display: 'flex', alignItems: 'center', width: "18px", height: "18px" }}
                           />

@@ -3,12 +3,15 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { ObjectId } = mongoose.Schema.Types
-const allowedTypes = ["Software development", "Marketing", "Design", "Human Resources"];
 
 
 const TicketsSchema = new mongoose.Schema(
   {
-   
+    storyPoints: {
+      type: String,  
+      trim: true,
+    },
+    
 
     Description: {
         type: String,
@@ -19,6 +22,8 @@ const TicketsSchema = new mongoose.Schema(
       EstimatedDuration: {
         type: String,
       },
+
+   
       
       descriptionticket: {
         imageD: [{
@@ -46,15 +51,39 @@ const TicketsSchema = new mongoose.Schema(
      
     },
      
-    // featureid: { type: ObjectId, ref: 'Features' },
       
       ResponsibleTicket : { type: ObjectId, ref: 'User' },
 
+      comments: [{
+        commenterId: {
+          type: ObjectId,
+          ref: 'User'
+        },
+        comment: {
+          type: String
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now
+        },
+        updatedAt: {
+          type: Date,
+          default: Date.now
+        }
+      }],
 
-    //   EndDate: {
-    //     type:Date
-
-    //   },
+      associatedTickets: [{
+        ticketId: {
+          type: ObjectId,
+          ref: 'Tickets',
+          required: true
+        },
+        relation: {
+          type: String,
+          enum: ['is blocked by', 'blocks'], 
+          required: true
+        }
+      }],
 
     projectId:
     { type: ObjectId, ref: 'Project' },
@@ -73,33 +102,16 @@ const TicketsSchema = new mongoose.Schema(
           }],
 
         flag :   { type: Boolean },
-        
 
         
         Type :{
           type: String,
           trim: true,
-          default:"Task"
+          default:"story"
       },
       User :{ type: mongoose.Schema.Types.ObjectId,ref: 'User'},
 
-     comments: [{
-  commenterId: {
-    type: ObjectId,
-    ref: 'User'
-  },
-  comment: {
-    type: String
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
-}],
+  
 
 
    Feature: { type: mongoose.Schema.Types.ObjectId, ref: 'Features' },

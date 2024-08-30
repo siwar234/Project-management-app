@@ -7,7 +7,8 @@ import {
     DELETE_TICKETS_SUCCESS,
     GET_ALLTICKETS_SUCCESS,
     DELETE_IMAGE,
-UPDATE_POSITION_SUCCESS
+UPDATE_POSITION_SUCCESS,
+ASSOCIATE_TICKETS_SUCCESS
     
    
   } from '../actionTypes/tickets';
@@ -59,6 +60,10 @@ UPDATE_POSITION_SUCCESS
               tickets: updatedtickets,
               errors: [], 
             };
+
+           
+
+            
 
             
             case   DELETE_TICKETS_SUCCESS:

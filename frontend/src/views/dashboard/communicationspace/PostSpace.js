@@ -243,7 +243,7 @@ const PostSpace = () => {
 
   const handlePDFChange = (e) => {
     const file = e.target.files[0];
-    console.log('Selected PDF file:', file);
+    // console.log('Selected PDF file:', file);
     setPDF(file);
   };
 

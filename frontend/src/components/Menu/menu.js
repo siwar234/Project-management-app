@@ -19,7 +19,8 @@ export default function LongMenu({
   MoreVertIconstyle,
   ticketId,
   projectId,
-  task
+  task,
+  handleopenUpdate
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isRelateTaskDropdownOpen, setIsRelateTaskDropdownOpen] = useState(false);
@@ -200,6 +201,10 @@ export default function LongMenu({
                 } else if(option==="Add To a discussion space") {
                   handleOpenModal();
                 }
+                else if(option==="edit sprint") {
+                  handleopenUpdate(taskId);
+                }
+                
                 else  {
                   handleClose()}
               }}
