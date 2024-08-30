@@ -1,20 +1,20 @@
-# Use the official Node.js image as the base image
-FROM node:16
+# Use an official Node.js runtime as a parent image
+FROM node:18
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies with --legacy-peer-deps
-RUN npm install --legacy-peer-deps
+# Install dependencies
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Expose port 3000
+# Expose the port
 EXPOSE 3000
 
-# Command to run the app
+# Start the application
 CMD ["npm", "start"]
