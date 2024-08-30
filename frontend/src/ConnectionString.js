@@ -1,6 +1,6 @@
-export const url="http://localhost:8000/api"
+export const url="http:172.10.0.140:8000/api"
 
-export const httpUrl="http://localhost:4101"
+export const httpUrl="http://172.10.0.140:4101"
 
-export const googlepUrl="http://localhost:8000"
+export const googlepUrl=http://172.10.0.140:8000"
 
