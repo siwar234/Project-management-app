@@ -42,7 +42,7 @@ const createEquipe = async (req, res) => {
         const token = generateUniqueToken({ email });
 
         // Send invitation email with token in the URL
-        const invitationUrl = `http://localhost:3000/join/jointeam/?equipeId=${equipeId}&token=${token}`;
+        const invitationUrl = `http://172.10.0.140/:3000/join/jointeam/?equipeId=${equipeId}&token=${token}`;
         const message = `<div style="max-width: 700px; margin:auto; padding: 50px 20px; font-size: 110%;">
         <!-- Image below the main content -->
         <div style="text-align: center; margin-top: 20px;">
