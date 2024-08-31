@@ -33,7 +33,7 @@ import {
   
 } from '../actionTypes/tasks';
 import { toast } from 'react-toastify';
-import { getallTasks, getTasks, updateSecondGrid } from './tasks';
+import {  getTasks, updateSecondGrid } from './tasks';
 import { getAllFeatures } from './feature';
 import io from 'socket.io-client';
 import { url,httpUrl } from "../../ConnectionString"
