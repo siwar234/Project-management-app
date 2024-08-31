@@ -122,7 +122,7 @@ const server = http.createServer();
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: 'http://localhost:3000', 
+    origin: 'http://172.10.0.140/:3000', 
     methods: ['GET', 'POST'],
     // allowedHeaders: ['Authorization'],
     credentials: true,
