@@ -152,18 +152,16 @@ export const leaveEquipe = (equipeId,id) => async (dispatch) => {
   };
 
 
-  export const sendInvitation = (formData,id) => async (dispatch) => {
-  
-      try {
+ export const sendInvitation = (formData, id) => async (dispatch) => {
+    try {
         const options = {
-          headers: { authorization: localStorage.getItem("token") },
+            headers: { authorization: localStorage.getItem("token") },
         };
-          const response = await axios.post(`${url}/equipe/invite/${id}`, formData,options);
-        
-      } catch (error) {
-          dispatch({ type: CREATE_EQUIPE_FAIL, payload: error.response.data.error }); 
-      }
-  };
+        await axios.post(`${url}/equipe/invite/${id}`, formData, options);
+    } catch (error) {
+        dispatch({ type: CREATE_EQUIPE_FAIL, payload: error.response.data.error });
+    }
+};
 
 //links
   export const addLink = (equipeId, linkData) => async (dispatch) => {
