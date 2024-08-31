@@ -22,7 +22,7 @@ module.exports = (passport) => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:8000/auth/google/callback",
+        callbackURL: "http://172.10.0.140/:8000/auth/google/callback",
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
         prompt: 'select_account',
         authType: 'rerequest' // Add this line
