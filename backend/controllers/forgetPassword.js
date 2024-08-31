@@ -21,7 +21,7 @@ exports.forgetPassword = async (req, res) => {
           pass: process.env.EMAIL_SENDER_PASSWORD,
         },
       });
-      const resetUrl = `http://localhost:3000/authentificate/password/${token}`;
+      const resetUrl = `http://172.10.0.140/:3000/authentificate/password/${token}`;
 
       const mailOptions = {
         from: process.env.EMAIL,
