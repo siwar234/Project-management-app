@@ -24,6 +24,15 @@ services:
     networks:
       - my-network
 
+  mongo-test:
+    image: mongo:latest
+    ports:
+      - "27019:27017"
+    networks:
+      - my-network
+    environment:
+      - URL_TEST=projectmanagement_test  # Optional: to initialize a specific database for testing
+
 networks:
   my-network:
     driver: bridge
