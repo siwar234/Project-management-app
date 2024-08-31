@@ -2,19 +2,28 @@ version: '3.8'
 
 services:
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: siwarenf/projectmanagemntapp-frontend:latest
     ports:
-      - "3000:3000"
-    depends_on:
-      - backend
+      - "3000:80"
+    networks:
+      - my-network
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: siwarenf/projectmanagemntapp:latest
     ports:
       - "8000:8000"
-    env_file:
-      - ./backend/.env
+    networks:
+      - my-network
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/projectmanagement
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
