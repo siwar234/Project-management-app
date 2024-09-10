@@ -2,6 +2,8 @@
   "name": "modernize",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/",
+
   "dependencies": {
     "@dhtmlx/trial-react-gantt": "^1.1.4",
     "@emotion/react": "^11.11.4",
