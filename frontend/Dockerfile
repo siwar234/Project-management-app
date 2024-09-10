@@ -7,9 +7,6 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json to leverage Docker cache
 COPY package*.json ./
 
-# Set NPM configuration for a higher timeout (60 seconds) and disable progress to improve speed in slow networks
-RUN npm config set timeout 60000 \
-    && npm config set progress false
 
 # Install dependencies with legacy peer dependencies flag
 RUN npm install --legacy-peer-deps
